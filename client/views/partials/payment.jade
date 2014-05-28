@@ -1,0 +1,11 @@
+.modal-body
+
+    .input-group
+        label(for='sum') Sum: 
+        input.form-control(type='text', id='sum', placeholder='{{payment.sum}}', ng-model='payment.sum')
+
+.modal-footer
+
+    button.btn.btn-sm.btn-default(ng-click='cancel()') Close
+    
+    button.btn.btn-sm.btn-primary(ng-click='create()') Create

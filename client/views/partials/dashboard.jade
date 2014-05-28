@@ -1,0 +1,23 @@
+row
+    h1 Todo
+
+    table.table.dashboard-table
+        tbody
+            tr(ng-repeat="(patientId, patientInfo) in patientsWithUnsummarizedAppointments")
+                td
+                    {{patientInfo.name}} has {{patientInfo.appointments}} unsummarized appointment(s)
+                td
+                    a.location-selector(href='patients/{{patientId}}')
+                        i.glyphicon.glyphicon-zoom-in
+
+row
+    h1 Coming up
+
+    table.table.dashboard-table
+        tbody
+            tr(ng-repeat="appointment in appointmentsComingUp | orderBy:'when'")
+                td {{appointment.when | date:"EEEE, dd MMMM 'at' HH:mm"}} with {{appointment.patient.name}}
+                td
+                    a.location-selector(href='patients/{{appointment.patient._id}}')
+                        i.glyphicon.glyphicon-zoom-in
+

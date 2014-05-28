@@ -1,0 +1,15 @@
+{
+  "name": "application-name",
+  "version": "0.0.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ],
+  "dependencies": {
+    "angular": "~1.2.x",
+    "angular-route": "~1.2.x",
+    "angular-resource": "~1.2.x",
+    "angular-bootstrap": "0.11.0"
+  }
+}

@@ -1,0 +1,21 @@
+row
+    button.btn.btn-sm.btn-primary.pull-left(ng-click='create()') New patient
+
+    .input-group.pull-right(style='width: 100px')
+        input.input-sm.form-control(type='text', id='search', placeholder='Search', ng-model='searchTerm')
+
+
+
+table.table
+    thead
+        tr
+            th Name
+            th Email
+            th 
+    tbody
+        tr(ng-repeat="patient in patients | orderBy: 'name' | filter: searchFilter")
+            td {{patient.name}}
+            td {{patient.email}}
+            td
+                a.location-selector(href='patients/{{patient._id}}')
+                    i.glyphicon.glyphicon-zoom-in

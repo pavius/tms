@@ -1,0 +1,31 @@
+.modal-body
+
+    .clearfix
+    
+        .col-md-6
+            .input-group
+                span.input-group-addon
+                    i.glyphicon.glyphicon-user
+                input.form-control(type='text', id='name', placeholder='Name', ng-model='patient.name')
+
+            .input-group
+                span.input-group-addon
+                    i.glyphicon.glyphicon-envelope
+                input.form-control(type='email', id='email', placeholder='Email', ng-model='patient.email')
+
+        .col-md-6
+            .input-group
+                span.input-group-addon
+                    i.glyphicon.glyphicon-phone
+                input.form-control(type='text', id='primary_phone', placeholder='Phone', ng-model='patient.primary_phone')
+
+            .input-group
+                span.input-group-addon
+                    i.glyphicon.glyphicon-usd
+                input.form-control(type='text', id='price', placeholder='Appointment price', ng-model='patient.appointment_price')
+
+.modal-footer
+
+    button.btn.btn-sm.btn-default(ng-click='cancel()') Close
+    
+    button.btn.btn-sm.btn-primary(ng-click='create()') Create

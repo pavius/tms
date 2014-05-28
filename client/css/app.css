@@ -1,0 +1,161 @@
+body 
+{
+    padding-top: 10px;
+}
+
+/* 
+ * Non-responsive navbar
+ */
+
+.navbar-nav 
+{
+    margin: 0;
+}
+
+.navbar-nav > li 
+{
+    float: none;
+    display: inline-block;
+}
+
+.navbar-nav > li > a 
+{
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+/*
+ * Other tweaks
+ */
+
+.table.table
+{
+    text-align: center;
+}
+
+th
+{
+    text-align: center;
+}
+
+.navbar
+{
+    margin-bottom: 12px;
+}
+
+.future-appointment
+{
+    background-color: #f9f9f9;
+}
+
+.input-group
+{
+    margin-bottom: 12px;
+}
+
+.col-left
+{
+    padding-left: 0px;
+    padding-right: 6px;
+}
+
+.col-right
+{
+    padding-left: 6px;
+    padding-right: 0px;
+}
+
+.col-xs-12
+{
+    padding: 0px 0px 12px 0px;
+}
+
+.row
+{
+    margin-bottom: 12px;
+}
+
+ul.nav.nav-tabs
+{
+    margin-bottom: 12px;
+    margin-top: 0px;
+}
+
+h3.view-header
+{
+    margin-bottom: 12px;
+    margin-top: 0px;
+}
+
+small
+{
+    margin-left: 6px;
+}
+
+#appointment-settings
+{
+    margin-top: 20px;
+}
+
+.modal-footer
+{
+    margin-top: 0px;
+}
+
+.table.table.dashboard-table
+{
+    text-align: left;
+}
+
+a.location-selector
+{
+    color: black;
+}
+
+/*
+ * Selectors
+ */
+@media(max-width: 767px)
+{
+
+    .input-group-addon
+    {
+        padding: 6px 6px;
+    }
+
+    .form-control
+    {
+        padding: 6px 6px;
+    }
+
+    ul.nav.nav-tabs
+    {
+        margin-bottom: 12px;
+        margin-top: 0px;
+    }
+
+    .table>thead>tr>th
+    {
+        padding: 0px 8px 4px 8px;
+    }
+
+    #appointment-datepicker
+    {
+        padding-left: 25px;
+    }
+}
+
+@media(min-width: 768px)
+{
+
+}
+
+@media(min-width: 992px)
+{
+
+}
+
+@media(min-width: 1200px)
+{
+
+}

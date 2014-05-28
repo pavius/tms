@@ -1,0 +1,37 @@
+.modal-body#appointment-modal
+
+        row
+            .col-xs-12
+
+                datepicker#appointment-datepicker(type='text', show-weeks='false', ng-model='appointment.when')
+
+        row.clearfix
+
+            div.col-xs-6
+
+                timepicker(ng-model='appointment.when', hour-step='1', minute-step='15', show-meridian='false')
+
+            div.col-xs-6
+                
+                div#appointment-settings
+
+                    .input-group
+                        span.input-group-addon
+                            i.glyphicon.glyphicon-usd
+                        input.form-control(type='text', id='price', ng-model='appointment.price')
+
+                    label.checkbox(ng-show='mode == "edit"')
+                        input(type='checkbox', ng-model='appointment.summary_sent') 
+                        | Summarized
+
+                    label.checkbox(ng-show='mode == "edit"')
+                        input(type='checkbox', ng-model='appointment.missed') 
+                        | Missed
+        
+.modal-footer
+
+    button.btn.btn-sm.btn-default(ng-click='cancel()') Close
+    
+    button.btn.btn-sm.btn-primary(ng-click='update()') {{mode == 'create' ? 'Create' : 'Update'}}
+    
+    button.btn.btn-sm.pull-left.btn-danger(ng-click='delete()', ng-show='mode == "edit"') Delete

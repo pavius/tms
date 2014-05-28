@@ -23,9 +23,9 @@ mongoose.connect(database.url);
 app.configure(function() 
 {
     // express stuff
-    app.set('views', __dirname + '/views');
+    app.set('views', '../client/views');
     app.set('view engine', 'jade');
-    app.use(express.static(__dirname + '/public'));
+    app.use(express.static('../client'));
     app.use(express.logger('dev'));
     app.use(express.json());
     app.use(express.methodOverride());
@@ -42,7 +42,7 @@ app.configure(function()
  * Routes
  */
 
-_.each(['patient', 'appointment', 'payment'], function(route)
+_.each(['auth', 'patient', 'appointment', 'payment', 'client'], function(route)
 {
     require('./src/routes/' + route).addRoutes(app, passport);
 });
