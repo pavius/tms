@@ -4,7 +4,7 @@ block body
 
     .container
 
-        nav.navbar.navbar-default(role='navigation', ng-controller="navController")
+        nav.navbar.navbar-default(role='navigation', ng-controller="NavController")
 
             .navbar-header
 
@@ -22,7 +22,7 @@ block body
                     a(href='/appointments')
                         i.glyphicon.glyphicon-comment
 
-        div(ng-controller='dashboardController')
+        div(ng-controller='DashboardController')
             div(ng-view)
 
     link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.css')
@@ -36,8 +36,12 @@ block body
     script(src='bower_components/angular-bootstrap/ui-bootstrap.js')
     script(src='bower_components/angular-bootstrap/ui-bootstrap-tpls.js')
 
-    script(src='js/controllers.js')
+    script(src='js/common/filters.js')
+    script(src='js/dashboard/controllers.js')
+    script(src='js/patient/controllers.js')
+    script(src='js/patient/services.js')
+    script(src='js/appointment/controllers.js')
+    script(src='js/appointment/services.js')
+    script(src='js/payment/controllers.js')
+    script(src='js/payment/services.js')
     script(src='js/app.js')
-    script(src='js/services.js')
-    script(src='js/filters.js')
-    script(src='js/controllers.js')

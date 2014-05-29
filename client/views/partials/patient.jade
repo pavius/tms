@@ -11,45 +11,6 @@ row.clearfix
 
     tabset
 
-        tab(heading='Info')
-
-            row
-                .col-xs-12
-                    
-                    button.btn.btn-sm.btn-primary(ng-click='update()') Update
-
-            row.clearfix
-            
-                .col-xs-8.col-sm-6.col-left
-                    .form-group
-                        .input-group
-                            span.input-group-addon
-                                i.glyphicon.glyphicon-user
-                            input.form-control(type='text', id='name', placeholder='Name', ng-model='patient.name')
-
-                        .input-group
-                            span.input-group-addon
-                                i.glyphicon.glyphicon-envelope
-                            input.form-control(type='email', id='email', placeholder='Email', ng-model='patient.email')
-
-                        .input-group
-                            span.input-group-addon
-                                i.glyphicon.glyphicon-phone
-                            input.form-control(type='text', id='primary_phone', placeholder='Phone', ng-model='patient.primary_phone')
-
-                .col-xs-4.col-sm-6.col-right
-                    .form-group
-
-                        .input-group
-                            span.input-group-addon
-                                i.glyphicon.glyphicon-usd
-                            input.form-control(type='text', id='price', placeholder='Appointment price', ng-model='patient.appointment_price')
-
-                        .input-group
-                            span.input-group-addon Owed
-                            input.form-control(type='text', readonly, placeholder='{{debt}}') 
-
-
         tab(heading='Appointments')
 
             row
@@ -94,3 +55,41 @@ row.clearfix
                         tr(ng-repeat="payment in patient.payments | orderBy:'-when'")
                             td {{payment.when | date:'dd MMMM HH:mm'}}
                             td {{payment.sum}}
+
+        tab(heading='Profile')
+
+            row
+                .col-xs-12
+                    
+                    button.btn.btn-sm.btn-primary(ng-click='update()') Update
+
+            row.clearfix
+            
+                .col-xs-8.col-sm-6.col-left
+                    .form-group
+                        .input-group
+                            span.input-group-addon
+                                i.glyphicon.glyphicon-user
+                            input.form-control(type='text', id='name', placeholder='Name', ng-model='patient.name')
+
+                        .input-group
+                            span.input-group-addon
+                                i.glyphicon.glyphicon-envelope
+                            input.form-control(type='email', id='email', placeholder='Email', ng-model='patient.email')
+
+                        .input-group
+                            span.input-group-addon
+                                i.glyphicon.glyphicon-phone
+                            input.form-control(type='text', id='primary_phone', placeholder='Phone', ng-model='patient.primary_phone')
+
+                .col-xs-4.col-sm-6.col-right
+                    .form-group
+
+                        .input-group
+                            span.input-group-addon
+                                i.glyphicon.glyphicon-usd
+                            input.form-control(type='text', id='price', placeholder='Appointment price', ng-model='patient.appointment_price')
+
+                        .input-group
+                            span.input-group-addon Owed
+                            input.form-control(type='text', readonly, placeholder='{{debt}}') 

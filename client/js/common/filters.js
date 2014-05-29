@@ -1,7 +1,6 @@
-/* Filters */
-var tmsFilters = angular.module('tms.filters', []);
+angular.module('tms.common.filters', [])
 
-tmsFilters.filter('checkmark', function()
+.filter('checkmark', function()
 {
     return function(value)
     {

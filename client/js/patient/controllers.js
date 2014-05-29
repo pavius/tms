@@ -1,115 +1,40 @@
-/* Controllers */
-angular.module('tms.controllers', 
+angular.module('tms.patient.controllers', 
 [
     'ui.bootstrap',
-    'ui.bootstrap.tpls'
-]);
+    'ui.bootstrap.tpls',
+    'tms.appointment.controllers',
+    'tms.payment.controllers',
+    'tms.patient.services',
+    'tms.payment.services',
+])
 
-var navController = function($scope, $location)
+.config(['$routeProvider', function ($routeProvider) 
 {
-    $scope.isActive = function (viewLocation) 
+    $routeProvider
+
+    .when('/patients', 
     {
-        var path = $location.path();
+        templateUrl:'partials/patients',
+        controller:'PatientListController',
+    })
 
-        // look for perfect match
-        if (viewLocation === path)
-        {
-            return true;
-        }
-        // look for imperfect match for non-root
-        else if (viewLocation != '/')
-        {
-            return path.substring(0, viewLocation.length) === viewLocation;
-        }
-        else return false;
-    };    
-};
-
-var dashboardController = function($scope, $location, Appointment) 
-{
-    function getPatientsRequiringSummary(callback)
+    .when('/patients/:id', 
     {
-        resultList = {};
-
-        Appointment.query({
-                              'when': '{lte}' + Date.now(), 
-                              'summary_sent': false, 
-                              'missed': false, 
-                              'populate_patient': true
-                          }, 
-        function(appointments)
-        {
-            appointments.forEach(function(appointment)
-            {
-                patient = appointment.patient;
-
-                // was this patient already added?
-                if (!resultList.hasOwnProperty(patient._id))
-                {
-                    resultList[patient._id] = {name: patient.name, appointments: 1};
-                }
-                else
-                {
-                    // add to # of appointments
-                    resultList[appointment.patient._id].appointments++;
-                }
-            });
-
-            // done
-            callback(resultList);
-        });
-    }
-
-    function getAppointmentsComingUp(callback)
-    {
-        cutoffDate = new Date();
-        cutoffDate.setDate(cutoffDate.getDate() + 7);
-
-        Appointment.query({
-                              'when': '{gte}' + Date.now() + '{lte}' + cutoffDate.getTime(), 
-                              'populate_patient': true
-                          }, 
-        function(appointments)
-        {
-            // done
-            callback(appointments);
-        });
-    }
-
-    $scope.patientsWithUnsummarizedAppointments = {};
-    $scope.appointmentsComingUp = [];
-    
-    // build todo list
-    getPatientsRequiringSummary(function(results)
-    {
-        $scope.patientsWithUnsummarizedAppointments = results;
+        templateUrl:'partials/patient',
+        controller:'PatientDetailController',
     });
 
-    // get upcoming appointments
-    getAppointmentsComingUp(function(results)
-    {
-        $scope.appointmentsComingUp = results;
-    });
-};
-    
-var patientsController = function($scope, $log, $location, $modal, Patient) 
+}])
+
+.controller('PatientListController', 
+            ['$scope', '$log', '$location', '$modal', 'Patient', 
+            function($scope, $log, $location, $modal, Patient) 
 {
-    $scope.searchTerm = '';
-
-    // pagination
-    $scope.patients = [];
-
-    // get all patients
-    Patient.query(function(patients)
-    {
-        $scope.patients = patients;
-    });
-    
     // create a new patient
     $scope.create = function()
     {
-        patientModal = $modal.open({templateUrl: './partials/new_patient',
-                                    controller: patientModalController});
+        patientModal = $modal.open({templateUrl: './partials/patient-modal',
+                                    controller: 'PatientModalController'});
 
         patientModal.result.then(function(newPatient)
         {
@@ -129,9 +54,22 @@ var patientsController = function($scope, $log, $location, $modal, Patient)
                 keyword.test(patient.primary_phone) || 
                 keyword.test(patient.email);
     };
-};
 
-var patientController = function($scope, $log, $routeParams, $modal, $location, Patient, Appointment, Payment)
+    $scope.searchTerm = '';
+
+    // pagination
+    $scope.patients = [];
+
+    // get all patients
+    Patient.query(function(patients)
+    {
+        $scope.patients = patients;
+    });
+}])
+
+.controller('PatientDetailController', 
+            ['$scope', '$log', '$routeParams', '$modal', '$location', 'Patient', 'Appointment', 'Payment', 
+            function($scope, $log, $routeParams, $modal, $location, Patient, Appointment, Payment) 
 {
     $scope.appointment = null;
     $scope.patient = {};
@@ -217,8 +155,8 @@ var patientController = function($scope, $log, $routeParams, $modal, $location, 
     {
 
         // pop up the modal
-        appointmentModal = $modal.open({templateUrl: './partials/appointment',
-                                        controller: appointmentModalController,
+        appointmentModal = $modal.open({templateUrl: './partials/appointment-modal',
+                                        controller: 'AppointmentModalController',
                                         size: 'sm',
                                         resolve:
                                         {
@@ -256,8 +194,8 @@ var patientController = function($scope, $log, $routeParams, $modal, $location, 
     $scope.createAppointment = function()
     {
         // pop up the modal
-        appointmentModal = $modal.open({templateUrl: './partials/appointment',
-                                        controller: appointmentModalController,
+        appointmentModal = $modal.open({templateUrl: './partials/appointment-modal',
+                                        controller: 'AppointmentModalController',
                                         size: 'sm',
                                         resolve:
                                         {
@@ -288,8 +226,8 @@ var patientController = function($scope, $log, $routeParams, $modal, $location, 
     $scope.createPayment = function()
     {
         // pop up the modal
-        paymentModal = $modal.open({templateUrl: './partials/payment',
-                                    controller: paymentModalController,
+        paymentModal = $modal.open({templateUrl: './partials/payment-modal',
+                                    controller: 'PaymentModalController',
                                     size: 'sm',
                                     resolve:
                                     {
@@ -373,43 +311,11 @@ var patientController = function($scope, $log, $routeParams, $modal, $location, 
         else if (appointment.summary_sent)             return 'glyphicon glyphicon-ok';
         else                                           return 'glyphicon glyphicon-remove';     
     };
-};
+}])
 
-var appointmentModalController = function($scope, $modalInstance, patient, appointment, mode) 
-{
-    $scope.dt = Date.now();
-    $scope.appointment = appointment;
-    $scope.mode = mode;
-    $scope.patient = patient;
-    $scope.opened = false;
-
-    $scope.update = function()
-    {
-        $scope.appointment.price = parseInt($scope.appointment.price);
-        $modalInstance.close({appointment: $scope.appointment, remove: false});
-    };
-
-    $scope.cancel = function()
-    {
-        $modalInstance.dismiss('cancel');
-    };
-
-    $scope.delete = function()
-    {
-        $modalInstance.close({appointment: $scope.appointment, remove: true});
-    };
-
-    $scope.do_open = function($event) 
-    {
-        console.log("foo");
-        $event.preventDefault();
-        $event.stopPropagation();
-
-        $scope.opened = true;
-    };
-};
-
-var patientModalController = function($scope, $modalInstance) 
+.controller('PatientModalController', 
+            ['$scope', '$modalInstance', 
+            function($scope, $modalInstance) 
 {
     $scope.patient = {appointment_price: 330};
 
@@ -422,32 +328,4 @@ var patientModalController = function($scope, $modalInstance)
     {
         $modalInstance.dismiss('cancel');
     };
-};
-
-var paymentModalController = function($scope, $modalInstance, patient, debt) 
-{
-    $scope.debt = debt;
-    $scope.payment = {sum: debt, patient: patient._id};
-
-    $scope.create = function()
-    {
-        $scope.payment.when = Date.now();
-        $modalInstance.close($scope.payment);
-    };
-
-    $scope.cancel = function()
-    {
-        $modalInstance.dismiss('cancel');
-    };
-};
-
-
-var appointmentsController = function($scope, Appointment) 
-{
-    $scope.appointments = [];
-
-    Appointment.query({populate_patient: true}, function(appointments)
-    {
-        $scope.appointments = appointments;
-    });
-};
+}]);
