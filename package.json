@@ -33,6 +33,6 @@
         "lorem-ipsum": "latest",
         "underscore": "latest",
         "async": "latest",
-        "bower": "0.6.x"
+        "bower": "latest"
     }
 }
