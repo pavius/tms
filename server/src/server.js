@@ -1,6 +1,4 @@
-/*
- * Set up
- */
+require('newrelic');
 var _ = require('underscore');
 var express = require('express');
 var app = express();
