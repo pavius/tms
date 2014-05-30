@@ -13,6 +13,7 @@
     "type": "git",
     "url": "https://github.com/pavius/tms.git"
   },
+
   "dependencies": {
     "express": "~3.4.4",
     "mongoose": "~3.6.2",
@@ -31,6 +32,6 @@
   "devDependencies": {
     "supertest": "latest",
     "chai": "latest",
-    "mocha": "latest",
+    "mocha": "latest"
   }
 }
