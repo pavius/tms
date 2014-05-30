@@ -108,9 +108,7 @@ function handleDelete(modelClass, request, response)
 
 function isLoggedIn(request, response, next)
 {
-    return next();
-    /* 
-    if (request.isAuthenticated())
+    if (process.env.NODE_ENV == 'development' || request.isAuthenticated())
     {
         return next();
     }
@@ -118,7 +116,6 @@ function isLoggedIn(request, response, next)
     {
         response.redirect('/login');
     } 
-    */
 }
 
 exports.handleGetAllDontRespondOnSuccess = handleGetAllDontRespondOnSuccess;
