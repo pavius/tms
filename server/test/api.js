@@ -3,7 +3,7 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var mongoose = require('mongoose');
 var async = require('async');
-var app = require('../server');
+var app = require('../src/server');
 
 var Patient = require('../src/models/patient');
 var Appointment = require('../src/models/appointment');

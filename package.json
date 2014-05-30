@@ -1,0 +1,38 @@
+{
+    "name": "TMS",
+    "version": "0.0.1",
+    "description": "System for managing Tali - the unmanagable being",
+    "main": "server.js",
+    "author": "Eran Duchan",
+    "license": "MIT",
+
+    "scripts":
+    {
+        "test": "cd server && mocha",
+        "postinstall": "./node_modules/bower/bin/bower install"
+    },
+
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/pavius/tms.git"
+    },
+
+    "dependencies": 
+    {
+        "express": "~3.4.4",
+        "mongoose": "~3.6.2",
+        "supertest": "latest",
+        "chai": "latest",
+        "mocha": "latest",
+        "jade": "~0.31.2",
+        "passport": "~0.1.17",
+        "passport-google-oauth": "~0.1.5",
+        "connect-flash": "~0.1.1",
+        "bcrypt-nodejs": "latest",
+        "lorem-ipsum": "latest",
+        "underscore": "latest",
+        "async": "latest",
+        "bower": "0.6.x"
+    }
+}

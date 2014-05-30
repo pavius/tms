@@ -1,4 +1,4 @@
-.env
+*.env
 server/db/
 server/node_modules/
 client/bower_components/
