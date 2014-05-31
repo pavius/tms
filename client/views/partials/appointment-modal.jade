@@ -9,10 +9,6 @@
 
             div.col-xs-6
 
-                timepicker(ng-model='appointment.when', hour-step='1', minute-step='15', show-meridian='false')
-
-            div.col-xs-6
-                
                 div#appointment-settings
 
                     .input-group
@@ -22,16 +18,21 @@
 
                     label.checkbox(ng-show='mode == "edit"')
                         input(type='checkbox', ng-model='appointment.summary_sent') 
-                        | Summarized
+                        | סוכמה
 
                     label.checkbox(ng-show='mode == "edit"')
                         input(type='checkbox', ng-model='appointment.missed') 
-                        | Missed
+                        | לא הגיע
+
+            div.col-xs-6
+                
+                timepicker(ng-model='appointment.when', hour-step='1', minute-step='15', show-meridian='false')
+
         
 .modal-footer
 
-    button.btn.btn-sm.btn-default(ng-click='cancel()') Close
+    button.btn.btn-sm.btn-primary.pull-left(ng-click='update()') {{mode == 'create' ? 'צור פגישה' : 'עדכן פגישה'}}
     
-    button.btn.btn-sm.btn-primary(ng-click='update()') {{mode == 'create' ? 'Create' : 'Update'}}
+    button.btn.btn-sm.btn-default.pull-left(ng-click='cancel()') סגור
     
-    button.btn.btn-sm.pull-left.btn-danger(ng-click='delete()', ng-show='mode == "edit"') Delete
+    button.btn.btn-sm.btn-danger(ng-click='delete()', ng-show='mode == "edit"') מחק

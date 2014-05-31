@@ -1,16 +1,16 @@
 row
-    button.btn.btn-sm.btn-primary.pull-left(ng-click='create()') New patient
+    button.btn.btn-sm.btn-primary.pull-right(ng-click='create()') מטופל חדש
 
-    .input-group.pull-right(style='width: 100px')
-        input.input-sm.form-control(type='text', id='search', placeholder='Search', ng-model='searchTerm')
+    .input-group.pull-left(style='width: 100px')
+        input.input-sm.form-control(type='text', id='search', placeholder='חפש', ng-model='searchTerm')
 
 
 
 table.table
     thead
         tr
-            th Name
-            th Email
+            th שם
+            th מייל
             th 
     tbody
         tr(ng-repeat="patient in patients | orderBy: 'name' | filter: searchFilter")

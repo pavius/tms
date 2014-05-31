@@ -6,26 +6,27 @@
             .input-group
                 span.input-group-addon
                     i.glyphicon.glyphicon-user
-                input.form-control(type='text', id='name', placeholder='Name', ng-model='patient.name')
+                input.form-control(type='text', id='name', placeholder='שם', ng-model='patient.name')
 
             .input-group
                 span.input-group-addon
                     i.glyphicon.glyphicon-envelope
-                input.form-control(type='email', id='email', placeholder='Email', ng-model='patient.email')
+                input.form-control(type='email', id='email', placeholder='מייל', ng-model='patient.email')
 
         .col-md-6
             .input-group
                 span.input-group-addon
                     i.glyphicon.glyphicon-phone
-                input.form-control(type='text', id='primary_phone', placeholder='Phone', ng-model='patient.primary_phone')
+                input.form-control(type='text', id='primary_phone', placeholder='טלפון', ng-model='patient.primary_phone')
 
             .input-group
                 span.input-group-addon
                     i.glyphicon.glyphicon-usd
-                input.form-control(type='text', id='price', placeholder='Appointment price', ng-model='patient.appointment_price')
+                input.form-control(type='text', id='price', placeholder='מחיר פגישה', ng-model='patient.appointment_price')
 
 .modal-footer
 
-    button.btn.btn-sm.btn-default(ng-click='cancel()') Close
+    button.btn.btn-sm.btn-primary.pull-left(ng-click='create()') צור מטופל
+
+    button.btn.btn-sm.btn-default.pull-left(ng-click='cancel()') סגור
     
-    button.btn.btn-sm.btn-primary(ng-click='create()') Create

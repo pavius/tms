@@ -10,6 +10,8 @@ body
 .navbar-nav 
 {
     margin: 0;
+    float: right;
+    padding-right: 0px;
 }
 
 .navbar-nav > li 
@@ -89,7 +91,7 @@ h3.view-header
 
 small
 {
-    margin-left: 6px;
+    margin-right: 6px;
 }
 
 #appointment-settings
@@ -104,7 +106,7 @@ small
 
 .table.table.dashboard-table
 {
-    text-align: left;
+    text-align: right;
 }
 
 a.location-selector
@@ -112,6 +114,10 @@ a.location-selector
     color: black;
 }
 
+.nav-tabs > li
+{
+    float: right;
+}
 /*
  * Selectors
  */
@@ -141,7 +147,7 @@ a.location-selector
 
     #appointment-datepicker
     {
-        padding-left: 25px;
+        padding-right: 25px;
     }
 }
 

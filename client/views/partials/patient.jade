@@ -11,21 +11,21 @@ row.clearfix
 
     tabset
 
-        tab(heading='Appointments')
+        tab#appointments-tab(heading='פגישות')
 
             row
                 .col-xs-12
                     
-                    button.btn.btn-sm.btn-primary.pull-left(ng-click='createAppointment()') New appointment
+                    button.btn.btn-sm.btn-primary.pull-right(ng-click='createAppointment()') פגישה חדשה
 
             row
 
                 table.table
                     thead
                         tr
-                            th When
-                            th Summarized
-                            th Paid
+                            th מתי
+                            th סוכמה
+                            th שולמה
                             th
                     tbody
                         tr(ng-repeat="appointment in patient.appointments | orderBy:'-when'", ng-class='getAppointmentClass(appointment)')
@@ -37,59 +37,61 @@ row.clearfix
                             td(ng-click="viewAppointment(appointment)")
                                 i.glyphicon.glyphicon-zoom-in
 
-        tab(heading='Payments')
+        tab(heading='תשלומים')
 
             row
                 .col-xs-12
         
-                    button.btn.btn-sm.btn-primary.pull-left(ng-click='createPayment()') New payment
+                    button.btn.btn-sm.btn-primary.pull-right(ng-click='createPayment()') תשלום חדש
 
             row
 
                 table.table
                     thead
                         tr
-                            th When
-                            th Sum
+                            th מתי
+                            th סכום
                     tbody
                         tr(ng-repeat="payment in patient.payments | orderBy:'-when'")
                             td {{payment.when | date:'dd MMMM HH:mm'}}
                             td {{payment.sum}}
 
-        tab(heading='Profile')
+        tab(heading='פרופיל')
 
             row
                 .col-xs-12
                     
-                    button.btn.btn-sm.btn-primary(ng-click='update()') Update
+                    button.btn.btn-sm.btn-primary.pull-right(ng-click='update()') עדכן פרופיל
 
             row.clearfix
             
-                .col-xs-8.col-sm-6.col-left
-                    .form-group
-                        .input-group
-                            span.input-group-addon
-                                i.glyphicon.glyphicon-user
-                            input.form-control(type='text', id='name', placeholder='Name', ng-model='patient.name')
+                .col-xs-4.col-sm-6.col-left
 
-                        .input-group
-                            span.input-group-addon
-                                i.glyphicon.glyphicon-envelope
-                            input.form-control(type='email', id='email', placeholder='Email', ng-model='patient.email')
-
-                        .input-group
-                            span.input-group-addon
-                                i.glyphicon.glyphicon-phone
-                            input.form-control(type='text', id='primary_phone', placeholder='Phone', ng-model='patient.primary_phone')
-
-                .col-xs-4.col-sm-6.col-right
                     .form-group
 
                         .input-group
                             span.input-group-addon
                                 i.glyphicon.glyphicon-usd
-                            input.form-control(type='text', id='price', placeholder='Appointment price', ng-model='patient.appointment_price')
+                            input.form-control(type='text', id='price', placeholder='מחיר פגישה', ng-model='patient.appointment_price')
 
                         .input-group
-                            span.input-group-addon Owed
+                            span.input-group-addon חוב
                             input.form-control(type='text', readonly, placeholder='{{debt}}') 
+
+                .col-xs-8.col-sm-6.col-right
+
+                    .form-group
+                        .input-group
+                            span.input-group-addon
+                                i.glyphicon.glyphicon-user
+                            input.form-control(type='text', id='name', placeholder='שם', ng-model='patient.name')
+
+                        .input-group
+                            span.input-group-addon
+                                i.glyphicon.glyphicon-envelope
+                            input.form-control(type='email', id='email', placeholder='מייל', ng-model='patient.email')
+
+                        .input-group
+                            span.input-group-addon
+                                i.glyphicon.glyphicon-phone
+                            input.form-control(type='text', id='primary_phone', placeholder='טלפון', ng-model='patient.primary_phone')
