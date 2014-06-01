@@ -1,3 +1,4 @@
+*newrelic*
 *.env
 server/db/
 node_modules/
