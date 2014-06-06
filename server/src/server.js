@@ -10,7 +10,7 @@ var flash = require('connect-flash');
 require('./auth/passport')(passport);
 
 // connect to database
-mongoose.connect(process.env.DB_URL);
+mongoose.connect(process.env.DB_URL || 'mongodb://localhost');
 
 // configure middlewares
 app.configure(function() 
@@ -25,7 +25,7 @@ app.configure(function()
 
     // passport stuff
     app.use(express.cookieParser());
-    app.use(express.session({secret: process.env.EXPRESS_SESSION_SECRET}));
+    app.use(express.session({secret: process.env.EXPRESS_SESSION_SECRET || 'local'}));
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(flash());
