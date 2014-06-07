@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
-var Payment = require('./appointment');
-var Appointment = require('./payment');
+var Appointment = require('./appointment');
+var Payment = require('./payment');
 
 var patientSchema = mongoose.Schema
 ({

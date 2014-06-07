@@ -1,14 +1,15 @@
-exports.query = function (model, populateField, rawParams, cb)
+exports.query = function (model, rawParams, cb)
 {
     var params = buildQueryParams(model, rawParams);
 
     // Create the Mongoose Query object.
-    query = model.find(params.searchParams).limit(params.per_page).skip((params.page - 1) * params.per_page);
+    query = model.find(params.searchParams)
+                 .limit(params.per_page)
+                 .skip((params.page - 1) * params.per_page);
 
     if (params.sort) query = query.sort(params.sort);
 
-    if (populateField !== null)
-        query = query.populate(populateField);
+    query.select(params.select);
 
     if (cb)
     {
@@ -270,13 +271,17 @@ function buildQueryParams(model, rawParams)
             sort = {};
             sort[parts[0]] = parts.length > 1 ? parts[1] : 1;
         }
+        else if (lcKey === "select")
+        {
+            select += val;
+        }
         else
         {
             parseSchemaForKey(model.schema, "", lcKey, val, operator);
         }
     };
 
-    var searchParams = {}, query, page = 1, per_page = 10, sort = false;
+    var searchParams = {}, query, page = 1, per_page = 10, sort = false, select = '-__v ';
 
     // Construct searchParams
     for (var key in rawParams)
@@ -300,6 +305,7 @@ function buildQueryParams(model, rawParams)
         searchParams: searchParams,
         page: page,
         per_page: per_page,
-        sort: sort
+        sort: sort,
+        select: select
     };
 }

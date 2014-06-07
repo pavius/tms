@@ -49,15 +49,11 @@ app.configure('development', function()
     var fixtures = require('../db/fixtures/fixtures');
 
     // load fixtures
-    fixtures.load(function()
-    {
-        // start the app
-        app.listen(port);
-    });
+    fixtures.load();
 });
 
 // if we're in production, just start the app
-app.configure('production', function()
+app.configure(function()
 {
     // start the app
     app.listen(port);

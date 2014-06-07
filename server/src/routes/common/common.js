@@ -1,7 +1,7 @@
 var paramQuery = require('./paramquery');
 
 // common functions
-function handleGetAllDontRespondOnSuccess(modelClass, populateField, request, response, callback)
+function handleGetAllDontRespondOnSuccess(modelClass, request, response, callback)
 {
     onResult = function(dbError, dbResponse)
     {
@@ -13,25 +13,13 @@ function handleGetAllDontRespondOnSuccess(modelClass, populateField, request, re
         callback(validDbResponse);
     };
 
-    // if any params passed, use the parameter query parser
-    if (Object.keys(request.query).length)
-    {
-        paramQuery.query(modelClass, populateField, request.query, onResult);
-    }
-    else
-    {
-        query = modelClass.find();
-
-        if (populateField !== null)
-            query = query.populate(populateField);
-
-        query.exec(onResult);
-    }
+    // use query
+    paramQuery.query(modelClass, request.query, onResult);
 }
 
-function handleGetAll(modelClass, populateField, request, response)
+function handleGetAll(modelClass, request, response)
 {
-    handleGetAllDontRespondOnSuccess(modelClass, populateField, request, response, function(validDbResponse)
+    handleGetAllDontRespondOnSuccess(modelClass, request, response, function(validDbResponse)
     {
         if (validDbResponse !== null)
             response.json(validDbResponse);    
@@ -41,13 +29,17 @@ function handleGetAll(modelClass, populateField, request, response)
 // gets one and if not valid, responds. otherwise returns the object
 function handleGetOneDontRespondOnSuccess(modelClass, request, response, callback)
 {
-    modelClass.findOne({_id: request.params.id}).select('-__v').exec(function(dbError, dbResponse) 
+    // shove id
+    request.query._id = request.params.id;
+
+    // use query so that select is honored. inject the id as a param
+    paramQuery.query(modelClass, request.query, function(dbError, dbResponse) 
     {
         var validDbResponse = null;
 
-        if (dbError)                response.json(403, dbError);
-        else if (!dbResponse)       response.send(404);
-        else                        validDbResponse = dbResponse;
+        if (dbError)                            response.json(403, dbError);
+        else if (dbResponse.length === 0)       response.send(404);
+        else                                    validDbResponse = dbResponse[0];
 
         callback(validDbResponse);
     });
@@ -108,7 +100,9 @@ function handleDelete(modelClass, request, response)
 
 function isLoggedIn(request, response, next)
 {
-    if (process.env.NODE_ENV == 'development' || request.isAuthenticated())
+    if (process.env.NODE_ENV == 'development' || 
+        process.env.NODE_ENV == 'test' || 
+        request.isAuthenticated())
     {
         return next();
     }

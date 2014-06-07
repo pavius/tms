@@ -2,7 +2,6 @@ var mongoose = require('mongoose');
 
 var appointmentSchema = mongoose.Schema
 ({
-    patient: {type: mongoose.Schema.ObjectId, ref: 'Patient', required: true},
     when: Date,
     summary: String,
     summarySent: {type: Boolean, default: false},
