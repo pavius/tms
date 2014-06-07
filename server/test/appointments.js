@@ -46,24 +46,24 @@ describe('Appointments', function()
             },
         ];
 
-        // drop everything
-        common.dropCollections(['patients', 'appointments', 'payments'], function(err)
-        {
-            async.each(patientFixtures, function(patientFixture, doneWithPatient)
-            {
-                // create the patient
-                Patient.create(patientFixture, doneWithPatient);
-            },
-            done);
-        });
+        // inject test fixtures
+        common.injectFixtures(patientFixtures, done);
     });
 
-    describe('GET /api/appointments', function() 
+    describe('GET /api/patients/x/appointments', function() 
     {
-        it('should return all appointments', function(done)
+        it('should return all appointments for patient x', function(done)
         {
-            console.log("foo");
-            done();
+            request(app)
+            .get('/api/patients/' + patientFixtures[0]._id + '/appointments')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end(function(err, response)
+            {
+                if (err) return done(err);
+                common.compareFixturesToResponse(patientFixtures[0].appointments, response.body, null);
+                done();
+            });
         });
     });
 });

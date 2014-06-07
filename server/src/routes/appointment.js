@@ -1,24 +1,40 @@
 var routeCommon = require('./common/common');
+var Patient = require('../models/patient');
 var Appointment = require('../models/appointment');
 
 module.exports.addRoutes = function(app, security)
 {
     // get all appointments
-    app.get('/api/appointments', routeCommon.isLoggedIn, function(request, response) 
+    app.get('/api/patients/:patientId/appointments', routeCommon.isLoggedIn, function(request, response) 
     {
-        var populateField = null;
-
-        if (request.query.hasOwnProperty('populate_patient'))
-            populateField = 'patient';
-
-        // check if we need to do a subse
-        routeCommon.handleGetAll(Appointment, populateField, request, response);
+        Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
+        {
+            if (dbError)                   response.json(403, dbError);
+            else if (!patientFromDb)       response.send(404);
+            else
+            {
+                response.send(200, patientFromDb.appointments);
+            }
+        });
     });
 
     // get a single appointment
-    app.get('/api/appointments/:id', routeCommon.isLoggedIn, function(request, response) 
+    app.get('/api/patients/:patientId/appointments/:id', routeCommon.isLoggedIn, function(request, response) 
     {
-        routeCommon.handleGetOne(Appointment, request, response);
+        Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
+        {
+            if (dbError)                   response.json(403, dbError);
+            else if (!patientFromDb)       response.send(404);
+            else
+            {
+                // find the appropriate appointment
+                appointment = patientFromDb.appointments.id(request.params.id);
+
+                // found?
+                if (appointment !== null)   response.send(200, appointment);
+                else                        response.send(404);
+            }
+        });
     });
 
     // create appointment

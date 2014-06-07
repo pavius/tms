@@ -22,7 +22,7 @@ function handleGetAll(modelClass, request, response)
     handleGetAllDontRespondOnSuccess(modelClass, request, response, function(validDbResponse)
     {
         if (validDbResponse !== null)
-            response.json(validDbResponse);    
+            response.json(validDbResponse);
     });
 }
 

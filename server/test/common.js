@@ -145,6 +145,12 @@ function injectFixtures(patientFixtures, done)
             Patient.create(patientFixture, function(dbErr, dbObject)
             {
                 patientFixture._id = String(dbObject._id);
+                
+                // save appointment id
+                if (patientFixture.appointments !== null && patientFixture.appointments !== undefined)
+                    for (var idx = 0; idx < patientFixture.appointments.length; ++idx)
+                        patientFixture.appointments[idx]._id = String(dbObject.appointments[idx]._id);
+
                 doneWithPatient();
             });
         },
