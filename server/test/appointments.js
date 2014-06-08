@@ -123,4 +123,30 @@ describe('Appointments', function()
             });
         });
     });
+
+    describe('PUT /api/patients/x/appointments', function()
+    {
+        describe('when updating an appointment for a patient', function()
+        {
+            it('should respond with 200, patient info and updated object', function(done)
+            {
+                patientFixtures[1].appointments[0].price = 222;
+
+                request(app)
+                    .put('/api/patients/' + patientFixtures[1]._id + '/appointments/' + patientFixtures[1].appointments[0]._id)
+                    .send(patientFixtures[1].appointments[0])
+                    .expect('Content-Type', /json/)
+                    .expect(200)
+                    .end(function(err, response)
+                    {
+                        if (err) return done(err, null);
+
+                        // did we get it as a response?
+                        common.compareFixtureToResponse(patientFixtures[1], response.body, null);
+
+                        done();
+                    });
+            });
+        });
+    });
 });

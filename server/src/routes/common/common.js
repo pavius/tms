@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var paramQuery = require('./paramquery');
 
 // common functions
@@ -112,6 +113,46 @@ function isLoggedIn(request, response, next)
     } 
 }
 
+function updateDocument(doc, SchemaTarget, data)
+{
+    for (var field in SchemaTarget.schema.paths)
+    {
+        if ((field !== '_id') && (field !== '__v'))
+        {
+            var newValue = getObjValue(field, data);
+            if (newValue !== undefined)
+            {
+                setObjValue(field, doc, newValue);
+            }
+        }
+    }
+    return doc;
+};
+
+function getObjValue(field, data)
+{
+    return _.reduce(field.split("."), function(obj, f)
+    {
+        if(obj) return obj[f];
+    }, data);
+}
+
+function setObjValue(field, data, value)
+{
+    var fieldArr = field.split('.');
+    return _.reduce(fieldArr, function(o, f, i)
+    {
+        if(i == fieldArr.length-1)
+        {
+            o[f] = value;
+        } else
+        {
+            if(!o[f]) o[f] = {};
+        }
+        return o[f];
+    }, data);
+}
+
 exports.handleGetAllDontRespondOnSuccess = handleGetAllDontRespondOnSuccess;
 exports.handleGetAll = handleGetAll;
 exports.handleGetOneDontRespondOnSuccess = handleGetOneDontRespondOnSuccess;
@@ -121,3 +162,4 @@ exports.handleCreate = handleCreate;
 exports.handleUpdate = handleUpdate;
 exports.handleDelete = handleDelete;
 exports.isLoggedIn = isLoggedIn;
+exports.updateDocument = updateDocument;
