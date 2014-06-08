@@ -30,6 +30,18 @@ describe('Appointments', function()
 
                     {
                         when: (new Date()).toISOString(),
+                        summary: "More",
+                        summarySent: false,
+                    },
+
+                    {
+                        when: (new Date()).toISOString(),
+                        summary: "More 2",
+                        summarySent: false,
+                    },
+
+                    {
+                        when: (new Date()).toISOString(),
                         summary: "No hope for this one.",
                         summarySent: true,
                         missed: false,
@@ -66,4 +78,42 @@ describe('Appointments', function()
             });
         });
     });
+
+    describe('POST /api/patients/x/appointments', function() 
+    {
+        describe('when creating a new appointment for a patient', function() 
+        {
+            it('should respond with 201, patient info and create an object', function(done) 
+            {
+                var newAppointment = 
+                {
+                    patient: patientFixtures[1]._id,
+                    when: (new Date()).toISOString(),
+                    summary: 'Why did I choose this profession?',
+                    summarySent: false,
+                    missed: false,
+                    price: 605
+                };
+
+                request(app)
+                .post('/api/patients/' + patientFixtures[1]._id + '/appointments')
+                .send(newAppointment)
+                .expect('Content-Type', /json/)
+                .expect(201)
+                .end(function(err, response) 
+                {
+                    if (err) return done(err, null);
+
+                    // expect patient + appointment
+                    patientFixtures[1].appointments = [newAppointment];
+
+                    // did we get it as a response?
+                    compareFixtureToResponse(patientFixtures[1], response.body, null);
+
+                    done();
+                });
+            });
+        });
+    });
+
 });

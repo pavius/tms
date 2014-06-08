@@ -38,9 +38,25 @@ module.exports.addRoutes = function(app, security)
     });
 
     // create appointment
-    app.post('/api/appointments', routeCommon.isLoggedIn, function(request, response) 
+    app.post('/api/patients/:patientId/appointments', routeCommon.isLoggedIn, function(request, response) 
     {
-        routeCommon.handleCreate(Appointment, request, response);
+        Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
+        {
+            if (dbError)                   response.json(403, dbError);
+            else if (!patientFromDb)       response.send(404);
+            else
+            {
+                patientFromDb.appointments.push(request.body);
+
+                patientFromDb.save(function(dbError, patientFromDb)
+                {
+                    console.log(patientFromDb);
+
+                    if (dbError)    response.json(403, dbError);
+                    else            response.send(201, patientFromDb);
+                });
+            }
+        });
     });
 
     // update a single appointment
