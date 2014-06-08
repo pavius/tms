@@ -149,4 +149,28 @@ describe('Appointments', function()
             });
         });
     });
+
+    describe('DELETE /api/patients/x/appointments', function()
+    {
+        describe('when deleting an appointment for a patient', function()
+        {
+            it('should respond with 200, patient info', function(done)
+            {
+                request(app)
+                    .delete('/api/patients/' + patientFixtures[1]._id + '/appointments/' + patientFixtures[1].appointments[0]._id)
+                    .send()
+                    .expect(200)
+                    .end(function(err, response)
+                    {
+                        if (err) return done(err, null);
+
+                        // did we get it as a response?
+                        delete patientFixtures[1].appointments;
+                        common.compareFixtureToResponse(patientFixtures[1], response.body, null);
+
+                        done();
+                    });
+            });
+        });
+    });
 });

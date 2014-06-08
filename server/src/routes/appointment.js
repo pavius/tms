@@ -58,6 +58,7 @@ module.exports.addRoutes = function(app, security)
                     else
                     {
                         // don't care about all appointments, just return new one
+                        delete patientFromDb.payments;
                         patientFromDb.appointments = [appointment];
 
                         // return the patient
@@ -86,6 +87,10 @@ module.exports.addRoutes = function(app, security)
                     if (dbError)    response.json(403, dbError);
                     else
                     {
+                        // return the patient + the updated appointment
+                        delete patientFromDb.payments;
+                        patientFromDb.appointments = [patientFromDb.appointments.id(request.params.id)];
+
                         // return the patient
                         response.send(200, patientFromDb);
                     }
@@ -95,8 +100,31 @@ module.exports.addRoutes = function(app, security)
     });
 
     // delete a appointment
-    app.delete('/api/appointments/:id', routeCommon.isLoggedIn, function(request, response)
+    app.delete('/api/patients/:patientId/appointments/:id', routeCommon.isLoggedIn, function(request, response)
     {
-        routeCommon.handleDelete(Appointment, request, response);
+        Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
+        {
+            if (dbError)                   response.json(403, dbError);
+            else if (!patientFromDb)       response.send(404);
+            else
+            {
+                // update the appointment
+                patientFromDb.appointments.id(request.params.id).remove();
+
+                // save self
+                patientFromDb.save(function(dbError, patientFromDb)
+                {
+                    if (dbError)    response.json(403, dbError);
+                    else
+                    {
+                        // return the patient, with no appointments
+                        delete patientFromDb.appointments;
+                        delete patientFromDb.payments;
+
+                        response.send(200, patientFromDb);
+                    }
+                });
+            }
+        });
     });
 };
