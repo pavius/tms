@@ -46,14 +46,23 @@ module.exports.addRoutes = function(app, security)
             else if (!patientFromDb)       response.send(404);
             else
             {
-                patientFromDb.appointments.push(request.body);
+                var appointment = patientFromDb.appointments.create(request.body);
 
+                // shove the new appointment
+                patientFromDb.appointments.push(appointment);
+
+                // save self
                 patientFromDb.save(function(dbError, patientFromDb)
                 {
-                    console.log(patientFromDb);
-
                     if (dbError)    response.json(403, dbError);
-                    else            response.send(201, patientFromDb);
+                    else
+                    {
+                        // don't care about all appointments, just return new one
+                        patientFromDb.appointments = [appointment];
+
+                        // return the patient
+                        response.send(201, patientFromDb);
+                    }
                 });
             }
         });

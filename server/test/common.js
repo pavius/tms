@@ -314,3 +314,4 @@ exports.updateAndVerifyUpdate = updateAndVerifyUpdate;
 exports.deleteExistingAndVerifyRemaining = deleteExistingAndVerifyRemaining;
 exports.deleteNoneExistingAndVerifyResponse = deleteNoneExistingAndVerifyResponse;
 exports.deleteExistingAndVerifyResponse = deleteExistingAndVerifyResponse;
+exports.compareFixtureToResponse = compareFixtureToResponse;

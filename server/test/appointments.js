@@ -31,13 +31,13 @@ describe('Appointments', function()
                     {
                         when: (new Date()).toISOString(),
                         summary: "More",
-                        summarySent: false,
+                        summarySent: false
                     },
 
                     {
                         when: (new Date()).toISOString(),
                         summary: "More 2",
-                        summarySent: false,
+                        summarySent: false
                     },
 
                     {
@@ -54,8 +54,17 @@ describe('Appointments', function()
                 name: "2_name",
                 primaryPhone: "+972546653002",
                 email: "2@here.com",
-                appointmentPrice: 500
-            },
+                appointmentPrice: 500,
+                appointments:
+                [
+                    {
+                        when: (new Date()).toISOString(),
+                        summary: "The guy is a cunt.",
+                        summarySent: false,
+                        missed: false
+                    }
+                ]
+            }
         ];
 
         // inject test fixtures
@@ -87,7 +96,6 @@ describe('Appointments', function()
             {
                 var newAppointment = 
                 {
-                    patient: patientFixtures[1]._id,
                     when: (new Date()).toISOString(),
                     summary: 'Why did I choose this profession?',
                     summarySent: false,
@@ -108,12 +116,11 @@ describe('Appointments', function()
                     patientFixtures[1].appointments = [newAppointment];
 
                     // did we get it as a response?
-                    compareFixtureToResponse(patientFixtures[1], response.body, null);
+                    common.compareFixtureToResponse(patientFixtures[1], response.body, null);
 
                     done();
                 });
             });
         });
     });
-
 });
