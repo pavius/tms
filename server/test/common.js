@@ -144,14 +144,23 @@ function injectFixtures(patientFixtures, done)
             // create the patient
             Patient.create(patientFixture, function(dbErr, dbObject)
             {
-                patientFixture._id = String(dbObject._id);
-                
-                // save appointment id
-                if (patientFixture.appointments !== null && patientFixture.appointments !== undefined)
-                    for (var idx = 0; idx < patientFixture.appointments.length; ++idx)
-                        patientFixture.appointments[idx]._id = String(dbObject.appointments[idx]._id);
+                if (dbErr) doneWithPatient(dbErr);
+                else
+                {
+                    patientFixture._id = String(dbObject._id);
 
-                doneWithPatient();
+                    // save appointment id
+                    if (patientFixture.appointments !== null && patientFixture.appointments !== undefined)
+                        for (var idx = 0; idx < patientFixture.appointments.length; ++idx)
+                            patientFixture.appointments[idx]._id = String(dbObject.appointments[idx]._id);
+
+                    // save payment id
+                    if (patientFixture.payments !== null && patientFixture.payments !== undefined)
+                        for (var idx = 0; idx < patientFixture.payments.length; ++idx)
+                            patientFixture.payments[idx]._id = String(dbObject.payments[idx]._id);
+                    
+                    doneWithPatient();
+                }
             });
         },
         done);
