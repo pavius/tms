@@ -55,11 +55,18 @@ describe('Payments', function()
                     appointments:
                         [
                             {
-                                when: (new Date()).toISOString(),
-                                summary: "The guy is a cunt.",
-                                summarySent: false,
-                                missed: false
-                            }
+                                when: (new Date(2010, 1, 1)).toISOString(),
+                            },
+
+                            {
+                                when: (new Date(2011, 1, 1)).toISOString(),
+                                price: 250
+                            },
+
+                            {
+                                when: (new Date(2012, 1, 1)).toISOString(),
+                                price: 275
+                            },
                         ]
                 }
             ];
@@ -94,11 +101,13 @@ describe('Payments', function()
                 var newPayment =
                 {
                     when: (new Date()).toISOString(),
-                    sum: 1000
+                    sum: 750
                 };
 
+                patient = patientFixtures[1];
+
                 request(app)
-                    .post('/api/patients/' + patientFixtures[1]._id + '/payments')
+                    .post('/api/patients/' + patient._id + '/payments')
                     .send(newPayment)
                     .expect('Content-Type', /json/)
                     .expect(201)
@@ -106,11 +115,12 @@ describe('Payments', function()
                     {
                         if (err) return done(err, null);
 
-                        // expect patient + payment
-                        patientFixtures[1].payments = [newPayment];
+                        // expect patient + first two appointments (to which it attached to)
+                        patient.payments = [newPayment];
+                        patient.appointments = [patient.appointments[0], patient.appointments[1]]
 
                         // did we get it as a response?
-                        common.compareFixtureToResponse(patientFixtures[1], response.body, null);
+                        common.compareFixtureToResponse(patient, response.body, null);
 
                         done();
                     });
