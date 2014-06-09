@@ -173,4 +173,120 @@ describe('Appointments', function()
             });
         });
     });
+
+    describe('Patient status', function()
+    {
+        describe('when creating/deleting appointments', function()
+        {
+            it('should update patient status accordingly', function(done)
+            {
+                // create an appointment for a patient, verify patient status on response
+                function createAppointment(patientId, when, expectedStatus, cb)
+                {
+                    request(app)
+                        .post('/api/patients/' + patientId + '/appointments')
+                        .send({when: when})
+                        .expect('Content-Type', /json/)
+                        .expect(201)
+                        .end(function(err, response)
+                        {
+                            if (err) cb(err);
+                            else
+                            {
+                                expect(response.body.status).to.equal(expectedStatus);
+
+                                // save appointment id
+                                appointments.push(response.body.appointments[0]._id);
+
+                                cb();
+                            }
+                        });
+                }
+
+                // update an appointment for a patient, verify patient status on response
+                function updateAppointment(patientId, appointmentId, when, expectedStatus, cb)
+                {
+                    request(app)
+                        .put('/api/patients/' + patientId + '/appointments/' + appointmentId)
+                        .send({when: when})
+                        .expect('Content-Type', /json/)
+                        .expect(200)
+                        .end(function(err, response)
+                        {
+                            if (err) cb(err);
+                            else
+                            {
+                                expect(response.body.status).to.equal(expectedStatus);
+
+                                cb();
+                            }
+                        });
+                }
+
+                // create an appointment for a patient, verify patient status on response
+                function deleteAppointment(patientId, appointmentId, expectedStatus, cb)
+                {
+                    request(app)
+                        .delete('/api/patients/' + patientId + '/appointments/' + appointmentId)
+                        .expect(200)
+                        .end(function(err, response)
+                        {
+                            if (err) cb(err);
+                            else
+                            {
+                                expect(response.body.status).to.equal(expectedStatus);
+
+                                // remove id from appointments
+                                appointments.splice(appointments.indexOf(appointmentId), 1);
+                                cb();
+                            }
+                        });
+                }
+
+                var patientId;
+                var appointments = [];
+
+                // create a patient
+                request(app)
+                    .post('/api/patients')
+                    .send({name: 'n', email: 'n@h.com'})
+                    .expect('Content-Type', /json/)
+                    .expect(201)
+                    .end(function(err, response)
+                    {
+                        expect(response.body.status).to.equal('new');
+
+                        patientId = response.body._id;
+
+                        // do appointment stuff one at a time
+                        async.series(
+                        [
+                            // create appointment for current time, expect to still be 'new'
+                            function(callback)
+                            {
+                                createAppointment(patientId, (new Date()).toISOString(), 'new', callback);
+                            },
+
+                            // another appointment - should be "active"
+                            function(callback)
+                            {
+                                createAppointment(patientId, (new Date()).toISOString(), 'active', callback);
+                            },
+
+                            // delete an appointment - should become 'new'
+                            function(callback)
+                            {
+                                deleteAppointment(patientId, appointments[1], 'new', callback);
+                            },
+
+                            // update the appointment - should become 'inactive'
+                            function(callback)
+                            {
+                                updateAppointment(patientId, appointments[0], (new Date(2007, 1, 1)).toISOString(), 'inactive', done);
+                            }
+                        ]);
+                    });
+            });
+        });
+    });
 });

@@ -51,6 +51,9 @@ module.exports.addRoutes = function(app, security)
                 // shove the new appointment
                 patientFromDb.appointments.push(appointment);
 
+                // update status
+                patientFromDb.status = patientFromDb.calculateStatus();
+
                 // save self
                 patientFromDb.save(function(dbError, patientFromDb)
                 {
@@ -78,23 +81,36 @@ module.exports.addRoutes = function(app, security)
             else if (!patientFromDb)       response.send(404);
             else
             {
-                // update the appointment
-                routeCommon.updateDocument(patientFromDb.appointments.id(request.params.id), Appointment, request.body);
+                var appointment = patientFromDb.appointments.id(request.params.id);
 
-                // save self
-                patientFromDb.save(function(dbError, patientFromDb)
+                // does such an appointment exist?
+                if (appointment !== null)
                 {
-                    if (dbError)    response.json(403, dbError);
-                    else
-                    {
-                        // return the patient + the updated appointment
-                        delete patientFromDb.payments;
-                        patientFromDb.appointments = [patientFromDb.appointments.id(request.params.id)];
+                    // update the appointment
+                    routeCommon.updateDocument(appointment, Appointment, request.body);
 
-                        // return the patient
-                        response.send(200, patientFromDb);
-                    }
-                });
+                    // update status
+                    patientFromDb.status = patientFromDb.calculateStatus();
+
+                    // save self
+                    patientFromDb.save(function(dbError, patientFromDb)
+                    {
+                        if (dbError)    response.json(403, dbError);
+                        else
+                        {
+                            // return the patient + the updated appointment
+                            delete patientFromDb.payments;
+                            patientFromDb.appointments = [patientFromDb.appointments.id(request.params.id)];
+
+                            // return the patient
+                            response.send(200, patientFromDb);
+                        }
+                    });
+                }
+                else
+                {
+                    response.send(404);
+                }
             }
         });
     });
@@ -110,6 +126,9 @@ module.exports.addRoutes = function(app, security)
             {
                 // update the appointment
                 patientFromDb.appointments.id(request.params.id).remove();
+
+                // update status
+                patientFromDb.status = patientFromDb.calculateStatus();
 
                 // save self
                 patientFromDb.save(function(dbError, patientFromDb)
