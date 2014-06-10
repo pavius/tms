@@ -56,6 +56,7 @@ describe('Payments', function()
                         [
                             {
                                 when: (new Date(2010, 1, 1)).toISOString(),
+                                price: 500
                             },
 
                             {
@@ -94,7 +95,7 @@ describe('Payments', function()
 
     describe('POST /api/patients/x/payments', function()
     {
-        describe('when creating a new payment for a patient', function()
+        describe('when creating a new payment for a patient that wholly covers appointments', function()
         {
             it('should respond with 201, patient info and create an object', function(done)
             {
@@ -115,15 +116,64 @@ describe('Payments', function()
                     {
                         if (err) return done(err, null);
 
+                        // expect the debt to equal the cost of the third appointment
+                        patient.debt =
+                        {
+                            total: patient.appointments[2].price,
+                            oldestNonPaidAppointment: patient.appointments[2].when
+                        }
+
                         // expect patient + first two appointments (to which it attached to)
                         patient.payments = [newPayment];
-                        patient.appointments = [patient.appointments[0], patient.appointments[1]]
+                        patient.appointments = [patient.appointments[0], patient.appointments[1]];
 
                         // did we get it as a response?
                         common.compareFixtureToResponse(patient, response.body, null);
 
                         done();
                     });
+            });
+        });
+
+        describe('when creating a new payment for a patient that doesnt wholly cover appointments', function()
+        {
+            it('should respond with 403', function(done)
+            {
+                var newPayment =
+                {
+                    when: (new Date()).toISOString(),
+                    sum: 745
+                };
+
+                patient = patientFixtures[1];
+
+                request(app)
+                    .post('/api/patients/' + patient._id + '/payments')
+                    .send(newPayment)
+                    .expect('Content-Type', /json/)
+                    .expect(403)
+                    .end(done);
+            });
+        });
+
+        describe('when creating a new payment for a patient that with a sum too large', function()
+        {
+            it('should respond with 403', function(done)
+            {
+                var newPayment =
+                {
+                    when: (new Date()).toISOString(),
+                    sum: 5000
+                };
+
+                patient = patientFixtures[1];
+
+                request(app)
+                    .post('/api/patients/' + patient._id + '/payments')
+                    .send(newPayment)
+                    .expect('Content-Type', /json/)
+                    .expect(403)
+                    .end(done);
             });
         });
     });

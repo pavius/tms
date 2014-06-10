@@ -46,13 +46,19 @@ module.exports.addRoutes = function(app, security)
             else if (!patientFromDb)       response.send(404);
             else
             {
+                // this should have been somewhere in appointments itself, but mongoose doesn't allow
+                // overriding creation properly. use patient's price if not set in appointment
+                if (!request.body.hasOwnProperty('price'))
+                    request.body.price = patientFromDb.appointmentPrice;
+
                 var appointment = patientFromDb.appointments.create(request.body);
 
                 // shove the new appointment
                 patientFromDb.appointments.push(appointment);
 
-                // update status
+                // update status/debt
                 patientFromDb.status = patientFromDb.calculateStatus();
+                patientFromDb.debt = patientFromDb.calculateDebt();
 
                 // save self
                 patientFromDb.save(function(dbError, patientFromDb)
@@ -88,8 +94,9 @@ module.exports.addRoutes = function(app, security)
                     // update the appointment
                     routeCommon.updateDocument(appointment, Appointment, request.body);
 
-                    // update status
+                    // update status/debt
                     patientFromDb.status = patientFromDb.calculateStatus();
+                    patientFromDb.debt = patientFromDb.calculateDebt();
 
                     // save self
                     patientFromDb.save(function(dbError, patientFromDb)
@@ -125,8 +132,9 @@ module.exports.addRoutes = function(app, security)
                 // update the appointment
                 patientFromDb.appointments.id(request.params.id).remove();
 
-                // update status
+                // update status/debt
                 patientFromDb.status = patientFromDb.calculateStatus();
+                patientFromDb.debt = patientFromDb.calculateDebt();
 
                 // save self
                 patientFromDb.save(function(dbError, patientFromDb)

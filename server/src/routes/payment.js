@@ -55,16 +55,7 @@ module.exports.addRoutes = function(app, security)
                 patientFromDb.payments.push(payment);
 
                 // get all unpaid appointments
-                unpaidAppointments = _.filter(patientFromDb.appointments, function(appointment)
-                {
-                    return !appointment.hasOwnProperty('payment');
-                });
-
-                // sort the unpaid appointments by date
-                unpaidAppointments = _.sortBy(unpaidAppointments, function(appointment)
-                {
-                    return appointment.when;
-                });
+                unpaidAppointments = patientFromDb.getUnpaidAppointments();
 
                 appointmentsToAttachTo = [];
 
@@ -100,25 +91,25 @@ module.exports.addRoutes = function(app, security)
                     {
                        appointment.payment = payment._id;
                     });
-                }
 
-                // update debt
-                // patientFromDb.status = patientFromDb.calculateDebt();
+                    // update debt
+                    patientFromDb.debt = patientFromDb.calculateDebt();
 
-                // save self
-                patientFromDb.save(function(dbError, patientFromDb)
-                {
-                    if (dbError)    response.json(403, dbError);
-                    else
+                    // save self
+                    patientFromDb.save(function(dbError, patientFromDb)
                     {
-                        // don't care about all payments, just return new one
-                        patientFromDb.payments = [payment];
-                        patientFromDb.appointments = appointmentsToAttachTo;
+                        if (dbError)    response.json(403, dbError);
+                        else
+                        {
+                            // don't care about all payments, just return new one
+                            patientFromDb.payments = [payment];
+                            patientFromDb.appointments = appointmentsToAttachTo;
 
-                        // return the patient
-                        response.send(201, patientFromDb);
-                    }
-                });
+                            // return the patient
+                            response.send(201, patientFromDb);
+                        }
+                    });
+                }
             }
         });
     });
@@ -140,8 +131,8 @@ module.exports.addRoutes = function(app, security)
                     // update the payment
                     routeCommon.updateDocument(payment, Payment, request.body);
 
-                    // update status
-                    patientFromDb.status = patientFromDb.calculateStatus();
+                    // update debt
+                    patientFromDb.debt = patientFromDb.calculateDebt();
 
                     // save self
                     patientFromDb.save(function(dbError, patientFromDb)

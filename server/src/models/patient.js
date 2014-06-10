@@ -12,7 +12,12 @@ var patientSchema = mongoose.Schema
     appointments: [Appointment.schema],
     payments: [Payment.schema],
     status: {type: String, enum: ['new', 'active', 'inactive', 'unknown'], default: 'new'},
-    manualStatus: {type: String, enum: ['undefined', 'inactive', 'unknown'], default: 'undefined'}
+    manualStatus: {type: String, enum: ['undefined', 'inactive', 'unknown'], default: 'undefined'},
+    debt:
+    {
+        total: {type: Number, min: 0, default: 0},
+        oldestNonPaidAppointment: {type: Date}
+    }
 });
 
 // calculate new status
@@ -56,6 +61,51 @@ patientSchema.methods.calculateStatus = function()
     }
 
     return status;
+};
+
+// get unpaid appointments
+patientSchema.methods.getUnpaidAppointments = function()
+{
+    // get all unpaid appointments
+    unpaidAppointments = _.filter(this.appointments, function (appointment)
+    {
+        return appointment.payment === null;
+    });
+
+    // sort the unpaid appointments by date
+    unpaidAppointments = _.sortBy(unpaidAppointments, function (appointment)
+    {
+        return appointment.when;
+    });
+
+    return unpaidAppointments;
+}
+
+// calculate new debt
+patientSchema.methods.calculateDebt = function()
+{
+    var total = 0;
+
+    // get unpaid appointments
+    unpaidAppointments = this.getUnpaidAppointments();
+
+    // if there are any unpaid appointments, sum up their price into the debt this scum owes us
+    if (unpaidAppointments.length)
+    {
+        unpaidAppointments.forEach(function(appointment)
+        {
+            // if the appointment happened, we need de monies for it
+            if (appointment.when <= Date.now())
+                total += appointment.price;
+        });
+
+        return {total: total, oldestNonPaidAppointment: unpaidAppointments[0].when};
+    }
+    else
+    {
+        // no debt
+        return {total: 0, oldestNonPaidAppointment: null};
+    }
 };
 
 module.exports = mongoose.model('Patient', patientSchema);
