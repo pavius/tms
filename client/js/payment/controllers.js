@@ -5,11 +5,10 @@ angular.module('tms.payment.controllers', [])
 }])
 
 .controller('PaymentModalController', 
-            ['$scope', '$modalInstance', 'patient', 'debt', 
-            function($scope, $modalInstance, patient, debt) 
+            ['$scope', '$modalInstance', 'patient',
+            function($scope, $modalInstance, patient)
 {
-    $scope.debt = debt;
-    $scope.payment = {sum: debt, patient: patient._id};
+    $scope.payment = {sum: patient.debt.total, patient: patient._id};
 
     $scope.create = function()
     {

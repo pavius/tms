@@ -124,12 +124,9 @@ angular.module('tms.patient.controllers',
     // the patient stuff
     function updateScopePatientWithResponse(patientResponse)
     {
-        // remove all appointments/payments received fromt eh server as they usually only hold relevant data
-        patientResponse.appointments = $scope.patient.appointments;
-        patientResponse.payments = $scope.patient.payments;
-
         // save into scope
-        $scope.patient = patientResponse;
+        $scope.patient.status = patientResponse.status;
+        $scope.patient.debt = patientResponse.debt;
     }
 
     $scope.update = function()
@@ -230,25 +227,27 @@ angular.module('tms.patient.controllers',
                                     size: 'sm',
                                     resolve:
                                     {
-                                        patient: function(){return $scope.patient;},
-                                        debt: function(){return $scope.debt;},
+                                        patient: function(){return $scope.patient;}
                                     }});
 
         paymentModal.result.then(function(newPayment)
         {
             // update in server
-            Payment.save(newPayment, 
+            Payment.save({patientId: $scope.patient._id}, newPayment,
 
                             // success
                             function(dbObject)
                             {
                                 // shove this payment to the list
-                                $scope.patient.payments.push(dbObject);
+                                $scope.patient.payments.push(dbObject.payments[0]);
+
+                                // update patient
+                                updateScopePatientWithResponse(dbObject);
 
                                 // update appointments with their new payments
-                                dbObject.appointments.forEach(function(appointmentId)
+                                dbObject.appointments.forEach(function(appointment)
                                 {
-                                    getAppointmentById($scope.patient, appointmentId).payment = dbObject._id;
+                                    getAppointmentById($scope.patient, appointment._id).payment = dbObject.payments[0]._id;
                                 });
                             },
 
