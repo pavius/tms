@@ -16,11 +16,6 @@ angular.module('tms.appointment.controllers', [])
             function($scope, Appointment) 
 {
     $scope.appointments = [];
-
-    Appointment.query({populate_patient: true}, function(appointments)
-    {
-        $scope.appointments = appointments;
-    });
 }])
 
 .controller('AppointmentModalController', 

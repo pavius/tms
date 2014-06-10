@@ -51,7 +51,7 @@ angular.module('tms.patient.controllers',
         var keyword = new RegExp($scope.searchTerm, 'i');
         return !$scope.searchTerm || 
                 keyword.test(patient.name) || 
-                keyword.test(patient.primary_phone) || 
+                keyword.test(patient.primaryPhone) ||
                 keyword.test(patient.email);
     };
 
@@ -77,12 +77,9 @@ angular.module('tms.patient.controllers',
     $scope.alerts = [];
 
     // load the patient
-    Patient.get({id: $routeParams.id, appointments: true, payments: true}, function(patient)
+    Patient.get({id: $routeParams.id}, function(patient)
     {
-        // get all patients
         $scope.patient = patient;
-
-        calculateDebt();
     });
 
     function updateActiveTab(activeTab)
@@ -95,28 +92,12 @@ angular.module('tms.patient.controllers',
         if (appointment.hasOwnProperty('price'))
             return appointment.price;
         else
-            return patient.appointment_price;
+            return patient.appointmentPrice;
     }
 
     function addAlert(type, message)
     {
         $scope.alerts.push({type: type, msg: message});
-    }
-
-    function calculateDebt()
-    {
-        $scope.debt = 0;
-
-        // iterate over all the appointments, check for those without payment and calculate
-        // how much this low life owns
-        $scope.patient.appointments.forEach(function(appointment)
-        {
-            if (!appointment.hasOwnProperty('payment') &&
-                Date.parse(appointment.when) < Date.now())
-            {
-                $scope.debt += getAppointmentPrice(patient, appointment);
-            }
-        });
     }
 
     function getAppointmentIndexById(patient, id)
@@ -138,6 +119,19 @@ angular.module('tms.patient.controllers',
         $scope.patient.appointments.splice(idx, 1);
     }
 
+
+    // response will arrive with appointments/payments. we don't want that. we just want to update
+    // the patient stuff
+    function updateScopePatientWithResponse(patientResponse)
+    {
+        // remove all appointments/payments received fromt eh server as they usually only hold relevant data
+        patientResponse.appointments = $scope.patient.appointments;
+        patientResponse.payments = $scope.patient.payments;
+
+        // save into scope
+        $scope.patient = patientResponse;
+    }
+
     $scope.update = function()
     {
         Patient.update({id: $scope.patient._id}, $scope.patient, function()
@@ -153,7 +147,6 @@ angular.module('tms.patient.controllers',
 
     $scope.viewAppointment = function(appointment)
     {
-
         // pop up the modal
         appointmentModal = $modal.open({templateUrl: './partials/appointment-modal',
                                         controller: 'AppointmentModalController',
@@ -170,22 +163,27 @@ angular.module('tms.patient.controllers',
             if (!modifiedAppointment.remove)
             {
                 // update in server
-                Appointment.update({id: modifiedAppointment.appointment._id}, modifiedAppointment.appointment, function(dbObject)
+                Appointment.update({patientId: $scope.patient._id,
+                                    id: modifiedAppointment.appointment._id},
+                                    modifiedAppointment.appointment, function(dbObject)
                 {
                     // reinsert
                     removeAppointmentById(modifiedAppointment.appointment._id);
-                    $scope.patient.appointments.push(dbObject);
+                    $scope.patient.appointments.push(dbObject.appointments[0]);
 
-                    calculateDebt();
+                    // update patient
+                    updateScopePatientWithResponse(dbObject);
                 });
             }
             else
             {
-                Appointment.delete({id: modifiedAppointment.appointment._id}, function()
+                Appointment.delete({patientId: $scope.patient._id,
+                                    id: modifiedAppointment.appointment._id}, function(dbObject)
                 {
-                    removeAppointmentById(modifiedAppointment.appointment._id);           
+                    removeAppointmentById(modifiedAppointment.appointment._id);
 
-                    calculateDebt();
+                    // update patient
+                    updateScopePatientWithResponse(dbObject);
                 });
             }
         });
@@ -205,7 +203,7 @@ angular.module('tms.patient.controllers',
                                                 return {
                                                     patient: $scope.patient._id,
                                                     when: (new Date()).setMinutes(0),
-                                                    price: $scope.patient.appointment_price
+                                                    price: $scope.patient.appointmentPrice
                                                 };
                                             },
                                             mode: function(){return 'create';}
@@ -214,11 +212,12 @@ angular.module('tms.patient.controllers',
         appointmentModal.result.then(function(newAppointment)
         {
             // update in server
-            Appointment.save(newAppointment.appointment, function(dbObject)
+            Appointment.save({patientId: $scope.patient._id}, newAppointment.appointment, function(dbObject)
             {
-                $scope.patient.appointments.push(dbObject);
+                $scope.patient.appointments.push(dbObject.appointments[0]);
 
-                calculateDebt();
+                // update patient
+                updateScopePatientWithResponse(dbObject);
             });
         });
     };
@@ -251,9 +250,6 @@ angular.module('tms.patient.controllers',
                                 {
                                     getAppointmentById($scope.patient, appointmentId).payment = dbObject._id;
                                 });
-
-                                // recalulate patient debt
-                                calculateDebt();
                             },
 
                             // error
@@ -270,7 +266,7 @@ angular.module('tms.patient.controllers',
         appointmentCopy[name] = !appointmentCopy[name];
 
         // update in server
-        Appointment.update({id: appointmentCopy._id}, 
+        Appointment.update({patientId: $scope.patient._id, id: appointmentCopy._id},
                             appointmentCopy, function(dbObject)
         {
             appointment[name] = !appointment[name];
@@ -281,7 +277,7 @@ angular.module('tms.patient.controllers',
     {
         if (Date.parse(appointment.when) <= Date.now())
         {
-            $scope.toggleAppointmentBoolean(appointment, 'summary_sent');
+            $scope.toggleAppointmentBoolean(appointment, 'summarySent');
         }
     };
 
@@ -301,14 +297,14 @@ angular.module('tms.patient.controllers',
     $scope.getAppointmentPaidIcon = function(appointment)
     {
         if (Date.parse(appointment.when) > Date.now())      return 'glyphicon glyphicon-minus';
-        else if (appointment.hasOwnProperty('payment'))     return 'glyphicon glyphicon-ok';
+        else if (appointment.payment !== null)              return 'glyphicon glyphicon-ok';
         else                                                return 'glyphicon glyphicon-remove';     
     };
 
     $scope.getAppointmentSummaryIcon = function(appointment)
     {
         if (Date.parse(appointment.when) > Date.now()) return 'glyphicon glyphicon-minus';
-        else if (appointment.summary_sent)             return 'glyphicon glyphicon-ok';
+        else if (appointment.summarySent)              return 'glyphicon glyphicon-ok';
         else                                           return 'glyphicon glyphicon-remove';     
     };
 }])
@@ -317,7 +313,7 @@ angular.module('tms.patient.controllers',
             ['$scope', '$modalInstance', 
             function($scope, $modalInstance) 
 {
-    $scope.patient = {appointment_price: 330};
+    $scope.patient = {appointmentPrice: 330};
 
     $scope.create = function()
     {

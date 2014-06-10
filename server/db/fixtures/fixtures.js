@@ -13,20 +13,14 @@ patients =
         name: "אדולף",
         primaryPhone: "054 123 4567",
         email: "mein.mail@here.com",
-        payments:
-        [
-            {
-                when: (new Date()).toISOString(),
-                sum: 330
-            }
-        ],
         appointments:
         [
             {
                 when: (generateRandomDateFromNow(-1000, 0)).toISOString(),
                 summary: "The guy is a cunt.",
                 summarySent: false,
-                missed: false
+                missed: false,
+                price: 600
             },
             {
                 when: (generateRandomDateFromNow(0, 10000)).toISOString(),
@@ -48,7 +42,8 @@ patients =
                 when: (new Date()).toISOString(),
                 summary: "Blah",
                 summarySent: true,
-                missed: true
+                missed: true,
+                price: 500
             }
         ]
     },
@@ -62,19 +57,22 @@ patients =
                 when: (generateRandomDateFromNow(-1000, 0)).toISOString(),
                 summary: "Something",
                 summarySent: false,
-                missed: false
+                missed: false,
+                price: 250
             },
             {
                 when: (generateRandomDateFromNow(-1000, 0)).toISOString(),
                 summary: "Whut",
                 summarySent: false,
-                missed: false
+                missed: false,
+                price: 500
             },
             {
                 when: (generateRandomDateFromNow(0, 10000)).toISOString(),
                 summary: "Blah",
                 summarySent: false,
-                missed: false
+                missed: false,
+                price: 200
             }
         ]
     }
@@ -135,23 +133,6 @@ function loadFixtures(modelClass, fixtures, callback)
 {
     objectsLeft = fixtures.length;
 
-    // shove patients
-    async.forEach(fixtures, function(fixture, done)
-    {
-        modelClass.create(fixture, function(dbErr, dbObject)
-        {
-            if (dbErr)  done(dbErr);
-            else
-            {
-                fixture._id = dbObject._id;
-                done(null);
-            }
-        });
-    }, function(result)
-    {
-        if (callback !== null && callback !== undefined)
-            callback(result);
-    });
 }
 
 exports.load = function(callback)
@@ -159,13 +140,31 @@ exports.load = function(callback)
     dropCollections(function()
     {
         // auto generate fixtures
-        autoGenerateFixtures();
+        //autoGenerateFixtures();
 
         // shove patients
-        loadFixtures(Patient, patients, function(err)
+        async.forEach(patients, function(patient, done)
         {
-            if (callback !== undefined && callback !== null)
-                callback(err);
+            Patient.create(patient, function(dbErr, patientFromDb)
+            {
+                if (dbErr)  done(dbErr);
+                else
+                {
+                    // save patient id in fixture
+                    patient._id = patientFromDb._id;
+
+                    // calculate debt and status
+                    patientFromDb.debt = patientFromDb.calculateDebt();
+                    patientFromDb.status = patientFromDb.calculateStatus();
+
+                    // update
+                    patientFromDb.save(done);
+                }
+            });
+        }, function(result)
+        {
+            if (callback !== null && callback !== undefined)
+                callback(result);
         });
     });
 };

@@ -24,7 +24,7 @@ angular.module('tms.dashboard.controllers',
 
         Appointment.query({
                               'when': '{lte}' + Date.now(), 
-                              'summary_sent': false, 
+                              'summarySent': false,
                               'missed': false, 
                               'populate_patient': true
                           }, 
@@ -69,16 +69,4 @@ angular.module('tms.dashboard.controllers',
 
     $scope.patientsWithUnsummarizedAppointments = {};
     $scope.appointmentsComingUp = [];
-    
-    // build todo list
-    getPatientsRequiringSummary(function(results)
-    {
-        $scope.patientsWithUnsummarizedAppointments = results;
-    });
-
-    // get upcoming appointments
-    getAppointmentsComingUp(function(results)
-    {
-        $scope.appointmentsComingUp = results;
-    });
 }]);

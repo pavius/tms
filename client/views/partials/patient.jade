@@ -72,11 +72,11 @@ row.clearfix
                         .input-group
                             span.input-group-addon
                                 i.glyphicon.glyphicon-usd
-                            input.form-control(type='text', id='price', placeholder='מחיר פגישה', ng-model='patient.appointment_price')
+                            input.form-control(type='text', id='price', placeholder='מחיר פגישה', ng-model='patient.appointmentPrice')
 
                         .input-group
                             span.input-group-addon חוב
-                            input.form-control(type='text', readonly, placeholder='{{debt}}') 
+                            input.form-control(type='text', readonly, ng-model='patient.debt.total')
 
                 .col-xs-8.col-sm-6.col-right
 
@@ -94,4 +94,4 @@ row.clearfix
                         .input-group
                             span.input-group-addon
                                 i.glyphicon.glyphicon-phone
-                            input.form-control(type='text', id='primary_phone', placeholder='טלפון', ng-model='patient.primary_phone')
+                            input.form-control(type='text', id='primaryPhone', placeholder='טלפון', ng-model='patient.primaryPhone')
