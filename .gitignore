@@ -1,5 +1,6 @@
 *newrelic*
 *.env
 server/db/
+.idea/
 node_modules/
 client/bower_components/
