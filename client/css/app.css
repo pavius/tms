@@ -118,6 +118,27 @@ a.location-selector
 {
     float: right;
 }
+
+/*
+ * RTL checkbox
+ */
+
+.cbx-container
+{
+    padding-top: 5px
+}
+
+input.cbx
+{
+    float: right;
+}
+
+label.cbx
+{
+    float: left;
+    padding: 0px 8px 0px 8px;
+}
+
 /*
  * Selectors
  */

@@ -4,7 +4,9 @@ row
     .input-group.pull-left(style='width: 100px')
         input.input-sm.form-control(type='text', id='search', placeholder='חפש', ng-model='searchTerm')
 
-
+    .cbx-container.pull-left
+        label.cbx(for='abc') רק פעילים
+        input(type='checkbox', id='abc', ng-model='showActivePatientsOnly', ng-change='reloadPatients()').cbx
 
 table.table
     thead

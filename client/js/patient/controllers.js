@@ -28,7 +28,7 @@ angular.module('tms.patient.controllers',
 
 .controller('PatientListController', 
             ['$scope', '$log', '$location', '$modal', 'Patient', 
-            function($scope, $log, $location, $modal, Patient) 
+            function($scope, $log, $location, $modal, Patient)
 {
     // create a new patient
     $scope.create = function()
@@ -46,25 +46,34 @@ angular.module('tms.patient.controllers',
         });
     };
 
-    $scope.searchFilter = function(patient) 
+    $scope.reloadPatients = function()
+    {
+        query = $scope.showActivePatientsOnly ? {status: '^active|new'} : {};
+
+        // get all patients
+        Patient.query(query, function(patients)
+        {
+            $scope.patients = patients;
+        });
+    };
+
+    $scope.searchFilter = function(patient)
     {
         var keyword = new RegExp($scope.searchTerm, 'i');
-        return !$scope.searchTerm || 
-                keyword.test(patient.name) || 
-                keyword.test(patient.primaryPhone) ||
-                keyword.test(patient.email);
+        return !$scope.searchTerm ||
+               keyword.test(patient.name) ||
+               keyword.test(patient.primaryPhone) ||
+               keyword.test(patient.email);
     };
 
     $scope.searchTerm = '';
+    $scope.showActivePatientsOnly = true;
 
     // pagination
     $scope.patients = [];
 
-    // get all patients
-    Patient.query(function(patients)
-    {
-        $scope.patients = patients;
-    });
+    // do the reload
+    $scope.reloadPatients();
 }])
 
 .controller('PatientDetailController', 

@@ -37,8 +37,12 @@ patientSchema.methods.calculateStatus = function()
     }
     else
     {
-        // get appointments, sorted by date
-        appointments = _.sortBy(this.appointments, function(a) {return a.when});
+        // get appointments, sorted by date (newest first)
+        appointments = _.sortBy(this.appointments,
+                                function(a)
+                                {
+                                    return a.when
+                                }).reverse();
 
         // is the newest appointment older than three weeks?
         if (Date.now() - Date.parse(appointments[0].when) >= (3 * 7 * 24 * 60 * 60 * 1000))

@@ -75,6 +75,10 @@ row.clearfix
                             input.form-control(type='text', id='price', placeholder='מחיר פגישה', ng-model='patient.appointmentPrice')
 
                         .input-group
+                            span.input-group-addon סטטוס
+                            input.form-control(type='text', readonly, ng-model='patient.status')
+
+                        .input-group
                             span.input-group-addon חוב
                             input.form-control(type='text', readonly, ng-model='patient.debt.total')
 

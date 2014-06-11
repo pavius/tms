@@ -282,7 +282,13 @@ describe('Appointments', function()
                             // update the appointment - should become 'inactive'
                             function(callback)
                             {
-                                updateAppointment(patientId, appointments[0], (new Date(2007, 1, 1)).toISOString(), 'inactive', done);
+                                updateAppointment(patientId, appointments[0], (new Date(2007, 1, 1)).toISOString(), 'inactive', callback);
+                            },
+
+                            // another appointment - should be "active"
+                            function(callback)
+                            {
+                                createAppointment(patientId, (new Date()).toISOString(), 'active', done);
                             }
                         ]);
                     });
