@@ -130,6 +130,15 @@ a.contact-glyph
     width: 30px;
 }
 
+.patientDropdown
+{
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    border-color: #CCCCCC;
+    background-color: #FFFFFF;
+}
+
 /*
  * RTL checkbox
  */

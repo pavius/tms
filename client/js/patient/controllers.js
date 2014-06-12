@@ -85,6 +85,8 @@ angular.module('tms.patient.controllers',
     $scope.debt = 0;
     $scope.alerts = [];
     $scope.translatedStatus = '';
+    $scope.inactivityReason = {open: false};
+
 
     // load the patient
     Patient.get({id: $routeParams.id}, function(patient)

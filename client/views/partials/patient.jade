@@ -78,9 +78,11 @@ row.clearfix
                             span.input-group-addon סטטוס
                             input.form-control(type='text', readonly, ng-model='translatedStatus')
 
-                        .input-group
-                            span.input-group-addon חוב
-                            input.form-control(type='text', readonly, ng-model='patient.debt.total')
+                        select.patientDropdown(ng-model='patient.inactivityReason', ng-show='patient.status == "inactive"')
+                            option(value='undefined') לא ידועה סיבת הפסקת הטיפול
+                            option(value='completed') הטיפול הגיע לסיומו
+                            option(value='terminated') המטופל סיים את הטיפול ביוזמתו
+
 
                 .col-xs-8.col-sm-6.col-right
 
@@ -97,5 +99,9 @@ row.clearfix
 
                         .input-group
                             span.input-group-addon
-                                i.glyphicon.glyphicon-phone
+                                i.glyphicon.glyphicon-phone-alt
                             input.form-control(type='text', id='primaryPhone', placeholder='טלפון', ng-model='patient.primaryPhone')
+
+                        .input-group
+                            span.input-group-addon חוב
+                            input.form-control(type='text', readonly, ng-model='patient.debt.total')
