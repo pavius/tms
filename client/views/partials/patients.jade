@@ -9,22 +9,31 @@ row
         input(type='checkbox', id='abc', ng-model='showActivePatientsOnly', ng-change='reloadPatients()').cbx
 
 table.table
+
     thead
+
         tr
             th#patient-new-indicator
             th שם
             th קשר
             th 
+
     tbody
+
         tr(ng-repeat="patient in patients | orderBy: 'name' | filter: searchFilter")
-            td#patient-new-indicator
-                i.glyphicon.glyphicon-certificate(ng-show='patient.status == "new"')
-            td {{patient.name}}
+
+            td#patient-list-status-indicator
+                i(ng-class='getPatientGlyphIconByStatus(patient)')
+
+            td#patient-list-name {{patient.name}}
+
             td
                 a(href='mailto:{{patient.email}}').contact-glyph
                     i.glyphicon.glyphicon-envelope
+
                 a(href='tel:{{patient.primaryPhone}}', ng-show='patient.primaryPhone.length').contact-glyph
                     i.glyphicon.glyphicon-phone-alt
+
             td
                 a.location-selector(href='patients/{{patient._id}}')
                     i.glyphicon.glyphicon-zoom-in

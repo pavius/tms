@@ -66,6 +66,17 @@ angular.module('tms.patient.controllers',
                keyword.test(patient.email);
     };
 
+    $scope.getPatientGlyphIconByStatus = function(patient)
+    {
+        switch(patient.status)
+        {
+            case 'active': return 'glyphicon glyphicon-plus';
+            case 'inactive': return 'glyphicon glyphicon-minus';
+            case 'new': return 'glyphicon glyphicon-asterisk';
+            default: return '';
+        }
+    }
+
     $scope.searchTerm = '';
     $scope.showActivePatientsOnly = true;
 

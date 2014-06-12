@@ -65,43 +65,43 @@ row.clearfix
 
             row.clearfix
             
-                .col-xs-4.col-sm-6.col-left
+                .form-group
 
-                    .form-group
+                    .input-group
+                        span.input-group-addon
+                            i.glyphicon.glyphicon-user
+                        input.form-control(type='text', id='name', placeholder='שם', ng-model='patient.name')
 
-                        .input-group
-                            span.input-group-addon
-                                i.glyphicon.glyphicon-usd
-                            input.form-control(type='text', id='price', placeholder='מחיר פגישה', ng-model='patient.appointmentPrice')
+                    .input-group
+                        span.input-group-addon
+                            i.glyphicon.glyphicon-envelope
+                        input.form-control(type='email', id='email', placeholder='מייל', ng-model='patient.email')
 
-                        .input-group
-                            span.input-group-addon סטטוס
-                            input.form-control(type='text', readonly, ng-model='translatedStatus')
+                    .input-group
+                        span.input-group-addon
+                            i.glyphicon.glyphicon-phone-alt
+                        input.form-control(type='text', id='primaryPhone', placeholder='טלפון', ng-model='patient.primaryPhone')
 
-                        select.patientDropdown(ng-model='patient.inactivityReason', ng-show='patient.status == "inactive"')
-                            option(value='undefined') לא ידועה סיבת הפסקת הטיפול
-                            option(value='completed') הטיפול הגיע לסיומו
-                            option(value='terminated') המטופל סיים את הטיפול ביוזמתו
+                    row.clearfix
+                        .col-xs-6.col-left
 
+                            .input-group
+                                span.input-group-addon חוב
+                                input.form-control(type='text', readonly, ng-model='patient.debt.total')
 
-                .col-xs-8.col-sm-6.col-right
+                        .col-xs-6.col-right
 
-                    .form-group
-                        .input-group
-                            span.input-group-addon
-                                i.glyphicon.glyphicon-user
-                            input.form-control(type='text', id='name', placeholder='שם', ng-model='patient.name')
+                            .input-group
+                                span.input-group-addon מחיר לפגישה
+                                input.form-control(type='text', id='price', placeholder='מחיר פגישה', ng-model='patient.appointmentPrice')
 
-                        .input-group
-                            span.input-group-addon
-                                i.glyphicon.glyphicon-envelope
-                            input.form-control(type='email', id='email', placeholder='מייל', ng-model='patient.email')
+                    hr#patient-status-separator
 
-                        .input-group
-                            span.input-group-addon
-                                i.glyphicon.glyphicon-phone-alt
-                            input.form-control(type='text', id='primaryPhone', placeholder='טלפון', ng-model='patient.primaryPhone')
+                    .input-group
+                        span.input-group-addon סטטוס
+                        input.form-control(type='text', readonly, ng-model='translatedStatus')
 
-                        .input-group
-                            span.input-group-addon חוב
-                            input.form-control(type='text', readonly, ng-model='patient.debt.total')
+                    select.patient-dropdown(ng-model='patient.inactivityReason', ng-show='patient.status == "inactive"')
+                        option(value='undefined') לא ידועה סיבת הפסקת הטיפול
+                        option(value='completed') הטיפול הגיע לסיומו
+                        option(value='terminated') המטופל סיים את הטיפול ביוזמתו
