@@ -1,6 +1,7 @@
 angular.module('tms', 
 [
     'ngRoute',
+    'tms.common.filters',
     'tms.dashboard.controllers',
     'tms.dashboard.controllers',
     'tms.patient.controllers',

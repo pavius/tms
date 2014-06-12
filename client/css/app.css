@@ -114,9 +114,20 @@ a.location-selector
     color: black;
 }
 
+a.contact-glyph
+{
+    color: black;
+    padding-left: 15px;
+}
+
 .nav-tabs > li
 {
     float: right;
+}
+
+#patient-new-indicator
+{
+    width: 30px;
 }
 
 /*

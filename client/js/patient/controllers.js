@@ -84,6 +84,7 @@ angular.module('tms.patient.controllers',
     $scope.patient = {};
     $scope.debt = 0;
     $scope.alerts = [];
+    $scope.translatedStatus = '';
 
     // load the patient
     Patient.get({id: $routeParams.id}, function(patient)
@@ -137,6 +138,23 @@ angular.module('tms.patient.controllers',
         $scope.patient.status = patientResponse.status;
         $scope.patient.debt = patientResponse.debt;
     }
+
+    function translateStatus(status)
+    {
+        switch(status)
+        {
+            case 'new': return 'חדש';
+            case 'active': return 'פעיל';
+            case 'inactive': return 'לא פעיל';
+            default: return 'לא ידוע';
+        }
+    }
+
+    $scope.$watch('patient.status', function(newValue, oldValue)
+    {
+        // really gross, but since translation is a hack right now - i'll live with this
+        $scope.translatedStatus = translateStatus(newValue);
+    });
 
     $scope.update = function()
     {
@@ -209,7 +227,8 @@ angular.module('tms.patient.controllers',
                                                 return {
                                                     patient: $scope.patient._id,
                                                     when: (new Date()).setMinutes(0),
-                                                    price: $scope.patient.appointmentPrice
+                                                    price: $scope.patient.appointmentPrice,
+                                                    payment: null
                                                 };
                                             },
                                             mode: function(){return 'create';}
