@@ -21,6 +21,17 @@ angular.module('tms.dashboard.controllers',
 {
     $scope.todos = [];
 
+    $scope.completeTodoAndRemove = function(todo, index)
+    {
+        if (todo.done)
+        {
+            todo.complete(function()
+            {
+                $scope.todos.splice(index, 1);
+            });
+        }
+    }
+
     // get all active patients
     Patient.query({status: '^active|new'}, function(patients)
     {

@@ -5,6 +5,11 @@ row
         tbody
             tr(ng-repeat="todo in todos")
                 td
-                    input(type='checkbox')
+                    form
+                        input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)')
                 td
                     {{todo.toString()}}
+                td
+                    a.location-selector(ng-click='todo.view()')
+                        i.glyphicon.glyphicon-zoom-in
+
