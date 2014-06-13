@@ -33,11 +33,24 @@ angular.module('tms.dashboard.controllers',
         }
     }
 
-    // get all active patients
-    Patient.query({status: '^active|new'}, function(patients)
+    function checkPatientDebtAndCreateTodo(patient)
+    {
+        // if patients oldest unpaid appointment is 2 months old, we want to know about it
+        if (patient.debt.total &&
+            (Date.now() - Date.parse(patient.debt.oldestNonPaidAppointment)) > (2 * 31 * 24 * 60 * 60 * 1000))
+        {
+            $scope.todos.push(Todo.createCollectDebtTodo(patient, patient.debt));
+        }
+    }
+
+    // get all active patients along with relevant appointment info
+    Patient.query({status: '^active|new',
+                   select: 'name debt appointments._id appointments.when appointments.summarySent'},
+                  function(patients)
     {
         patients.forEach(function (patient)
         {
+            // scan appointments and do stuff
             patient.appointments.forEach(function (appointment)
             {
                 // is this an appointment which occurred in teh past?
@@ -58,6 +71,20 @@ angular.module('tms.dashboard.controllers',
                     }
                 }
             });
+
+            // check for outstanding debt
+            checkPatientDebtAndCreateTodo(patient);
+        });
+    });
+
+    // get all inactive patients and check for debt
+    Patient.query({status: 'inactive',
+                   select: 'name debt'},
+                  function(patients)
+    {
+        patients.forEach(function(patient)
+        {
+            checkPatientDebtAndCreateTodo(patient);
         });
     });
 }]);

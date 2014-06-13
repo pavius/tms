@@ -42,19 +42,25 @@ patients =
                 when: (new Date()).toISOString(),
                 summary: "Blah",
                 summarySent: true,
-                missed: true,
+                missed: false,
                 price: 500
+            },
+            {
+                when: generateTimeFromNow(-72, 0, 0).toISOString(),
+                summarySent: true,
+                missed: true,
+                price: 750
             }
         ]
     },
     {
-        name: "עוד מישהו",
+        name: "ששון",
         primaryPhone: "054 123 4567",
         email: "whut@here.com",
         appointments:
         [
             {
-                when: (generateRandomDateFromNow(-1000, 0)).toISOString(),
+                when: generateTimeFromNow(-3, 0, 0).toISOString(),
                 summary: "Something",
                 summarySent: false,
                 missed: false,
@@ -75,12 +81,36 @@ patients =
                 price: 200
             }
         ]
-    }
+    },
+    {
+        name: "שמואל",
+        email: "whut@here.com",
+        appointments:
+            [
+                {
+                    when: generateTimeFromNow(-90, 0, 0).toISOString(),
+                    summary: "Something",
+                    summarySent: false,
+                    missed: false,
+                    price: 250
+                }
+            ]
+    },
 ];
 
 function generateRandomNumber(min, max)
 {
     return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function generateTimeFromNow(days, hours, minutes)
+{
+    var now = Date.now();
+    now += days * ((24 * 60 * 60 * 1000));
+    now += hours * ((60 * 60 * 1000));
+    now += minutes * ((60 * 1000));
+
+    return new Date(now);
 }
 
 function generateRandomDateFromNow(min, max)

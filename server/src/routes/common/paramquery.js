@@ -281,7 +281,7 @@ function buildQueryParams(model, rawParams)
         }
     };
 
-    var searchParams = {}, query, page = 1, per_page = 10, sort = false, select = '-__v ';
+    var searchParams = {}, query, page = 1, per_page = 10, sort = false, select = '';
 
     // Construct searchParams
     for (var key in rawParams)
