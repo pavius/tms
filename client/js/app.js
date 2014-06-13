@@ -6,6 +6,7 @@ angular.module('tms',
     'tms.dashboard.controllers',
     'tms.patient.controllers',
     'tms.appointment.controllers',
+    'tms.todo.services'
 ])
 
 .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider)

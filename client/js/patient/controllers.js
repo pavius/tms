@@ -30,6 +30,10 @@ angular.module('tms.patient.controllers',
             ['$scope', '$log', '$location', '$modal', 'Patient', 
             function($scope, $log, $location, $modal, Patient)
 {
+    $scope.searchTerm = '';
+    $scope.showActivePatientsOnly = true;
+    $scope.patients = [];
+
     // create a new patient
     $scope.create = function()
     {
@@ -76,12 +80,6 @@ angular.module('tms.patient.controllers',
             default: return '';
         }
     }
-
-    $scope.searchTerm = '';
-    $scope.showActivePatientsOnly = true;
-
-    // pagination
-    $scope.patients = [];
 
     // do the reload
     $scope.reloadPatients();

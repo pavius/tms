@@ -32,7 +32,7 @@ patients =
         ]
     },
     {
-        name: "נועם",
+        name: "משה",
         primaryPhone: "054 123 4567",
         email: "kiddie.luv22@gmail.com",
         appointmentPrice: 500,

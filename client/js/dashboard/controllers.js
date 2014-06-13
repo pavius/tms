@@ -1,6 +1,7 @@
 angular.module('tms.dashboard.controllers', 
 [
-    'tms.appointment.services'
+    'tms.patient.services',
+    'tms.todo.services'
 ])
 
 .config(['$routeProvider', function ($routeProvider)
@@ -14,59 +15,25 @@ angular.module('tms.dashboard.controllers',
         });
 }]) 
 
-.controller('DashboardController', 
-            ['$scope', '$location', 'Appointment', 
-            function($scope, $location, Appointment) 
+.controller('DashboardController',
+            ['$scope', '$location', 'Patient', 'Todo',
+            function($scope, $location, Patient, Todo)
 {
-    function getPatientsRequiringSummary(callback)
+    $scope.todos = [];
+
+    // get all active patients
+    Patient.query({status: '^active|new'}, function(patients)
     {
-        resultList = {};
-
-        Appointment.query({
-                              'when': '{lte}' + Date.now(), 
-                              'summarySent': false,
-                              'missed': false, 
-                              'populate_patient': true
-                          }, 
-        function(appointments)
+        patients.forEach(function (patient)
         {
-            appointments.forEach(function(appointment)
+            patient.appointments.forEach(function (appointment)
             {
-                patient = appointment.patient;
-
-                // was this patient already added?
-                if (!resultList.hasOwnProperty(patient._id))
+                // is this an appointment which occurred in teh past and is not summarized?
+                if (Date.parse(appointment.when) <= Date.now() && !appointment.summarySent)
                 {
-                    resultList[patient._id] = {name: patient.name, appointments: 1};
-                }
-                else
-                {
-                    // add to # of appointments
-                    resultList[appointment.patient._id].appointments++;
+                    $scope.todos.push(Todo.createSummarizeAppointmentTodo(patient, appointment));
                 }
             });
-
-            // done
-            callback(resultList);
         });
-    }
-
-    function getAppointmentsComingUp(callback)
-    {
-        cutoffDate = new Date();
-        cutoffDate.setDate(cutoffDate.getDate() + 7);
-
-        Appointment.query({
-                              'when': '{gte}' + Date.now() + '{lte}' + cutoffDate.getTime(), 
-                              'populate_patient': true
-                          }, 
-        function(appointments)
-        {
-            // done
-            callback(appointments);
-        });
-    }
-
-    $scope.patientsWithUnsummarizedAppointments = {};
-    $scope.appointmentsComingUp = [];
+    });
 }]);
