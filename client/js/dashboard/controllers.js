@@ -20,6 +20,7 @@ angular.module('tms.dashboard.controllers',
             function($scope, $location, Patient, Todo)
 {
     $scope.todos = [];
+    $scope.upcomingAppointments = [];
 
     $scope.completeTodoAndRemove = function(todo, index)
     {
@@ -39,10 +40,22 @@ angular.module('tms.dashboard.controllers',
         {
             patient.appointments.forEach(function (appointment)
             {
-                // is this an appointment which occurred in teh past and is not summarized?
-                if (Date.parse(appointment.when) <= Date.now() && !appointment.summarySent)
+                // is this an appointment which occurred in teh past?
+                if (Date.parse(appointment.when) <= Date.now())
                 {
-                    $scope.todos.push(Todo.createSummarizeAppointmentTodo(patient, appointment));
+                    // is it unsummarized?
+                    if (!appointment.summarySent)
+                        $scope.todos.push(Todo.createSummarizeAppointmentTodo(patient, appointment));
+                }
+                // future appointment
+                else
+                {
+                    // is it within 7 days from now?
+                    if ((Date.parse(appointment.when) - Date.now()) < (7 * 24 * 60 * 60 * 1000))
+                    {
+                        appointment.patient = patient;
+                        $scope.upcomingAppointments.push(appointment);
+                    }
                 }
             });
         });

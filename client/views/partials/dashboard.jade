@@ -4,7 +4,7 @@ row
     table.table.dashboard-table
         tbody
             tr(ng-repeat="todo in todos")
-                td
+                td#dashboard-checkbox-column
                     form
                         input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)')
                 td
@@ -13,3 +13,13 @@ row
                     a.location-selector(ng-click='todo.view()')
                         i.glyphicon.glyphicon-zoom-in
 
+row
+    h3 פגישות קרובות
+
+    table.table.dashboard-table
+        tbody
+            tr(ng-repeat="appointment in upcomingAppointments | orderBy:'when'")
+                td {{appointment.when | date:"EEEE, dd MMMM 'ב-' HH:mm"}} עם {{appointment.patient.name}}
+                td
+                    a.location-selector(href='patients/{{appointment.patient._id}}')
+                        i.glyphicon.glyphicon-zoom-in

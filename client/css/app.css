@@ -156,6 +156,11 @@ a.contact-glyph
     margin-top: 0px;
 }
 
+#dashboard-checkbox-column
+{
+    width: 30px;
+}
+
 /*
  * RTL checkbox
  */
