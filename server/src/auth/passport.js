@@ -42,6 +42,7 @@ module.exports = function(passport)
         // check if allowed
         console.log(allowedUsers);
         console.log(profile.id);
+        console.log(profile);
 
         // check if user is allowed
         if (allowedUsers.indexOf(profile.id) == -1)
