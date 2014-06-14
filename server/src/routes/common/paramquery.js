@@ -3,9 +3,7 @@ exports.query = function (model, rawParams, cb)
     var params = buildQueryParams(model, rawParams);
 
     // Create the Mongoose Query object.
-    query = model.find(params.searchParams)
-                 .limit(params.per_page)
-                 .skip((params.page - 1) * params.per_page);
+    query = model.find(params.searchParams);
 
     if (params.sort) query = query.sort(params.sort);
 
