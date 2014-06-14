@@ -161,6 +161,13 @@ a.contact-glyph
     width: 30px;
 }
 
+.input-group input[readonly="readonly"]
+{
+    background-color: #F5F5F5;
+    text-align: center;
+    color: #777;
+}
+
 /*
  * RTL checkbox
  */
@@ -180,6 +187,20 @@ label.cbx
     float: left;
     padding: 0px 4px 0px 8px;
     font-weight: normal;
+}
+
+/*
+ * Input group LTR hack
+ */
+
+.input-group
+{
+    direction: ltr;
+}
+
+.input-group input
+{
+    text-align: right;
 }
 
 /*
