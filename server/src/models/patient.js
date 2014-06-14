@@ -18,7 +18,8 @@ var patientSchema = mongoose.Schema
     {
         total: {type: Number, min: 0, default: 0},
         oldestNonPaidAppointment: {type: Date}
-    }
+    },
+    lastContact: {type: Date, default: Date.now()}
 });
 
 // calculate new status

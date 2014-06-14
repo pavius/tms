@@ -7,5 +7,10 @@ angular.module('tms.patient.services', ['ngResource'])
         update: {method:'PUT'}
     });
 
+    Patient.prototype.isActive = function()
+    {
+        return this.status == 'new' || this.status == 'active';
+    }
+
     return Patient; 
 }]);

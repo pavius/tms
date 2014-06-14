@@ -45,7 +45,7 @@ angular.module('tms.dashboard.controllers',
 
     // get all active patients along with relevant appointment info
     Patient.query({status: '^active|new',
-                   select: 'name debt appointments._id appointments.when appointments.summarySent'},
+                   select: 'name debt lastContact appointments._id appointments.when appointments.summarySent'},
                   function(patients)
     {
         patients.forEach(function (patient)
@@ -74,6 +74,12 @@ angular.module('tms.dashboard.controllers',
 
             // check for outstanding debt
             checkPatientDebtAndCreateTodo(patient);
+
+            // check if we need to contact this active patient
+            if ((Date.now() - Date.parse(patient.lastContact)) > (4 * 24 * 60 * 60 * 1000))
+            {
+                $scope.todos.push(Todo.createContactPatientTodo(patient));
+            }
         });
     });
 

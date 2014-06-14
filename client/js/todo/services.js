@@ -1,12 +1,13 @@
 angular.module('tms.todo.services',
 [
     'ngResource',
+    'tms.patient.services',
     'tms.appointment.services',
     'tms.payment.services'
 ])
 
-.factory('Todo', ['$resource', '$location', 'Appointment', 'Payment',
-         function($resource, $location, Appointment, Payment)
+.factory('Todo', ['$resource', '$location', 'Appointment', 'Payment', 'Patient',
+         function($resource, $location, Appointment, Payment, Patient)
 {
     //
     // A summary is required for a patient
@@ -48,7 +49,7 @@ angular.module('tms.todo.services',
                 return "לפני " + Math.round(hoursSinceAppointment / 24) + " ימים";
         }
 
-        return "ל" + this.patient.name + " פגישה לא מסוכמת מ" + getTimeSinceAppointment(this.appointment);
+        return "לסכם פגישה של " + this.patient.name + " מ" + getTimeSinceAppointment(this.appointment);
     }
 
     //
@@ -84,15 +85,47 @@ angular.module('tms.todo.services',
             return Math.floor((Date.now() - Date.parse(debt.oldestNonPaidAppointment)) / (24 * 60 * 60 * 1000));
         }
 
-        return "ל" + this.patient.name + " חוב בן " + getDaysSinceOldestUnpaidAppointment(this.debt) + ' ימים ע"ס ' + this.debt.total + ' ש"ח';
+        return "לגבות חוב על סך " + this.debt.total + ' ש"ח מ' + this.patient.name;
     }
 
+    //
+    // An active patient needs to be contacted
+    //
+    function ContactPatientTodo(patient)
+    {
+        this.patient = patient;
+        this.done = false;
+    }
+
+    ContactPatientTodo.prototype.complete = function(callback)
+    {
+        Patient.update({id: this.patient._id}, {lastContact: Date.now()}, function(patient)
+        {
+            callback();
+        });
+    }
+
+    ContactPatientTodo.prototype.view = function(callback)
+    {
+        $location.path('patients/' + this.patient._id);
+    }
+
+    ContactPatientTodo.prototype.toString = function()
+    {
+        function getDaysSinceLastContact(patient)
+        {
+            return Math.floor((Date.now() - Date.parse(patient.lastContact)) / (24 * 60 * 60 * 1000));
+        }
+
+        return "ליצור קשר עם " + this.patient.name;
+    }
 
     //
     // Factory object
     //
     return {
         createSummarizeAppointmentTodo: function(patient, appointment) { return new SummarizeAppointmentTodo(patient, appointment); },
-        createCollectDebtTodo: function(patient, debt) { return new CollectDebtTodo(patient, debt); }
+        createCollectDebtTodo: function(patient, debt) { return new CollectDebtTodo(patient, debt); },
+        createContactPatientTodo: function(patient) { return new ContactPatientTodo(patient); }
     }
 }]);
