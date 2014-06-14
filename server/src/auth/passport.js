@@ -39,13 +39,8 @@ module.exports = function(passport)
         // get who is allowed to log in
         allowedUsers = getAuthorizedUsers();
 
-        // check if allowed
-        console.log(allowedUsers);
-        console.log(profile.id);
-        console.log(profile);
-
         // check if user is allowed
-        if (allowedUsers.indexOf(profile.id) == -1)
+        if (allowedUsers.indexOf(profile._json.email) == -1)
             return done(new Error("Not allowed"));
 
         // try to find the user based on their google id
