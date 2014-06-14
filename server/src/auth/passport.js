@@ -28,7 +28,7 @@ module.exports = function(passport)
     },
     function(token, refreshToken, profile, done) 
     {
-        function getAuthorizedUsers()
+        /* function getAuthorizedUsers()
         {
             if (!process.env.AUTH_ALLOWED_USERS)
                 return [];
@@ -44,7 +44,7 @@ module.exports = function(passport)
 
         // check if user is allowed
         if (allowedUsers.indexOf(profile.id) == -1)
-            return done("Not allowed");
+            return done("Not allowed");  */
 
         // try to find the user based on their google id
         User.findOne({'google.id': profile.id}, function(err, user) 
