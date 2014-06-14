@@ -1,6 +1,8 @@
 row
     h3 לבצע
 
+    p(ng-show='todos.length == 0') אין משימות לביצוע
+
     table.table.dashboard-table
         tbody
             tr(ng-repeat="todo in todos")
@@ -15,6 +17,8 @@ row
 
 row
     h3 פגישות קרובות
+
+    p(ng-show='upcomingAppointments.length == 0') אין פגישות קרובות
 
     table.table.dashboard-table
         tbody

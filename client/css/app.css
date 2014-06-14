@@ -1,11 +1,18 @@
 body 
 {
     padding-top: 10px;
+    background: url('../images/ricepaper2.png');
 }
 
 /* 
  * Non-responsive navbar
  */
+
+.navbar
+{
+    background: url(../images/vertical_lines.png);
+    background-color: #FFF;
+}
 
 .navbar-nav 
 {
@@ -20,11 +27,19 @@ body
     display: inline-block;
 }
 
-.navbar-nav > li > a 
+.navbar-nav > li > a
 {
     padding-top: 15px;
     padding-bottom: 15px;
 }
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover
+{
+    background-color: rgba(148, 191, 216, 0.65)
+}
+
+
 
 /*
  * Other tweaks
@@ -47,7 +62,7 @@ th
 
 .future-appointment
 {
-    background-color: #f9f9f9;
+    background-color: rgba(223, 233, 225, 0.42);
 }
 
 .input-group
