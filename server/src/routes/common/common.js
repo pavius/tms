@@ -110,7 +110,7 @@ function isLoggedIn(request, response, next)
     else
     {
         response.redirect('/login');
-    } 
+    }
 }
 
 function updateDocument(doc, SchemaTarget, data)

@@ -19,15 +19,33 @@ module.exports = function(passport)
             done(err, user);
         });
     });
-    
+
     passport.use(new GoogleStrategy(
     {
         clientID: process.env.AUTH_GOOGLE_OAUTH_CLIENT_ID || 'local',
         clientSecret: process.env.AUTH_GOOGLE_OAUTH_CLIENT_SECRET || 'local',
-        callbackURL: process.env.ROOT_URL + '/login/callback',
+        callbackURL: process.env.ROOT_URL + '/login/callback'
     },
     function(token, refreshToken, profile, done) 
     {
+        function getAuthorizedUsers()
+        {
+            if (!process.env.AUTH_ALLOWED_USERS)
+                return [];
+            else
+                return process.env.AUTH_ALLOWED_USERS.split(",");
+        }
+
+        // get who is allowed to log in
+        allowedUsers = getAuthorizedUsers();
+
+        // check if allowed
+        console.log(allowedUsers);
+
+        // check if user is allowed
+        if (allowedUsers.indexOf(profile.id) == -1)
+            return done("Not allowed");
+
         // try to find the user based on their google id
         User.findOne({'google.id': profile.id}, function(err, user) 
         {
