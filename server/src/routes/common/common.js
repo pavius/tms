@@ -99,9 +99,9 @@ function handleDelete(modelClass, request, response)
     });
 }
 
-function isLoggedIn(request, response, next)
+function verifyLoggedIn(request, response, errorScheme, next)
 {
-    if (process.env.NODE_ENV == 'development' || 
+    if (/* process.env.NODE_ENV == 'development' || */
         process.env.NODE_ENV == 'test' || 
         request.isAuthenticated())
     {
@@ -109,8 +109,23 @@ function isLoggedIn(request, response, next)
     }
     else
     {
-        response.redirect('/login');
+        if (errorScheme == 'redirect')
+            response.redirect('/login');
+        else
+            response.send(302);
     }
+}
+
+function isLoggedInRedirect(request, response, next)
+{
+    // check if logged in and redirect to /login otherwise
+    return verifyLoggedIn(request, response, 'redirect', next);
+}
+
+function isLoggedInSendError(request, response, next)
+{
+    // check if logged in and return error otherwise
+    return verifyLoggedIn(request, response, 'error', next);
 }
 
 function updateDocument(doc, SchemaTarget, data)
@@ -161,5 +176,6 @@ exports.handleCreateDontRespondOnSuccess = handleCreateDontRespondOnSuccess;
 exports.handleCreate = handleCreate;
 exports.handleUpdate = handleUpdate;
 exports.handleDelete = handleDelete;
-exports.isLoggedIn = isLoggedIn;
+exports.isLoggedInRedirect = isLoggedInRedirect;
+exports.isLoggedInSendError = isLoggedInSendError;
 exports.updateDocument = updateDocument;

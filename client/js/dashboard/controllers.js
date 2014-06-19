@@ -44,44 +44,53 @@ angular.module('tms.dashboard.controllers',
     }
 
     // get all active patients along with relevant appointment info
-    Patient.query({status: '^active|new',
-                   select: 'name debt lastContact appointments._id appointments.when appointments.summarySent'},
-                  function(patients)
-    {
-        patients.forEach(function (patient)
+    Patient.query({
+                      status: '^active|new',
+                      select: 'name debt lastContact appointments._id appointments.when appointments.summarySent'
+                  }).
+                  $promise.then
+    (
+        function(patients)
         {
-            // scan appointments and do stuff
-            patient.appointments.forEach(function (appointment)
+            patients.forEach(function (patient)
             {
-                // is this an appointment which occurred in teh past?
-                if (Date.parse(appointment.when) <= Date.now())
+                // scan appointments and do stuff
+                patient.appointments.forEach(function (appointment)
                 {
-                    // is it unsummarized?
-                    if (!appointment.summarySent)
-                        $scope.todos.push(Todo.createSummarizeAppointmentTodo(patient, appointment));
-                }
-                // future appointment
-                else
-                {
-                    // is it within 7 days from now?
-                    if ((Date.parse(appointment.when) - Date.now()) < (7 * 24 * 60 * 60 * 1000))
+                    // is this an appointment which occurred in teh past?
+                    if (Date.parse(appointment.when) <= Date.now())
                     {
-                        appointment.patient = patient;
-                        $scope.upcomingAppointments.push(appointment);
+                        // is it unsummarized?
+                        if (!appointment.summarySent)
+                            $scope.todos.push(Todo.createSummarizeAppointmentTodo(patient, appointment));
                     }
+                    // future appointment
+                    else
+                    {
+                        // is it within 7 days from now?
+                        if ((Date.parse(appointment.when) - Date.now()) < (7 * 24 * 60 * 60 * 1000))
+                        {
+                            appointment.patient = patient;
+                            $scope.upcomingAppointments.push(appointment);
+                        }
+                    }
+                });
+
+                // check for outstanding debt
+                checkPatientDebtAndCreateTodo(patient);
+
+                // check if we need to contact this active patient
+                if ((Date.now() - Date.parse(patient.lastContact)) > (4 * 24 * 60 * 60 * 1000))
+                {
+                    $scope.todos.push(Todo.createContactPatientTodo(patient));
                 }
             });
-
-            // check for outstanding debt
-            checkPatientDebtAndCreateTodo(patient);
-
-            // check if we need to contact this active patient
-            if ((Date.now() - Date.parse(patient.lastContact)) > (4 * 24 * 60 * 60 * 1000))
-            {
-                $scope.todos.push(Todo.createContactPatientTodo(patient));
-            }
-        });
-    });
+        },
+        function(error)
+        {
+            console.log(error);
+        }
+    );
 
     // get all inactive patients and check for debt
     Patient.query({status: 'inactive',

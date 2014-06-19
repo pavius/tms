@@ -8,7 +8,7 @@ var Payment = require('../models/payment');
 module.exports.addRoutes = function(app, security)
 {
     // get all payments
-    app.get('/api/patients/:patientId/payments', routeCommon.isLoggedIn, function(request, response)
+    app.get('/api/patients/:patientId/payments', routeCommon.isLoggedInSendError, function(request, response)
     {
         Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
         {
@@ -22,7 +22,7 @@ module.exports.addRoutes = function(app, security)
     });
 
     // get a single payment
-    app.get('/api/patients/:patientId/payments/:id', routeCommon.isLoggedIn, function(request, response)
+    app.get('/api/patients/:patientId/payments/:id', routeCommon.isLoggedInSendError, function(request, response)
     {
         Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
         {
@@ -41,7 +41,7 @@ module.exports.addRoutes = function(app, security)
     });
 
     // create payment
-    app.post('/api/patients/:patientId/payments', routeCommon.isLoggedIn, function(request, response)
+    app.post('/api/patients/:patientId/payments', routeCommon.isLoggedInSendError, function(request, response)
     {
         Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
         {
@@ -115,7 +115,7 @@ module.exports.addRoutes = function(app, security)
     });
 
     // update a single payment
-    app.put('/api/patients/:patientId/payments/:id', routeCommon.isLoggedIn, function(request, response)
+    app.put('/api/patients/:patientId/payments/:id', routeCommon.isLoggedInSendError, function(request, response)
     {
         Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
         {
@@ -157,7 +157,7 @@ module.exports.addRoutes = function(app, security)
     });
 
     // delete an payment
-    app.delete('/api/patients/:patientId/payments/:id', routeCommon.isLoggedIn, function(request, response)
+    app.delete('/api/patients/:patientId/payments/:id', routeCommon.isLoggedInSendError, function(request, response)
     {
         Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
         {

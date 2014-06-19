@@ -5,7 +5,7 @@ var Appointment = require('../models/appointment');
 module.exports.addRoutes = function(app, security)
 {
     // get all appointments
-    app.get('/api/patients/:patientId/appointments', routeCommon.isLoggedIn, function(request, response) 
+    app.get('/api/patients/:patientId/appointments', routeCommon.isLoggedInSendError, function(request, response)
     {
         Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
         {
@@ -19,7 +19,7 @@ module.exports.addRoutes = function(app, security)
     });
 
     // get a single appointment
-    app.get('/api/patients/:patientId/appointments/:id', routeCommon.isLoggedIn, function(request, response) 
+    app.get('/api/patients/:patientId/appointments/:id', routeCommon.isLoggedInSendError, function(request, response)
     {
         Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
         {
@@ -38,7 +38,7 @@ module.exports.addRoutes = function(app, security)
     });
 
     // create appointment
-    app.post('/api/patients/:patientId/appointments', routeCommon.isLoggedIn, function(request, response) 
+    app.post('/api/patients/:patientId/appointments', routeCommon.isLoggedInSendError, function(request, response)
     {
         Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
         {
@@ -78,7 +78,7 @@ module.exports.addRoutes = function(app, security)
     });
 
     // update a single appointment
-    app.put('/api/patients/:patientId/appointments/:id', routeCommon.isLoggedIn, function(request, response)
+    app.put('/api/patients/:patientId/appointments/:id', routeCommon.isLoggedInSendError, function(request, response)
     {
         Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
         {
@@ -121,7 +121,7 @@ module.exports.addRoutes = function(app, security)
     });
 
     // delete an appointment
-    app.delete('/api/patients/:patientId/appointments/:id', routeCommon.isLoggedIn, function(request, response)
+    app.delete('/api/patients/:patientId/appointments/:id', routeCommon.isLoggedInSendError, function(request, response)
     {
         Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
         {
