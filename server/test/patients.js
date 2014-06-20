@@ -181,3 +181,170 @@ describe('Patients', function()
         });
     });
 });
+
+describe('Patient status', function()
+{
+    var weekInMs = 7 * 24 * 60 * 60 * 1000;
+
+    // create an appointment for a patient, verify patient status on response
+    function createAppointment(patientId, when, expectedStatus, cb)
+    {
+        request(app)
+            .post('/api/patients/' + patientId + '/appointments')
+            .send({when: when})
+            .expect('Content-Type', /json/)
+            .expect(201)
+            .end(function(err, response)
+            {
+                if (err) cb(err);
+                else
+                {
+                    expect(response.body.status).to.equal(expectedStatus);
+
+                    // save appointment id
+                    appointments.push(response.body.appointments[0]._id);
+
+                    cb();
+                }
+            });
+    }
+
+    // update an appointment for a patient, verify patient status on response
+    function updateAppointment(patientId, appointmentId, when, expectedStatus, cb)
+    {
+        request(app)
+            .put('/api/patients/' + patientId + '/appointments/' + appointmentId)
+            .send({when: when})
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end(function(err, response)
+            {
+                if (err) cb(err);
+                else
+                {
+                    expect(response.body.status).to.equal(expectedStatus);
+
+                    cb();
+                }
+            });
+    }
+
+    // create an appointment for a patient, verify patient status on response
+    function deleteAppointment(patientId, appointmentId, expectedStatus, cb)
+    {
+        request(app)
+            .delete('/api/patients/' + patientId + '/appointments/' + appointmentId)
+            .expect(200)
+            .end(function(err, response)
+            {
+                if (err) cb(err);
+                else
+                {
+                    expect(response.body.status).to.equal(expectedStatus);
+
+                    // remove id from appointments
+                    appointments.splice(appointments.indexOf(appointmentId), 1);
+                    cb();
+                }
+            });
+    }
+
+    function generateTimeFromNow(days, hours, minutes)
+    {
+        var now = Date.now();
+        now += days * ((24 * 60 * 60 * 1000));
+        now += hours * ((60 * 60 * 1000));
+        now += minutes * ((60 * 1000));
+
+        return new Date(now);
+    }
+
+    beforeEach(function(done)
+    {
+        patientId = null;
+        appointments = [];
+
+        // create a patient
+        request(app)
+            .post('/api/patients')
+            .send({name: 'n', email: 'n@h.com'})
+            .expect(201)
+            .end(function(err, response)
+            {
+                if (err) return done(err);
+
+                expect(response.body.status).to.equal('new');
+                patientId = response.body._id;
+                done();
+            });
+    });
+
+    describe('when a patient has more than N appointments', function()
+    {
+        it('should transition from new to active', function(done)
+        {
+            var appointmentIndex = 0;
+
+            // create 7 appointments - must be new
+            async.whilst(
+                function() { return appointmentIndex < 7 },
+
+                // 7 appointments - must be new
+                function(callback)
+                {
+                    createAppointment(patientId, (new Date()).toISOString(), 'new', callback);
+                    appointmentIndex++;
+                },
+
+                // 8th appointment - become active
+                function()
+                {
+                    createAppointment(patientId, (new Date()).toISOString(), 'active', done);
+                });
+        });
+    });
+
+    describe('when a patient has only 2 appointments but was previously active', function()
+    {
+        it('should remain active, and not become new again', function(done)
+        {
+            // do appointment stuff one at a time
+            async.series(
+                [
+                    // create an appointment 3 weeks from now, should lose "new" status
+                    function(callback)
+                    {
+                        createAppointment(patientId, generateTimeFromNow(-21, 0, 0).toISOString(), 'active', callback);
+                    },
+
+                    // another appointment from now - should not regain "new" status
+                    function(callback)
+                    {
+                        createAppointment(patientId, (new Date()).toISOString(), 'active', done);
+                    }
+                ]);
+        });
+    });
+
+    describe('when a patient becomes inactive and then an appointment is created', function()
+    {
+        it('should become active', function(done)
+        {
+            // do appointment stuff one at a time
+            async.series(
+                [
+                    // create an appointment 3 weeks from now, should lose "new" status
+                    function(callback)
+                    {
+                        createAppointment(patientId, generateTimeFromNow(-80, 0, 0).toISOString(), 'inactive', callback);
+                    },
+
+                    // another appointment from now - should not regain "new" status
+                    function(callback)
+                    {
+                        createAppointment(patientId, (new Date()).toISOString(), 'active', done);
+                    }
+                ]);
+        });
+    });
+});

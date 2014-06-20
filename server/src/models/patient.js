@@ -12,7 +12,7 @@ var patientSchema = mongoose.Schema
     appointments: [Appointment.schema],
     payments: [Payment.schema],
     status: {type: String, enum: ['new', 'active', 'inactive', 'unknown'], default: 'new'},
-    manualStatus: {type: String, enum: ['undefined', 'inactive', 'unknown'], default: 'undefined'},
+    manualStatus: {type: String, enum: ['undefined', 'new', 'active', 'inactive'], default: 'undefined'},
     inactivityReason: {type: String, enum: ['undefined', 'completed', 'terminated'], default: 'undefined'},
     debt:
     {
@@ -27,12 +27,7 @@ patientSchema.methods.calculateStatus = function()
 {
     var status = 'undefined';
 
-    // is there a manual override?
-    if (this.manualStatus !== 'undefined')
-    {
-        status = this.manualStatus;
-    }
-    else if (this.appointments.length === 0)
+    if (this.appointments.length === 0)
     {
         // no appointments means the patient is "new"
         status = 'new';
@@ -46,16 +41,22 @@ patientSchema.methods.calculateStatus = function()
                                     return a.when
                                 }).reverse();
 
-        // is the newest appointment older than three weeks?
-        if (Date.now() - Date.parse(appointments[0].when) >= (3 * 7 * 24 * 60 * 60 * 1000))
+        var weekInMs = 7 * 24 * 60 * 60 * 1000;
+        var lastAppointmentMsAgo = (Date.now() - Date.parse(appointments[0].when));
+
+        // is the newest appointment older than eight weeks?
+        if (lastAppointmentMsAgo >= (8 * weekInMs))
         {
             // inactive patient
             status = 'inactive';
         }
         else
         {
-            // is there only one appointment? if so, it's a new patient
-            if (appointments.length === 1)
+            // a "new" status can only be maintained, once it's lost it can't be re-attained. to maintain being a new
+            // patient you need to have less than 7 appointments and the last appointment must be 2 weeks ago
+            if (appointments.length <= 7 &&
+                lastAppointmentMsAgo <= (2 * weekInMs) &&
+                this.status == 'new')
             {
                 status = 'new';
             }
