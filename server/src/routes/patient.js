@@ -28,7 +28,33 @@ module.exports.addRoutes = function(app, security)
     // update a single patient
     app.put('/api/patients/:id', routeCommon.isLoggedInSendError, function(request, response)
     {
-        routeCommon.handleUpdate(Patient, request, response);
+        // remove 'id' from request body, if it exists
+        delete request.body._id;
+
+        // check if the request is telling us to re-calculate the status
+        if (request.body.manualStatus != 'recalculate')
+        {
+            Patient.findByIdAndUpdate(request.params.id, request.body, function(dbError, dbObject)
+            {
+                if (dbError)                response.json(403, dbError);
+                else                        response.json(200, dbObject);
+            });
+        }
+        else
+        {
+            Patient.findById(request.params.id, function(dbError, dbObject)
+            {
+                // set status to new, so as to "reset" the status logic
+                dbObject.status = 'new';
+                dbObject.status = dbObject.calculateStatus();
+
+                dbObject.save(function(dbError, dbObject)
+                {
+                    if (dbError)                response.json(403, dbError);
+                    else                        response.json(200, dbObject);
+                });
+            });
+        }
     });
 
     // delete a patient

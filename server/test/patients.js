@@ -347,4 +347,42 @@ describe('Patient status', function()
                 ]);
         });
     });
+
+    describe('when a patient is inactive, changes are made to appointments and status is recalculated', function()
+    {
+        it('should update status according to as if it were just created', function(done)
+        {
+            // do appointment stuff one at a time
+            async.series(
+                [
+                    // create an appointment 3 weeks from now, should lose "new" status
+                    function(callback)
+                    {
+                        createAppointment(patientId, generateTimeFromNow(-80, 0, 0).toISOString(), 'inactive', callback);
+                    },
+
+                    // update the appointment to "now" - it should become active but not new
+                    function(callback)
+                    {
+                        updateAppointment(patientId, appointments[0]._id, (new Date()).toISOString(), 'active', callback);
+                    },
+
+                    // now recalculate the status of the patient
+                    function(callback)
+                    {
+                        // create a patient
+                        request(app)
+                            .put('/api/patients/' + patientId)
+                            .send({manualStatus: 'recalculate'})
+                            .expect(200)
+                            .end(function(err, response)
+                            {
+                                if (err) return done(err);
+                                expect(response.body.status).to.equal('new');
+                                done();
+                            });
+                    }
+                ]);
+        });
+    });
 });

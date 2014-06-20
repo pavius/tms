@@ -12,7 +12,7 @@ var patientSchema = mongoose.Schema
     appointments: [Appointment.schema],
     payments: [Payment.schema],
     status: {type: String, enum: ['new', 'active', 'inactive', 'unknown'], default: 'new'},
-    manualStatus: {type: String, enum: ['undefined', 'new', 'active', 'inactive'], default: 'undefined'},
+    manualStatus: {type: String, enum: ['undefined', 'new', 'active', 'inactive', 'recalculate'], default: 'undefined'},
     inactivityReason: {type: String, enum: ['undefined', 'completed', 'terminated'], default: 'undefined'},
     debt:
     {
