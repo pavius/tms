@@ -101,7 +101,7 @@ function handleDelete(modelClass, request, response)
 
 function verifyLoggedIn(request, response, errorScheme, next)
 {
-    if (/* process.env.NODE_ENV == 'development' || */
+    if (process.env.NODE_ENV == 'development' ||
         process.env.NODE_ENV == 'test' || 
         request.isAuthenticated())
     {
