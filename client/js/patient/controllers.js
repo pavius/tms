@@ -105,7 +105,7 @@ angular.module('tms.patient.controllers',
     $scope.patient = {};
     $scope.debt = 0;
     $scope.alerts = [];
-    $scope.translatedStatus = '';
+    $scope.calculatedStatus = '';
     $scope.inactivityReason = {open: false};
     $scope.errorHandler = errorHandler;
 
@@ -146,7 +146,6 @@ angular.module('tms.patient.controllers',
         $scope.patient.appointments.splice(idx, 1);
     }
 
-
     // response will arrive with appointments/payments. we don't want that. we just want to update
     // the patient stuff
     function updateScopePatientWithResponse(patientResponse)
@@ -161,16 +160,25 @@ angular.module('tms.patient.controllers',
         switch(status)
         {
             case 'new': return 'חדש';
-            case 'active': return 'פעיל';
+            case 'active': return 'בתהליך';
             case 'inactive': return 'לא פעיל';
             default: return 'לא ידוע';
         }
     }
 
-    $scope.$watch('patient.status', function(newValue, oldValue)
+    // choose between manual and automatic status
+    function getEffectiveStatus()
     {
-        // really gross, but since translation is a hack right now - i'll live with this
-        $scope.translatedStatus = translateStatus(newValue);
+        if ($scope.patient.manualStatus == 'undefined' ||
+            $scope.patient.manualStatus == 'recalculate')
+            return $scope.patient.status;
+        else
+            return $scope.patient.manualStatus;
+    }
+
+    $scope.$watch('patient.status + patient.manualStatus', function()
+    {
+        $scope.effectiveStatus = translateStatus(getEffectiveStatus());
     });
 
     $scope.update = function()

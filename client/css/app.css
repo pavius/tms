@@ -164,6 +164,7 @@ a.contact-glyph
     padding: 6px 12px;
     border-color: #CCCCCC;
     background-color: #FFFFFF;
+    direction: rtl
 }
 
 #patient-status-separator

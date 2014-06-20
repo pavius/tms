@@ -100,10 +100,19 @@ row.clearfix
                     hr#patient-status-separator
 
                     .input-group
-                        input.form-control(type='text', readonly, ng-model='translatedStatus')
+                        input.form-control(type='text', readonly, ng-model='effectiveStatus')
                         span.input-group-addon סטטוס
 
-                    select.patient-dropdown(ng-model='patient.inactivityReason', ng-show='patient.status == "inactive"')
+                    .input-group
+                        select.patient-dropdown(ng-model='patient.manualStatus')
+                            option(value='undefined') מחושב אוטומטית
+                            option(value='new') חדש (ידני)
+                            option(value='active') בתהליך (ידני)
+                            option(value='inactive') לא פעיל (ידני)
+                            option(value='recalculate') חשב מחדש
+                        span.input-group-addon חישוב סטטוס
+
+                    select.patient-dropdown(ng-model='patient.inactivityReason', ng-show='patient.status == "inactive" || patient.manualStatus == "inactive"')
                         option(value='undefined') לא ידועה סיבת הפסקת הטיפול
                         option(value='completed') הטיפול הגיע לסיומו
                         option(value='terminated') המטופל סיים את הטיפול ביוזמתו
