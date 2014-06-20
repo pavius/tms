@@ -6,7 +6,7 @@ var Payment = require('./payment');
 var patientSchema = mongoose.Schema
 ({
     name: {type: String, required: true},
-    email: {type: String, required: true},
+    email: {type: String},
     primaryPhone: {type: String},
     appointmentPrice: {type: Number, min: 0, default: 330},
     appointments: [Appointment.schema],

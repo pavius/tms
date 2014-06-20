@@ -1,4 +1,7 @@
 row
+    alert(ng-repeat='alert in errorHandler.alerts', type='{{alert.type}}', close='errorHandler.closeAlert($index)') {{alert.message}}
+
+row
     h3 לבצע
 
     p(ng-show='todos.length == 0') אין משימות לביצוע

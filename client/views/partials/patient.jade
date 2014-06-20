@@ -1,5 +1,5 @@
 row
-    alert(ng-repeat='alert in alerts', type='{{alert.type}}', close='closeAlert($index)') {{alert.msg}}
+    alert(ng-repeat='alert in errorHandler.alerts', type='{{alert.type}}', close='errorHandler.closeAlert($index)') {{alert.message}}
 
 row
     h3.view-header

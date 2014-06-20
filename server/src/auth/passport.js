@@ -41,7 +41,7 @@ module.exports = function(passport)
 
         // check if user is allowed
         if (allowedUsers.length && allowedUsers.indexOf(profile._json.email) == -1)
-            return done(new Error("Not allowed"));
+            return done("User not allowed");
 
         // try to find the user based on their google id
         User.findOne({'google.id': profile.id}, function(err, user) 

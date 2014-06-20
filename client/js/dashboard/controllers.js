@@ -1,7 +1,8 @@
 angular.module('tms.dashboard.controllers', 
 [
     'tms.patient.services',
-    'tms.todo.services'
+    'tms.todo.services',
+    'tms.common.services'
 ])
 
 .config(['$routeProvider', function ($routeProvider)
@@ -16,11 +17,12 @@ angular.module('tms.dashboard.controllers',
 }]) 
 
 .controller('DashboardController',
-            ['$scope', '$location', 'Patient', 'Todo',
-            function($scope, $location, Patient, Todo)
+            ['$scope', '$location', 'ErrorHandler', 'Patient', 'Todo',
+            function($scope, $location, errorHandler, Patient, Todo)
 {
     $scope.todos = [];
     $scope.upcomingAppointments = [];
+    $scope.errorHandler = errorHandler;
 
     $scope.completeTodoAndRemove = function(todo, index)
     {
@@ -44,12 +46,8 @@ angular.module('tms.dashboard.controllers',
     }
 
     // get all active patients along with relevant appointment info
-    Patient.query({
-                      status: '^active|new',
-                      select: 'name debt lastContact appointments._id appointments.when appointments.summarySent'
-                  }).
-                  $promise.then
-    (
+    Patient.query({status: '^active|new',
+                   select: 'name debt lastContact appointments._id appointments.when appointments.summarySent'},
         function(patients)
         {
             patients.forEach(function (patient)
@@ -88,18 +86,22 @@ angular.module('tms.dashboard.controllers',
         },
         function(error)
         {
-            console.log(error);
+            $scope.errorHandler.handleError('read active patients', error);
         }
     );
 
     // get all inactive patients and check for debt
     Patient.query({status: 'inactive',
                    select: 'name debt'},
-                  function(patients)
-    {
-        patients.forEach(function(patient)
+        function(patients)
         {
-            checkPatientDebtAndCreateTodo(patient);
+            patients.forEach(function(patient)
+            {
+                checkPatientDebtAndCreateTodo(patient);
+            });
+        },
+        function(error)
+        {
+            $scope.errorHandler.handleError('read inactive patients', error);
         });
-    });
 }]);

@@ -112,7 +112,7 @@ function verifyLoggedIn(request, response, errorScheme, next)
         if (errorScheme == 'redirect')
             response.redirect('/login');
         else
-            response.send(302);
+            response.send(401);
     }
 }
 

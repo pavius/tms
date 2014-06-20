@@ -2,6 +2,7 @@ angular.module('tms.patient.controllers',
 [
     'ui.bootstrap',
     'ui.bootstrap.tpls',
+    'tms.common.services',
     'tms.appointment.controllers',
     'tms.payment.controllers',
     'tms.patient.services',
@@ -27,12 +28,13 @@ angular.module('tms.patient.controllers',
 }])
 
 .controller('PatientListController', 
-            ['$scope', '$log', '$location', '$modal', 'Patient', 
-            function($scope, $log, $location, $modal, Patient)
+            ['$scope', '$log', '$location', '$modal', 'ErrorHandler', 'Patient',
+            function($scope, $log, $location, $modal, errorHandler, Patient)
 {
     $scope.searchTerm = '';
     $scope.showActivePatientsOnly = true;
     $scope.patients = [];
+    $scope.errorHandler = errorHandler;
 
     // create a new patient
     $scope.create = function()
@@ -42,11 +44,16 @@ angular.module('tms.patient.controllers',
 
         patientModal.result.then(function(newPatient)
         {
-            Patient.save(newPatient, function(dbObject)
-            {
-                // shove to view
-                $scope.patients.push(dbObject);
-            });
+            Patient.save(newPatient,
+                function(dbObject)
+                {
+                    // shove to view
+                    $scope.patients.push(dbObject);
+                },
+                function(error)
+                {
+                    $scope.errorHandler.handleError('create patient', error);
+                });
         });
     };
 
@@ -55,10 +62,15 @@ angular.module('tms.patient.controllers',
         query = $scope.showActivePatientsOnly ? {status: '^active|new'} : {};
 
         // get all patients
-        Patient.query(query, function(patients)
-        {
-            $scope.patients = patients;
-        });
+        Patient.query(query,
+            function(patients)
+            {
+                $scope.patients = patients;
+            },
+            function(error)
+            {
+                $scope.errorHandler.handleError('load patients', error);
+            });
     };
 
     $scope.searchFilter = function(patient)
@@ -86,8 +98,8 @@ angular.module('tms.patient.controllers',
 }])
 
 .controller('PatientDetailController', 
-            ['$scope', '$log', '$routeParams', '$modal', '$location', 'Patient', 'Appointment', 'Payment', 
-            function($scope, $log, $routeParams, $modal, $location, Patient, Appointment, Payment) 
+            ['$scope', '$log', '$routeParams', '$modal', '$location', 'ErrorHandler', 'Patient', 'Appointment', 'Payment',
+            function($scope, $log, $routeParams, $modal, $location, errorHandler, Patient, Appointment, Payment)
 {
     $scope.appointment = null;
     $scope.patient = {};
@@ -95,13 +107,7 @@ angular.module('tms.patient.controllers',
     $scope.alerts = [];
     $scope.translatedStatus = '';
     $scope.inactivityReason = {open: false};
-
-
-    // load the patient
-    Patient.get({id: $routeParams.id}, function(patient)
-    {
-        $scope.patient = patient;
-    });
+    $scope.errorHandler = errorHandler;
 
     function updateActiveTab(activeTab)
     {
@@ -169,10 +175,15 @@ angular.module('tms.patient.controllers',
 
     $scope.update = function()
     {
-        Patient.update({id: $scope.patient._id}, $scope.patient, function()
-        {
-            $location.path('patients');
-        });
+        Patient.update({id: $scope.patient._id}, $scope.patient,
+            function()
+            {
+                $location.path('patients');
+            },
+            function(error)
+            {
+                $scope.errorHandler.handleError('update patient', error);
+            });
     };
 
     $scope.cancel = function()
@@ -200,26 +211,36 @@ angular.module('tms.patient.controllers',
                 // update in server
                 Appointment.update({patientId: $scope.patient._id,
                                     id: modifiedAppointment.appointment._id},
-                                    modifiedAppointment.appointment, function(dbObject)
-                {
-                    // reinsert
-                    removeAppointmentById(modifiedAppointment.appointment._id);
-                    $scope.patient.appointments.push(dbObject.appointments[0]);
+                                    modifiedAppointment.appointment,
+                    function(dbObject)
+                    {
+                        // reinsert
+                        removeAppointmentById(modifiedAppointment.appointment._id);
+                        $scope.patient.appointments.push(dbObject.appointments[0]);
 
-                    // update patient
-                    updateScopePatientWithResponse(dbObject);
-                });
+                        // update patient
+                        updateScopePatientWithResponse(dbObject);
+                    },
+                    function(error)
+                    {
+                        $scope.errorHandler.handleError('update appointment', error);
+                    });
             }
             else
             {
                 Appointment.delete({patientId: $scope.patient._id,
-                                    id: modifiedAppointment.appointment._id}, function(dbObject)
-                {
-                    removeAppointmentById(modifiedAppointment.appointment._id);
+                                    id: modifiedAppointment.appointment._id},
+                    function(dbObject)
+                    {
+                        removeAppointmentById(modifiedAppointment.appointment._id);
 
-                    // update patient
-                    updateScopePatientWithResponse(dbObject);
-                });
+                        // update patient
+                        updateScopePatientWithResponse(dbObject);
+                    },
+                    function(error)
+                    {
+                        $scope.errorHandler.handleError('delete appointment', error);
+                    });
             }
         });
     };
@@ -248,13 +269,18 @@ angular.module('tms.patient.controllers',
         appointmentModal.result.then(function(newAppointment)
         {
             // update in server
-            Appointment.save({patientId: $scope.patient._id}, newAppointment.appointment, function(dbObject)
-            {
-                $scope.patient.appointments.push(dbObject.appointments[0]);
+            Appointment.save({patientId: $scope.patient._id}, newAppointment.appointment,
+                function(dbObject)
+                {
+                    $scope.patient.appointments.push(dbObject.appointments[0]);
 
-                // update patient
-                updateScopePatientWithResponse(dbObject);
-            });
+                    // update patient
+                    updateScopePatientWithResponse(dbObject);
+                },
+                function(error)
+                {
+                    $scope.errorHandler.handleError('save appointment', error);
+                });
         });
     };
 
@@ -273,28 +299,24 @@ angular.module('tms.patient.controllers',
         {
             // update in server
             Payment.save({patientId: $scope.patient._id}, newPayment,
+                function(dbObject)
+                {
+                    // shove this payment to the list
+                    $scope.patient.payments.push(dbObject.payments[0]);
 
-                            // success
-                            function(dbObject)
-                            {
-                                // shove this payment to the list
-                                $scope.patient.payments.push(dbObject.payments[0]);
+                    // update patient
+                    updateScopePatientWithResponse(dbObject);
 
-                                // update patient
-                                updateScopePatientWithResponse(dbObject);
-
-                                // update appointments with their new payments
-                                dbObject.appointments.forEach(function(appointment)
-                                {
-                                    getAppointmentById($scope.patient, appointment._id).payment = dbObject.payments[0]._id;
-                                });
-                            },
-
-                            // error
-                            function(response)
-                            {
-                                addAlert('danger', 'Error creating payment: ' + response.data.error);
-                            });
+                    // update appointments with their new payments
+                    dbObject.appointments.forEach(function(appointment)
+                    {
+                        getAppointmentById($scope.patient, appointment._id).payment = dbObject.payments[0]._id;
+                    });
+                },
+                function(error)
+                {
+                    $scope.errorHandler.handleError('create payment', error);
+                });
         });
     };
 
@@ -305,10 +327,15 @@ angular.module('tms.patient.controllers',
 
         // update in server
         Appointment.update({patientId: $scope.patient._id, id: appointmentCopy._id},
-                            appointmentCopy, function(dbObject)
-        {
-            appointment[name] = !appointment[name];
-        });
+                            appointmentCopy,
+            function(dbObject)
+            {
+                appointment[name] = !appointment[name];
+            },
+            function(error)
+            {
+                $scope.errorHandler.handleError('update appointment', error);
+            });
     };
 
     $scope.toggleAppointmentSummarized = function(appointment)
@@ -345,6 +372,18 @@ angular.module('tms.patient.controllers',
         else if (appointment.summarySent)              return 'glyphicon glyphicon-ok';
         else                                           return 'glyphicon glyphicon-remove';     
     };
+
+    // load the patient
+    Patient.get({id: $routeParams.id},
+        function(patient)
+        {
+            $scope.patient = patient;
+        },
+        function(error)
+        {
+            $scope.errorHandler.handleError('read patient info', error);
+        }
+    );
 }])
 
 .controller('PatientModalController', 
