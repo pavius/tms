@@ -8,7 +8,7 @@ var patientSchema = mongoose.Schema
     name: {type: String, required: true},
     email: {type: String},
     primaryPhone: {type: String},
-    appointmentPrice: {type: Number, min: 0, default: 330},
+    appointmentPrice: {type: Number, min: 0, default: 350},
     appointments: [Appointment.schema],
     payments: [Payment.schema],
     status: {type: String, enum: ['new', 'active', 'inactive', 'unknown'], default: 'new'},

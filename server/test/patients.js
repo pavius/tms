@@ -107,7 +107,7 @@ describe('Patients', function()
                     if (err) return done(err);
 
                     // verify the response has a default price
-                    expect(response.body.appointmentPrice).to.equal(330);
+                    expect(response.body.appointmentPrice).to.equal(350);
 
                     done();
                 });

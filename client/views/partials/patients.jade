@@ -2,7 +2,7 @@ row
     alert(ng-repeat='alert in errorHandler.alerts', type='{{alert.type}}', close='errorHandler.closeAlert($index)') {{alert.message}}
 
 row
-    button.btn.btn-sm.btn-primary.pull-right(ng-click='create()') מטופל חדש
+    button.btn.btn-sm.btn-primary.pull-right(ng-click='create()') צור מטופל
 
     .input-group.pull-left(style='width: 100px')
         input.input-sm.form-control(type='text', id='search', placeholder='חפש', ng-model='searchTerm')
@@ -31,7 +31,7 @@ table.table
             td#patient-list-name {{patient.name}}
 
             td
-                a(href='mailto:{{patient.email}}').contact-glyph
+                a(href='mailto:{{patient.email}}', ng-show='patient.email.length').contact-glyph
                     i.glyphicon.glyphicon-envelope
 
                 a(href='tel:{{patient.primaryPhone}}', ng-show='patient.primaryPhone.length').contact-glyph

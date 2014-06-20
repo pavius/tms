@@ -398,7 +398,7 @@ angular.module('tms.patient.controllers',
             ['$scope', '$modalInstance', 
             function($scope, $modalInstance) 
 {
-    $scope.patient = {appointmentPrice: 330};
+    $scope.patient = {appointmentPrice: 350};
 
     $scope.create = function()
     {
