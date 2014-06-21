@@ -53,14 +53,14 @@ patients =
                 missed: true,
                 price: 750
             },
-            {when: generateTimeFromNow(-1, 0, 0).toISOString()},
-            {when: generateTimeFromNow(-2, 0, 0).toISOString()},
-            {when: generateTimeFromNow(-3, 0, 0).toISOString()},
-            {when: generateTimeFromNow(-4, 0, 0).toISOString()},
-            {when: generateTimeFromNow(-5, 0, 0).toISOString()},
-            {when: generateTimeFromNow(-6, 0, 0).toISOString()},
-            {when: generateTimeFromNow(-7, 0, 0).toISOString()},
-            {when: generateTimeFromNow(-8, 0, 0).toISOString()}
+            {when: generateTimeFromNow(-1, 0, 0).toISOString(), summarySent: false},
+            {when: generateTimeFromNow(-2, 0, 0).toISOString(), summarySent: true},
+            {when: generateTimeFromNow(-3, 0, 0).toISOString(), summarySent: true},
+            {when: generateTimeFromNow(-4, 0, 0).toISOString(), summarySent: true},
+            {when: generateTimeFromNow(-5, 0, 0).toISOString(), summarySent: true},
+            {when: generateTimeFromNow(-6, 0, 0).toISOString(), summarySent: true},
+            {when: generateTimeFromNow(-7, 0, 0).toISOString(), summarySent: true},
+            {when: generateTimeFromNow(-8, 0, 0).toISOString(), summarySent: true}
         ]
     },
     {

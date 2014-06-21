@@ -120,12 +120,33 @@ angular.module('tms.todo.services',
         return "ליצור קשר עם " + this.patient.name;
     }
 
+
+    //
+    // A new patient needs to have an appointment
+    //
+    function SetPatientAppointment(patient)
+    {
+        this.patient = patient;
+        this.done = false;
+    }
+
+    SetPatientAppointment.prototype.view = function(callback)
+    {
+        $location.path('patients/' + this.patient._id);
+    }
+
+    SetPatientAppointment.prototype.toString = function()
+    {
+        return "לקבוע פגישה עם " + this.patient.name;
+    }
+
     //
     // Factory object
     //
     return {
         createSummarizeAppointmentTodo: function(patient, appointment) { return new SummarizeAppointmentTodo(patient, appointment); },
         createCollectDebtTodo: function(patient, debt) { return new CollectDebtTodo(patient, debt); },
-        createContactPatientTodo: function(patient) { return new ContactPatientTodo(patient); }
+        createContactPatientTodo: function(patient) { return new ContactPatientTodo(patient); },
+        createSetPatientAppointment: function(patient) { return new SetPatientAppointment(patient); }
     }
 }]);

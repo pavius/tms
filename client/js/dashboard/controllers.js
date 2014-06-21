@@ -52,6 +52,8 @@ angular.module('tms.dashboard.controllers',
         {
             patients.forEach(function (patient)
             {
+                var patientHasFutureAppointment = false;
+
                 // scan appointments and do stuff
                 patient.appointments.forEach(function (appointment)
                 {
@@ -65,6 +67,8 @@ angular.module('tms.dashboard.controllers',
                     // future appointment
                     else
                     {
+                        patientHasFutureAppointment = true;
+
                         // is it within 7 days from now?
                         if ((Date.parse(appointment.when) - Date.now()) < (7 * 24 * 60 * 60 * 1000))
                         {
@@ -77,10 +81,19 @@ angular.module('tms.dashboard.controllers',
                 // check for outstanding debt
                 checkPatientDebtAndCreateTodo(patient);
 
-                // check if we need to contact this active patient
-                if (patient.getStatus() == 'new' && (Date.now() - Date.parse(patient.lastContact)) > (4 * 24 * 60 * 60 * 1000))
+                if (patient.getStatus() == 'new')
                 {
-                    $scope.todos.push(Todo.createContactPatientTodo(patient));
+                    // check if we need to contact this new patient
+                    if ((Date.now() - Date.parse(patient.lastContact)) > (4 * 24 * 60 * 60 * 1000))
+                    {
+                        $scope.todos.push(Todo.createContactPatientTodo(patient));
+                    }
+
+                    // check if this patient has an appointment
+                    if (!patientHasFutureAppointment)
+                    {
+                        $scope.todos.push(Todo.createSetPatientAppointment(patient));
+                    }
                 }
             });
         },

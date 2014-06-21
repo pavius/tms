@@ -2,16 +2,16 @@ row
     alert(ng-repeat='alert in errorHandler.alerts', type='{{alert.type}}', close='errorHandler.closeAlert($index)') {{alert.message}}
 
 row
-    h3 לבצע
+    h3.dashboard-title לבצע
 
     p(ng-show='todos.length == 0') אין משימות לביצוע
 
     table.table.dashboard-table
         tbody
-            tr(ng-repeat="todo in todos")
+            tr(ng-repeat="todo in todos | orderBy: todo.patient._id")
                 td#dashboard-checkbox-column
                     form
-                        input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)')
+                        input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)', ng-show='todo.complete')
                 td
                     {{todo.toString()}}
                 td
@@ -19,7 +19,7 @@ row
                         i.glyphicon.glyphicon-zoom-in
 
 row
-    h3 פגישות קרובות
+    h3.dashboard-title פגישות קרובות
 
     p(ng-show='upcomingAppointments.length == 0') אין פגישות קרובות
 
