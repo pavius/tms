@@ -8,7 +8,7 @@ row
 
     table.table.dashboard-table
         tbody
-            tr(ng-repeat="todo in todos | orderBy: todo.patient._id")
+            tr(ng-repeat="todo in todos | orderBy: 'importance()'")
                 td#dashboard-checkbox-column
                     form
                         input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)', ng-show='todo.complete')

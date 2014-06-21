@@ -186,12 +186,12 @@ a.contact-glyph
 
 #patients-patient-row.new-patient
 {
-    background-color: rgba(223, 233, 225, 0.42);
+    background-color: rgba(223, 233, 225, 0.8);
 }
 
 #patients-patient-row.inactive-patient
 {
-    background-color: rgba(255, 221, 221, 0.42);
+    background-color: rgba(255, 221, 221, 0.8);
 }
 
 h3.dashboard-title

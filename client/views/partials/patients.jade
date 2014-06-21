@@ -16,7 +16,6 @@ table.table
     thead
 
         tr
-            th#patient-new-indicator
             th שם
             th קשר
             th 
@@ -24,8 +23,6 @@ table.table
     tbody
 
         tr#patients-patient-row(ng-repeat="patient in patients | orderBy: ['getFreshness()', 'name'] | filter: searchFilter", ng-class='patient.getStatus() + "-patient"')
-
-            td#patient-list-status-indicator
 
             td#patient-list-name {{patient.name}}
 

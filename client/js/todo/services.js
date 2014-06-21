@@ -19,6 +19,8 @@ angular.module('tms.todo.services',
         this.done = false;
     }
 
+    SummarizeAppointmentTodo.prototype.importance = function() { return 0; }
+
     SummarizeAppointmentTodo.prototype.complete = function(callback)
     {
         Appointment.update({patientId: this.patient._id, id: this.appointment._id}, {summarySent: true}, function(appointment)
@@ -62,6 +64,8 @@ angular.module('tms.todo.services',
         this.done = false;
     }
 
+    CollectDebtTodo.prototype.importance = function() { return 100; }
+
     CollectDebtTodo.prototype.complete = function(callback)
     {
         if (window.confirm("האם לשלוח חשבונית ל" + this.patient.name + "?"))
@@ -97,6 +101,8 @@ angular.module('tms.todo.services',
         this.done = false;
     }
 
+    ContactPatientTodo.prototype.importance = function() { return 10; }
+
     ContactPatientTodo.prototype.complete = function(callback)
     {
         Patient.update({id: this.patient._id}, {lastContact: Date.now()}, function(patient)
@@ -129,6 +135,8 @@ angular.module('tms.todo.services',
         this.patient = patient;
         this.done = false;
     }
+
+    SetPatientAppointment.prototype.importance = function() { return 5; }
 
     SetPatientAppointment.prototype.view = function(callback)
     {
