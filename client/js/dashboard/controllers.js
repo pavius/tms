@@ -21,7 +21,8 @@ angular.module('tms.dashboard.controllers',
             function($scope, $location, errorHandler, Patient, Todo)
 {
     $scope.todos = [];
-    $scope.upcomingAppointments = [];
+    $scope.appointmentsThisWeek = [];
+    $scope.appointmentsNextWeek = [];
     $scope.errorHandler = errorHandler;
 
     $scope.completeTodoAndRemove = function(todo, index)
@@ -69,11 +70,21 @@ angular.module('tms.dashboard.controllers',
                     {
                         patientHasFutureAppointment = true;
 
-                        // is it within 7 days from now?
-                        if ((Date.parse(appointment.when) - Date.now()) < (7 * 24 * 60 * 60 * 1000))
+                        var dayInMs = 24 * 60 * 60 * 1000;
+                        var daysUntilSaturday = 6 /* saturday */ - (new Date()).getDay();
+                        var appointmentDaysFromNow = (Date.parse(appointment.when) - new Date()) / dayInMs;
+
+                        // is it this week?
+                        if (appointmentDaysFromNow < daysUntilSaturday)
                         {
                             appointment.patient = patient;
-                            $scope.upcomingAppointments.push(appointment);
+                            $scope.appointmentsThisWeek.push(appointment);
+                        }
+                        // is it next week?
+                        else if (appointmentDaysFromNow < (daysUntilSaturday + 7))
+                        {
+                            appointment.patient = patient;
+                            $scope.appointmentsNextWeek.push(appointment);
                         }
                     }
                 });

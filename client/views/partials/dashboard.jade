@@ -19,13 +19,26 @@ row
                         i.glyphicon.glyphicon-zoom-in
 
 row
-    h3.dashboard-title פגישות קרובות
+    h3.dashboard-title פגישות השבוע
 
-    p(ng-show='upcomingAppointments.length == 0') אין פגישות קרובות
+    p(ng-show='appointmentsThisWeek.length == 0') אין פגישות השבוע
 
     table.table.dashboard-table
         tbody
-            tr(ng-repeat="appointment in upcomingAppointments | orderBy:'when'")
+            tr(ng-repeat="appointment in appointmentsThisWeek | orderBy:'when'")
+                td {{appointment.when | date:"EEEE, dd MMMM 'ב-' HH:mm"}} עם {{appointment.patient.name}}
+                td
+                    a.location-selector(href='patients/{{appointment.patient._id}}')
+                        i.glyphicon.glyphicon-zoom-in
+
+row
+    h3.dashboard-title פגישות בשבוע הבא
+
+    p(ng-show='appointmentsNextWeek.length == 0') אין פגישות בשבוע הבא
+
+    table.table.dashboard-table
+        tbody
+            tr(ng-repeat="appointment in appointmentsNextWeek | orderBy:'when'")
                 td {{appointment.when | date:"EEEE, dd MMMM 'ב-' HH:mm"}} עם {{appointment.patient.name}}
                 td
                     a.location-selector(href='patients/{{appointment.patient._id}}')
