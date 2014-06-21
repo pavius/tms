@@ -184,6 +184,18 @@ a.contact-glyph
     color: #777;
 }
 
+#patients-patient-row.new-patient
+{
+    background-color: rgba(223, 233, 225, 0.42);
+}
+
+#patients-patient-row.inactive-patient
+{
+    background-color: rgba(255, 221, 221, 0.42);
+}
+
+
+
 /*
  * RTL checkbox
  */

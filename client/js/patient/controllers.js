@@ -6,7 +6,7 @@ angular.module('tms.patient.controllers',
     'tms.appointment.controllers',
     'tms.payment.controllers',
     'tms.patient.services',
-    'tms.payment.services',
+    'tms.payment.services'
 ])
 
 .config(['$routeProvider', function ($routeProvider) 
@@ -16,13 +16,13 @@ angular.module('tms.patient.controllers',
     .when('/patients', 
     {
         templateUrl:'partials/patients',
-        controller:'PatientListController',
+        controller:'PatientListController'
     })
 
     .when('/patients/:id', 
     {
         templateUrl:'partials/patient',
-        controller:'PatientDetailController',
+        controller:'PatientDetailController'
     });
 
 }])
@@ -59,18 +59,49 @@ angular.module('tms.patient.controllers',
 
     $scope.reloadPatients = function()
     {
-        query = $scope.showActivePatientsOnly ? {status: '^active|new'} : {};
+        $scope.patients = [];
 
-        // get all patients
-        Patient.query(query,
-            function(patients)
+        function addPatientsIfUnique(patients)
+        {
+            patients.forEach(function(patient)
             {
-                $scope.patients = patients;
-            },
-            function(error)
-            {
-                $scope.errorHandler.handleError('load patients', error);
+                if (!_.findWhere($scope.patients, {_id: patient._id}))
+                {
+                    $scope.patients.push(patient);
+                }
             });
+        }
+
+        function handlePatientLoadError(error)
+        {
+            $scope.errorHandler.handleError('load patients', error);
+        }
+
+        // do we need only to get active/new patients?
+        if ($scope.showActivePatientsOnly)
+        {
+            // requires two queries
+            async.parallel(
+                [
+                    // get all patients who do not have manual status and are active/new
+                    function(callback)
+                    {
+                        Patient.query({manualStatus: 'undefined', status: '^active|new', select: '-appointments'}, addPatientsIfUnique, handlePatientLoadError);
+                    },
+
+                    // get all patients who are manually defined as active/new
+                    function(callback)
+                    {
+                        Patient.query({manualStatus: '^active|new', select: '-appointments'}, addPatientsIfUnique, handlePatientLoadError);
+                    }
+                ]
+            );
+        }
+        else
+        {
+            // just get'em all
+            Patient.query({}, addPatientsIfUnique, handlePatientLoadError);
+        }
     };
 
     $scope.searchFilter = function(patient)
@@ -82,7 +113,7 @@ angular.module('tms.patient.controllers',
                keyword.test(patient.email);
     };
 
-    $scope.getPatientGlyphIconByStatus = function(patient)
+    $scope.getPatientGlyphIconByHasAppointment = function(patient)
     {
         switch(patient.status)
         {

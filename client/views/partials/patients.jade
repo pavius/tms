@@ -23,10 +23,10 @@ table.table
 
     tbody
 
-        tr(ng-repeat="patient in patients | orderBy: 'name' | filter: searchFilter")
+        tr#patients-patient-row(ng-repeat="patient in patients | orderBy: ['getFreshness()', 'name'] | filter: searchFilter", ng-class='patient.getStatus() + "-patient"')
 
             td#patient-list-status-indicator
-                i(ng-class='getPatientGlyphIconByStatus(patient)')
+                i(ng-class='getPatientGlyphIconByHasAppointment(patient)')
 
             td#patient-list-name {{patient.name}}
 

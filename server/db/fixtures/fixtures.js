@@ -50,7 +50,15 @@ patients =
                 summarySent: true,
                 missed: true,
                 price: 750
-            }
+            },
+            {when: generateTimeFromNow(-1, 0, 0).toISOString()},
+            {when: generateTimeFromNow(-2, 0, 0).toISOString()},
+            {when: generateTimeFromNow(-3, 0, 0).toISOString()},
+            {when: generateTimeFromNow(-4, 0, 0).toISOString()},
+            {when: generateTimeFromNow(-5, 0, 0).toISOString()},
+            {when: generateTimeFromNow(-6, 0, 0).toISOString()},
+            {when: generateTimeFromNow(-7, 0, 0).toISOString()},
+            {when: generateTimeFromNow(-8, 0, 0).toISOString()}
         ]
     },
     {
@@ -146,15 +154,23 @@ function randomWords(count)
 
 function autoGenerateFixtures()
 {
-    // add 50 patients
-    for (var idx = 0; idx < 6; ++idx)
+    // add patients
+    for (var idx = 0; idx < 12; ++idx)
     {
         patient =
         {
             name: randomWords(2),
             primaryPhone: "0541234567",
-            email: randomWords(1) + '@' + randomWords(1) + '.com'
+            email: randomWords(1) + '@' + randomWords(1) + '.com',
+            appointments: []
         };
+
+        for (var appointmentIdx = 0; appointmentIdx < idx; ++appointmentIdx)
+        {
+            patient.appointments.push({
+                when: generateRandomDateFromNow(-10000, 10000)
+            });
+        }
 
         patients.push(patient);
     }
@@ -163,7 +179,6 @@ function autoGenerateFixtures()
 function loadFixtures(modelClass, fixtures, callback)
 {
     objectsLeft = fixtures.length;
-
 }
 
 exports.load = function(callback)
@@ -171,7 +186,7 @@ exports.load = function(callback)
     dropCollections(function()
     {
         // auto generate fixtures
-        //autoGenerateFixtures();
+        // autoGenerateFixtures();
 
         // shove patients
         async.forEach(patients, function(patient, done)
