@@ -24,6 +24,7 @@ angular.module('tms.dashboard.controllers',
     $scope.appointmentsThisWeek = [];
     $scope.appointmentsNextWeek = [];
     $scope.errorHandler = errorHandler;
+    $scope.totalNumberOfAppointmentsThisWeek = 0;
 
     $scope.completeTodoAndRemove = function(todo, index)
     {
@@ -59,6 +60,13 @@ angular.module('tms.dashboard.controllers',
                    select: 'name status manualStatus debt lastContact appointments._id appointments.when appointments.summarySent'},
         function(patients)
         {
+            var dayInMs = 24 * 60 * 60 * 1000;
+            var now = new Date();
+
+            // get start of week without time element
+            var thisWeekStartDate = new Date(now - (now.getDay() * dayInMs));
+            thisWeekStartDate = new Date(thisWeekStartDate.getFullYear(), thisWeekStartDate.getMonth(), thisWeekStartDate.getDate());
+
             patients.forEach(function (patient)
             {
                 var patientHasFutureAppointment = false;
@@ -66,8 +74,16 @@ angular.module('tms.dashboard.controllers',
                 // scan appointments and do stuff
                 patient.appointments.forEach(function (appointment)
                 {
+                    var appointmentDate = Date.parse(appointment.when);
+
+                    // is this an appointment which occurred this week?
+                    if ((appointmentDate >= thisWeekStartDate.getTime()) && (appointmentDate <= thisWeekStartDate.getTime() + 7 * dayInMs))
+                    {
+                        $scope.totalNumberOfAppointmentsThisWeek++;
+                    }
+
                     // is this an appointment which occurred in teh past?
-                    if (Date.parse(appointment.when) <= Date.now())
+                    if (appointmentDate <= Date.now())
                     {
                         // is it unsummarized?
                         if (!appointment.summarySent)
@@ -78,9 +94,8 @@ angular.module('tms.dashboard.controllers',
                     {
                         patientHasFutureAppointment = true;
 
-                        var dayInMs = 24 * 60 * 60 * 1000;
-                        var daysUntilSaturday = 6 /* saturday */ - (new Date()).getDay();
-                        var appointmentDaysFromNow = (Date.parse(appointment.when) - new Date()) / dayInMs;
+                        var daysUntilSaturday = 7 /* saturday */ - now.getDay();
+                        var appointmentDaysFromNow = (appointmentDate - now) / dayInMs;
 
                         // is it this week?
                         if (appointmentDaysFromNow < daysUntilSaturday)

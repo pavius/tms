@@ -21,7 +21,7 @@ row
                         i.glyphicon.glyphicon-zoom-in
 
 row
-    h3.dashboard-title פגישות השבוע
+    h3.dashboard-title פגישות השבוע ({{totalNumberOfAppointmentsThisWeek}})
 
     p(ng-show='appointmentsThisWeek.length == 0') אין פגישות השבוע
 
@@ -34,7 +34,7 @@ row
                         i.glyphicon.glyphicon-zoom-in
 
 row
-    h3.dashboard-title פגישות בשבוע הבא
+    h3.dashboard-title פגישות בשבוע הבא ({{appointmentsNextWeek.length}})
 
     p(ng-show='appointmentsNextWeek.length == 0') אין פגישות בשבוע הבא
 
