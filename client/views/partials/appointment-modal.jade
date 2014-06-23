@@ -2,7 +2,8 @@
 
     row
 
-        input#appointment-modal-patient-dropdown(type='text', ui-select2='patientDropdownConfig', ng-model='$parent.patient', ng-show='patients')
+        select#appointment-modal-patient-dropdown(ui-select2='patientDropdownConfig', ng-model='$parent.selectedPatientIdx', ng-show='patients')
+            option(ng-repeat='patient in patients', value='{{$index}}'){{patient.name}}
 
     row
         .col-xs-12

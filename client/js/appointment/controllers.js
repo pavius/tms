@@ -28,6 +28,7 @@ angular.module('tms.appointment.controllers', [])
     $scope.appointment = angular.copy(appointment);
     $scope.opened = false;
     $scope.patients = null;
+    $scope.selectedPatientIdx = null;
 
     function patientDropdownFormat(patient)
     {
@@ -99,15 +100,7 @@ angular.module('tms.appointment.controllers', [])
     // configure patient dropdown
     $scope.patientDropdownConfig =
     {
-        id: function(element) { return element._id; },
-        placeholder: "לבחור מטופל",
-        formatSelection: patientDropdownFormat,
-        formatResult: patientDropdownFormat,
-        initSelection: angular.noop,
-        query: function(query)
-        {
-            query.callback({results: $scope.patients});
-        }
+        placeholder: "בחר מטופל",
     }
 
     // on open, if there is no patient defined, we need to load the dropdown
@@ -124,14 +117,17 @@ angular.module('tms.appointment.controllers', [])
                     patientsArray.push(patient);
                 })
 
-                $scope.patients = patientsArray;
+                $scope.patients = _.sortBy(patientsArray, function(p) { return p.name; });
             });
 
         // on patient change
-        $scope.$watch('patient', function(newValue, oldValue)
+        $scope.$watch('selectedPatientIdx', function(newValue, oldValue)
         {
-            if (newValue && angular.isObject(newValue))
-                $scope.appointment.price = newValue.appointmentPrice;
+            if (newValue)
+            {
+                $scope.patient = $scope.patients[$scope.selectedPatientIdx];
+                $scope.appointment.price = $scope.patient.appointmentPrice;
+            }
         });
     }
 }]);
