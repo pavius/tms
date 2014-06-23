@@ -122,7 +122,7 @@ small
 #s2id_appointment-modal-patient-dropdown
 {
     width: 100%;
-    padding-left: 10px;
+    padding-left: 5px;
     margin-bottom: 10px;
 }
 
@@ -215,6 +215,11 @@ h3.dashboard-title
 #appointment-modal
 {
     padding-bottom: 0px;
+}
+
+#dashboard-create-appointment
+{
+    margin-top: 10px;
 }
 
 /*

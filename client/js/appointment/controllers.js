@@ -19,14 +19,20 @@ angular.module('tms.appointment.controllers', [])
 }])
 
 .controller('AppointmentModalController', 
-            ['$scope', '$modalInstance', 'Appointment', 'mode', 'patient', 'appointment',
-            function($scope, $modalInstance, Appointment, mode, patient, appointment)
+            ['$scope', '$modalInstance', 'Appointment', 'Patient', 'mode', 'patient', 'appointment',
+            function($scope, $modalInstance, Appointment, Patient, mode, patient, appointment)
 {
     $scope.dt = Date.now();
     $scope.mode = mode;
     $scope.patient = patient;
     $scope.appointment = angular.copy(appointment);
     $scope.opened = false;
+    $scope.patients = null;
+
+    function patientDropdownFormat(patient)
+    {
+        return patient.name;
+    }
 
     $scope.createOrUpdate = function()
     {
@@ -35,7 +41,7 @@ angular.module('tms.appointment.controllers', [])
         if (mode == 'create')
         {
             // update in server
-            Appointment.save({patientId: $scope.patient._id}, appointment, function(dbObject)
+            Appointment.save({patientId: $scope.patient._id}, $scope.appointment, function(dbObject)
                 {
                     $modalInstance.close({updatedPatient: dbObject, status: 'create'});
                 },
@@ -84,10 +90,48 @@ angular.module('tms.appointment.controllers', [])
 
     $scope.do_open = function($event) 
     {
-        console.log("foo");
         $event.preventDefault();
         $event.stopPropagation();
 
         $scope.opened = true;
     };
+
+    // configure patient dropdown
+    $scope.patientDropdownConfig =
+    {
+        id: function(element) { return element._id; },
+        placeholder: "לבחור מטופל",
+        formatSelection: patientDropdownFormat,
+        formatResult: patientDropdownFormat,
+        initSelection: angular.noop,
+        query: function(query)
+        {
+            query.callback({results: $scope.patients});
+        }
+    }
+
+    // on open, if there is no patient defined, we need to load the dropdown
+    if ($scope.patient === null)
+    {
+        // get all patients
+        Patient.query({select: '_id name appointmentPrice'},
+            function(patients)
+            {
+                patientsArray = [];
+
+                patients.forEach(function(patient)
+                {
+                    patientsArray.push(patient);
+                })
+
+                $scope.patients = patientsArray;
+            });
+
+        // on patient change
+        $scope.$watch('patient', function(newValue, oldValue)
+        {
+            if (newValue && angular.isObject(newValue))
+                $scope.appointment.price = newValue.appointmentPrice;
+        });
+    }
 }]);

@@ -17,8 +17,8 @@ angular.module('tms.dashboard.controllers',
 }]) 
 
 .controller('DashboardController',
-            ['$scope', '$location', 'ErrorHandler', 'Patient', 'Todo',
-            function($scope, $location, errorHandler, Patient, Todo)
+            ['$scope', '$location', 'ErrorHandler', 'Patient', 'Todo', 'AppointmentModal',
+            function($scope, $location, errorHandler, Patient, Todo, AppointmentModal)
 {
     $scope.todos = [];
     $scope.appointmentsThisWeek = [];
@@ -44,6 +44,14 @@ angular.module('tms.dashboard.controllers',
         {
             $scope.todos.push(Todo.createCollectDebtTodo(patient, patient.debt));
         }
+    }
+
+    $scope.createAppointment = function()
+    {
+        AppointmentModal.create(null, function(updatedPatient)
+        {
+            $scope.errorHandler.openAlert('success', "פגישה עם " + updatedPatient.name + " נוצרה בהצלחה");
+        });
     }
 
     // get all active patients along with relevant appointment info

@@ -100,7 +100,7 @@ angular.module('tms.patient.controllers',
         else
         {
             // just get'em all
-            Patient.query({}, addPatientsIfUnique, handlePatientLoadError);
+            Patient.query({select: '-appointments'}, addPatientsIfUnique, handlePatientLoadError);
         }
     };
 

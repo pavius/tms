@@ -2,7 +2,8 @@ row
     alert(ng-repeat='alert in errorHandler.alerts', type='{{alert.type}}', close='errorHandler.closeAlert($index)') {{alert.message}}
 
 row
-    h3.dashboard-title לבצע
+    h3.dashboard-title.pull-right לבצע
+    button#dashboard-create-appointment.btn.btn-sm.btn-primary.pull-left(ng-click='createAppointment()') צור פגישה
 
     p(ng-show='todos.length == 0') אין משימות לביצוע
 

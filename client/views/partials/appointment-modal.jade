@@ -1,36 +1,40 @@
 .modal-body#appointment-modal
 
-        row
-            .col-xs-12
+    row
 
-                datepicker#appointment-datepicker(type='text', show-weeks='false', ng-model='appointment.when')
+        input#appointment-modal-patient-dropdown(type='text', ui-select2='patientDropdownConfig', ng-model='$parent.patient', ng-show='patients')
 
-        row.clearfix
+    row
+        .col-xs-12
 
-            div.col-xs-6
+            datepicker#appointment-datepicker(type='text', show-weeks='false', ng-model='appointment.when')
 
-                div#appointment-settings
+    row.clearfix
 
-                    .input-group
-                        span.input-group-addon ש"ח
-                        input.form-control(type='text', id='price', ng-model='appointment.price')
+        div.col-xs-6
 
-                    label.checkbox(ng-show='mode == "edit"')
-                        input(type='checkbox', ng-model='appointment.summarySent')
-                        | סוכמה
+            div#appointment-settings
 
-                    label.checkbox(ng-show='mode == "edit"')
-                        input(type='checkbox', ng-model='appointment.missed') 
-                        | לא הגיע
+                .input-group
+                    span.input-group-addon ש"ח
+                    input.form-control(type='text', id='price', ng-model='appointment.price')
 
-            div.col-xs-6
-                
-                timepicker(ng-model='appointment.when', hour-step='1', minute-step='15', show-meridian='false')
+                label.checkbox(ng-show='mode == "edit"')
+                    input(type='checkbox', ng-model='appointment.summarySent')
+                    | סוכמה
+
+                label.checkbox(ng-show='mode == "edit"')
+                    input(type='checkbox', ng-model='appointment.missed')
+                    | לא הגיע
+
+        div.col-xs-6
+
+            timepicker(ng-model='appointment.when', hour-step='1', minute-step='15', show-meridian='false')
 
         
 .modal-footer
 
-    button.btn.btn-sm.btn-primary.pull-left(ng-click='createOrUpdate()', ng-show='appointment.payment === null') {{mode == 'create' ? 'צור פגישה' : 'עדכן פגישה'}}
+    button.btn.btn-sm.btn-primary.pull-left(ng-click='createOrUpdate()', ng-show='appointment.payment === null', ng-disabled='!patient') {{mode == 'create' ? 'צור פגישה' : 'עדכן פגישה'}}
     
     button.btn.btn-sm.btn-default.pull-left(ng-click='cancel()') סגור
     

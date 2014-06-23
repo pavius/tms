@@ -30,9 +30,12 @@ angular.module('tms.appointment.services', ['ngResource'])
         // build the default appointment, based on the fact that it belongs to a certain patient
         appointment = {
             when: (new Date()).setMinutes(0),
-            price: patient.appointmentPrice,
             payment: null
         };
+
+        // set appointment price if there's a defined patient. Otherwise default to appointment price
+        if (patient)
+            appointment.price = patient.appointmentPrice;
 
         // pop up the modal
         appointmentModal = openModal('create', patient, appointment);
