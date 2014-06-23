@@ -19,29 +19,67 @@ angular.module('tms.appointment.controllers', [])
 }])
 
 .controller('AppointmentModalController', 
-            ['$scope', '$modalInstance', 'patient', 'appointment', 'mode', 
-            function($scope, $modalInstance, patient, appointment, mode) 
+            ['$scope', '$modalInstance', 'Appointment', 'mode', 'patient', 'appointment',
+            function($scope, $modalInstance, Appointment, mode, patient, appointment)
 {
     $scope.dt = Date.now();
-    $scope.appointment = appointment;
     $scope.mode = mode;
     $scope.patient = patient;
+    $scope.appointment = angular.copy(appointment);
     $scope.opened = false;
 
-    $scope.update = function()
+    $scope.createOrUpdate = function()
     {
         $scope.appointment.price = parseInt($scope.appointment.price);
-        $modalInstance.close({appointment: $scope.appointment, remove: false});
+
+        if (mode == 'create')
+        {
+            // update in server
+            Appointment.save({patientId: $scope.patient._id}, appointment, function(dbObject)
+                {
+                    $modalInstance.close({updatedPatient: dbObject, status: 'create'});
+                },
+                function(error)
+                {
+                    $modalInstance.close({status: 'Error creating appointment'});
+                });
+        }
+        else if (mode == 'update')
+        {
+            // update in server
+            Appointment.update({patientId: $scope.patient._id, id: $scope.appointment._id},
+                               $scope.appointment,
+                function(dbObject)
+                {
+                    $modalInstance.close({updatedPatient: dbObject, status: 'update'});
+                },
+                function(error)
+                {
+                    $modalInstance.close({status: 'Error updating appointment'});
+                });
+        }
+        else
+        {
+            $modalInstance.close({status: 'Invalid mode'});
+        }
     };
 
     $scope.cancel = function()
     {
-        $modalInstance.dismiss('cancel');
+        $modalInstance.dismiss({result: 'cancelled'});
     };
 
     $scope.delete = function()
     {
-        $modalInstance.close({appointment: $scope.appointment, remove: true});
+        Appointment.delete({patientId: $scope.patient._id, id: $scope.appointment._id},
+            function(dbObject)
+            {
+                $modalInstance.close({updatedPatient: dbObject, status: 'delete'});
+            },
+            function(error)
+            {
+                $modalInstance.close({status: 'Error deleting appointment'});
+            });
     };
 
     $scope.do_open = function($event) 

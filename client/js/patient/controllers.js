@@ -129,8 +129,8 @@ angular.module('tms.patient.controllers',
 }])
 
 .controller('PatientDetailController', 
-            ['$scope', '$log', '$routeParams', '$modal', '$location', 'ErrorHandler', 'Patient', 'Appointment', 'Payment',
-            function($scope, $log, $routeParams, $modal, $location, errorHandler, Patient, Appointment, Payment)
+            ['$scope', '$log', '$routeParams', '$modal', '$location', 'ErrorHandler', 'Patient', 'Appointment', 'AppointmentModal', 'Payment',
+            function($scope, $log, $routeParams, $modal, $location, errorHandler, Patient, Appointment, AppointmentModal, Payment)
 {
     $scope.appointment = null;
     $scope.patient = {};
@@ -230,97 +230,41 @@ angular.module('tms.patient.controllers',
         $location.path('patients');
     };
 
-    $scope.viewAppointment = function(appointment)
-    {
-        // pop up the modal
-        appointmentModal = $modal.open({templateUrl: './partials/appointment-modal',
-                                        controller: 'AppointmentModalController',
-                                        size: 'sm',
-                                        resolve:
-                                        {
-                                            patient: function(){return $scope.patient;},
-                                            appointment: function(){return angular.copy(appointment);},
-                                            mode: function(){return 'edit';}
-                                        }});
-
-        appointmentModal.result.then(function(modifiedAppointment)
-        {
-            if (!modifiedAppointment.remove)
-            {
-                // update in server
-                Appointment.update({patientId: $scope.patient._id,
-                                    id: modifiedAppointment.appointment._id},
-                                    modifiedAppointment.appointment,
-                    function(dbObject)
-                    {
-                        // reinsert
-                        removeAppointmentById(modifiedAppointment.appointment._id);
-                        $scope.patient.appointments.push(dbObject.appointments[0]);
-
-                        // update patient
-                        updateScopePatientWithResponse(dbObject);
-                    },
-                    function(error)
-                    {
-                        $scope.errorHandler.handleError('update appointment', error);
-                    });
-            }
-            else
-            {
-                Appointment.delete({patientId: $scope.patient._id,
-                                    id: modifiedAppointment.appointment._id},
-                    function(dbObject)
-                    {
-                        removeAppointmentById(modifiedAppointment.appointment._id);
-
-                        // update patient
-                        updateScopePatientWithResponse(dbObject);
-                    },
-                    function(error)
-                    {
-                        $scope.errorHandler.handleError('delete appointment', error);
-                    });
-            }
-        });
-    };
-
     $scope.createAppointment = function()
     {
         // pop up the modal
-        appointmentModal = $modal.open({templateUrl: './partials/appointment-modal',
-                                        controller: 'AppointmentModalController',
-                                        size: 'sm',
-                                        resolve:
-                                        {
-                                            patient: function(){return $scope.patient;},
-                                            appointment: function()
-                                            {
-                                                return {
-                                                    patient: $scope.patient._id,
-                                                    when: (new Date()).setMinutes(0),
-                                                    price: $scope.patient.appointmentPrice,
-                                                    payment: null
-                                                };
-                                            },
-                                            mode: function(){return 'create';}
-                                        }});
+        AppointmentModal.create($scope.patient,
+            function(updatedPatient)
+            {
+                $scope.patient.appointments.push(updatedPatient.appointments[0]);
 
-        appointmentModal.result.then(function(newAppointment)
-        {
-            // update in server
-            Appointment.save({patientId: $scope.patient._id}, newAppointment.appointment,
-                function(dbObject)
-                {
-                    $scope.patient.appointments.push(dbObject.appointments[0]);
+                // update patient
+                updateScopePatientWithResponse(updatedPatient);
+            });
+    };
 
-                    // update patient
-                    updateScopePatientWithResponse(dbObject);
-                },
-                function(error)
-                {
-                    $scope.errorHandler.handleError('save appointment', error);
-                });
-        });
+    $scope.updateAppointment = function(appointment)
+    {
+        // pop up the modal
+        AppointmentModal.update($scope.patient, appointment,
+            // updated
+            function(updatedPatient)
+            {
+                // reinsert
+                removeAppointmentById(appointment._id);
+                $scope.patient.appointments.push(updatedPatient.appointments[0]);
+
+                // update patient
+                updateScopePatientWithResponse(updatedPatient);
+            },
+            // deleted
+            function(updatedPatient)
+            {
+                removeAppointmentById(appointment._id);
+
+                // update patient
+                updateScopePatientWithResponse(updatedPatient);
+            });
     };
 
     $scope.createPayment = function()

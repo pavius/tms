@@ -1,6 +1,7 @@
 angular.module('tms', 
 [
     'ngRoute',
+    'ui.select2',
     'tms.common.filters',
     'tms.dashboard.controllers',
     'tms.dashboard.controllers',

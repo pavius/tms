@@ -119,6 +119,13 @@ small
     margin-top: 20px;
 }
 
+#s2id_appointment-modal-patient-dropdown
+{
+    width: 100%;
+    padding-left: 10px;
+    margin-bottom: 10px;
+}
+
 .modal-footer
 {
     margin-top: 0px;
@@ -198,6 +205,16 @@ h3.dashboard-title
 {
     font-weight: bold;
     color: rgba(57, 97, 50, 0.65);
+}
+
+#appointment-datepicker .btn-sm
+{
+    padding: 2px 10px;
+}
+
+#appointment-modal
+{
+    padding-bottom: 0px;
 }
 
 /*

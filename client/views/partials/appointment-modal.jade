@@ -30,8 +30,8 @@
         
 .modal-footer
 
-    button.btn.btn-sm.btn-primary.pull-left(ng-click='update()', ng-show='appointment.payment === null') {{mode == 'create' ? 'צור פגישה' : 'עדכן פגישה'}}
+    button.btn.btn-sm.btn-primary.pull-left(ng-click='createOrUpdate()', ng-show='appointment.payment === null') {{mode == 'create' ? 'צור פגישה' : 'עדכן פגישה'}}
     
     button.btn.btn-sm.btn-default.pull-left(ng-click='cancel()') סגור
     
-    button.btn.btn-sm.btn-danger(ng-click='delete()', ng-show='mode == "edit" && appointment.payment === null') מחק
+    button.btn.btn-sm.btn-danger(ng-click='delete()', ng-show='mode == "update" && appointment.payment === null') מחק
