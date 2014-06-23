@@ -55,18 +55,31 @@ angular.module('tms.dashboard.controllers',
         });
     }
 
+    function getDayInMs()
+    {
+        return 24 * 60 * 60 * 1000;
+    }
+
+    function getStartOfWeekDate()
+    {
+        now = new Date();
+
+        // get start of week without time element
+        var thisWeekStartDate = new Date(now - (now.getDay() * getDayInMs()));
+        return new Date(thisWeekStartDate.getFullYear(), thisWeekStartDate.getMonth(), thisWeekStartDate.getDate());
+    }
+
+    function getEndOfWeekDate()
+    {
+        var thisWeekEndDate = new Date(getStartOfWeekDate().getTime() + 6 * getDayInMs());
+        return new Date(thisWeekEndDate.getFullYear(), thisWeekEndDate.getMonth(), thisWeekEndDate.getDate(), 23, 59, 59);
+    }
+
     // get all active patients along with relevant appointment info
     Patient.query({status: '^active|new',
                    select: 'name status manualStatus debt lastContact appointments._id appointments.when appointments.summarySent'},
         function(patients)
         {
-            var dayInMs = 24 * 60 * 60 * 1000;
-            var now = new Date();
-
-            // get start of week without time element
-            var thisWeekStartDate = new Date(now - (now.getDay() * dayInMs));
-            thisWeekStartDate = new Date(thisWeekStartDate.getFullYear(), thisWeekStartDate.getMonth(), thisWeekStartDate.getDate());
-
             patients.forEach(function (patient)
             {
                 var patientHasFutureAppointment = false;
@@ -75,9 +88,12 @@ angular.module('tms.dashboard.controllers',
                 patient.appointments.forEach(function (appointment)
                 {
                     var appointmentDate = Date.parse(appointment.when);
+                    weekStart = getStartOfWeekDate();
+                    weekEnd = getEndOfWeekDate();
+                    nextWeekEnd = new Date(getEndOfWeekDate().getTime() + (7 * getDayInMs()) - 1000);
 
                     // is this an appointment which occurred this week?
-                    if ((appointmentDate >= thisWeekStartDate.getTime()) && (appointmentDate <= thisWeekStartDate.getTime() + 7 * dayInMs))
+                    if ((appointmentDate >= weekStart.getTime()) && (appointmentDate <= weekEnd.getTime()))
                     {
                         $scope.totalNumberOfAppointmentsThisWeek++;
                     }
@@ -94,17 +110,14 @@ angular.module('tms.dashboard.controllers',
                     {
                         patientHasFutureAppointment = true;
 
-                        var daysUntilSaturday = 7 /* saturday */ - now.getDay();
-                        var appointmentDaysFromNow = (appointmentDate - now) / dayInMs;
-
                         // is it this week?
-                        if (appointmentDaysFromNow < daysUntilSaturday)
+                        if (appointmentDate <= weekEnd)
                         {
                             appointment.patient = patient;
                             $scope.appointmentsThisWeek.push(appointment);
                         }
                         // is it next week?
-                        else if (appointmentDaysFromNow < (daysUntilSaturday + 7))
+                        else if (appointmentDate <= nextWeekEnd)
                         {
                             appointment.patient = patient;
                             $scope.appointmentsNextWeek.push(appointment);
