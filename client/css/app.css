@@ -31,6 +31,8 @@ body
 {
     padding-top: 15px;
     padding-bottom: 15px;
+    width: 60px;
+    text-align: center;
 }
 
 .navbar-default .navbar-nav > .active > a,
