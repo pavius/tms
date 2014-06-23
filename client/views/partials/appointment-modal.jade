@@ -16,15 +16,19 @@
 
             div#appointment-settings
 
+                select.appointment-dropdown(ng-model='appointment.type')
+                    option(value='face-to-face') פנים אל פנים
+                    option(value='skype') סקייפ
+
                 .input-group
                     span.input-group-addon ש"ח
                     input.form-control(type='text', id='price', ng-model='appointment.price')
 
-                label.checkbox(ng-show='mode == "edit"')
+                label.checkbox(ng-show='mode == "update"')
                     input(type='checkbox', ng-model='appointment.summarySent')
                     | סוכמה
 
-                label.checkbox(ng-show='mode == "edit"')
+                label.checkbox(ng-show='mode == "update"')
                     input(type='checkbox', ng-model='appointment.missed')
                     | לא הגיע
 

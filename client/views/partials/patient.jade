@@ -23,13 +23,17 @@ row.clearfix
                 table.table
                     thead
                         tr
+                            th
                             th מתי
                             th סוכמה
                             th שולמה
                             th
                     tbody
                         tr(ng-repeat="appointment in patient.appointments | orderBy:'-when'", ng-class='getAppointmentClass(appointment)')
-                            td {{appointment.when | date:'dd MMMM HH:mm'}}
+                            td#patient-appointment-type-column
+                                span.fa.fa-skype(ng-show='appointment.type == "skype"')
+                            td
+                                {{appointment.when | date:'dd MMMM HH:mm'}}
                             td
                                 i(ng-class='getAppointmentSummaryIcon(appointment)', ng-click="toggleAppointmentSummarized(appointment)")
                             td
