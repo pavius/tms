@@ -30,6 +30,7 @@ angular.module('tms.appointment.services', ['ngResource'])
         // build the default appointment, based on the fact that it belongs to a certain patient
         appointment = {
             when: (new Date()).setMinutes(0),
+            type: 'face-to-face',
             payment: null
         };
 
