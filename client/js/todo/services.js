@@ -145,7 +145,7 @@ angular.module('tms.todo.services',
 
     SetPatientAppointment.prototype.toString = function()
     {
-        return "לקבוע פגישה עם " + this.patient.name;
+        return "לתאם פגישה עם " + this.patient.name;
     }
 
     //
