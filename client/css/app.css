@@ -245,6 +245,11 @@ h3.dashboard-title
     padding-left: 7px;
 }
 
+td.zoom-in
+{
+    text-align: left;
+}
+
 /*
  * RTL checkbox
  */

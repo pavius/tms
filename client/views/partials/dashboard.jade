@@ -16,7 +16,7 @@ row
                         input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)', ng-show='todo.complete')
                 td
                     {{todo.toString()}}
-                td
+                td.zoom-in
                     a.location-selector(ng-click='todo.view()')
                         i.glyphicon.glyphicon-zoom-in
 
@@ -31,7 +31,7 @@ row
                 td
                     span.fa.fa-skype(ng-show='appointment.type == "skype"')
                     {{appointment.when | date:"EEEE, dd MMMM 'ב-' HH:mm"}} עם {{appointment.patient.name}}
-                td
+                td.zoom-in
                     a.location-selector(href='patients/{{appointment.patient._id}}')
                         i.glyphicon.glyphicon-zoom-in
 
@@ -46,6 +46,20 @@ row
                 td
                     span.fa.fa-skype(ng-show='appointment.type == "skype"')
                     {{appointment.when | date:"EEEE, dd MMMM 'ב-' HH:mm"}} עם {{appointment.patient.name}}
-                td
+                td.zoom-in
                     a.location-selector(href='patients/{{appointment.patient._id}}')
+                        i.glyphicon.glyphicon-zoom-in
+
+row
+    h3.dashboard-title תיאום פגישות
+
+    p(ng-show='setPatientAppointmentTodos.length == 0') לכל המטופלים נקבעו פגישות
+
+    table.table.dashboard-table
+        tbody
+            tr(ng-repeat="todo in setPatientAppointmentTodos | orderBy: 'importance()'")
+                td
+                    {{todo.toString()}}
+                td.zoom-in
+                    a.location-selector(ng-click='todo.view()')
                         i.glyphicon.glyphicon-zoom-in

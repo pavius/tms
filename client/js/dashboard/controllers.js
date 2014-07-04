@@ -21,6 +21,7 @@ angular.module('tms.dashboard.controllers',
             function($scope, $location, errorHandler, Patient, Todo, AppointmentModal)
 {
     $scope.todos = [];
+    $scope.setPatientAppointmentTodos = [];
     $scope.appointmentsThisWeek = [];
     $scope.appointmentsNextWeek = [];
     $scope.errorHandler = errorHandler;
@@ -130,16 +131,10 @@ angular.module('tms.dashboard.controllers',
 
                 if (patient.getStatus() == 'new')
                 {
-                    // check if we need to contact this new patient
-                    if ((Date.now() - Date.parse(patient.lastContact)) > (4 * 24 * 60 * 60 * 1000))
-                    {
-                        $scope.todos.push(Todo.createContactPatientTodo(patient));
-                    }
-
                     // check if this patient has an appointment
                     if (!patientHasFutureAppointment)
                     {
-                        $scope.todos.push(Todo.createSetPatientAppointment(patient));
+                        $scope.setPatientAppointmentTodos.push(Todo.createSetPatientAppointment(patient));
                     }
                 }
             });
