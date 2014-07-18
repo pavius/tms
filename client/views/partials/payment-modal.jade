@@ -1,8 +1,38 @@
 .modal-body
 
-    .input-group
-        label(for='sum') סכום:
-        input.form-control(type='text', id='sum', placeholder='{{payment.sum}}', ng-model='payment.sum')
+    div#common
+
+        .input-group
+            span.input-group-addon ש"ח
+            input.form-control(type='text', placeholder='{{payment.sum}}', ng-model='payment.sum')
+            span.input-group-addon סכום
+
+        .input-group
+            input.form-control(type='text', ng-model='payment.invoice.name')
+            span.input-group-addon על שם
+
+        select.patient-dropdown(ng-model='payment.type')
+            option(value='cash') מזומן
+            option(value='cheque') צ'ק
+
+    div#checkPayment(ng-show='payment.type=="cheque"')
+
+        .input-group
+            input.form-control(type='text', ng-model='payment.invoice.bank')
+            span.input-group-addon בנק
+
+        .input-group
+            input.form-control(type='text', ng-model='payment.invoice.branch')
+            span.input-group-addon סניף
+
+        .input-group
+            input.form-control(type='text', ng-model='payment.invoice.account')
+            span.input-group-addon חשבון
+
+        .input-group
+            input.form-control(type='text', ng-model='payment.invoice.chequeNumber')
+            span.input-group-addon מספר צ'ק
+
 
 .modal-footer
 

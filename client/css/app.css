@@ -250,6 +250,16 @@ td.zoom-in
     text-align: left;
 }
 
+.modal.payment #checkPayment
+{
+    margin-top: 15px;
+}
+
+.modal.payment span.input-group-addon
+{
+    width: 70px;
+}
+
 /*
  * RTL checkbox
  */

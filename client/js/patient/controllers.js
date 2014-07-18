@@ -272,6 +272,7 @@ angular.module('tms.patient.controllers',
         // pop up the modal
         paymentModal = $modal.open({templateUrl: './partials/payment-modal',
                                     controller: 'PaymentModalController',
+                                    windowClass: 'payment',
                                     size: 'sm',
                                     resolve:
                                     {
