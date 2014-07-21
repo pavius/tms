@@ -19,7 +19,13 @@ var patientSchema = mongoose.Schema
         total: {type: Number, min: 0, default: 0},
         oldestNonPaidAppointment: {type: Date}
     },
-    lastContact: {type: Date, default: Date.now()}
+    lastContact: {type: Date, default: Date.now()},
+    bank:
+    {
+        name: {type: String},
+        branch: {type: String},
+        account: {type: String}
+    }
 });
 
 // calculate new status
