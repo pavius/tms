@@ -1,6 +1,8 @@
 var request = require('supertest');
 var expect = require('chai').expect;
 var async = require('async');
+var nock = require('nock');
+var url = require('url');
 var common = require('./common');
 var app = require('../src/server');
 var Patient = require('../src/models/patient');
@@ -10,6 +12,36 @@ describe('Payments', function()
 {
     var patientFixtures = [];
     var fixtures = [];
+
+    function callInvoiceCompleteWebhook(patient, payment, callback)
+    {
+        var invoice = {url: 'http://www.gi.com/link', id: '00fad0c7-0b47-c1b4-b900-64fbaba1cd6d'};
+
+        request(app)
+            .post('/api/patients/' + patient._id + '/payments/' + payment._id + '/invoices')
+            .type('form')
+            .send({ticket_id: payment.invoice.ticket})
+            .send({url: invoice.url})
+            .send({id: invoice.id})
+            .expect(200)
+            .end(function(err, response)
+            {
+                if (err) return callback(err);
+
+                // verify that payment was updated with invoice info
+                request(app)
+                    .get('/api/patients/' + patient._id + '/payments/' + payment._id)
+                    .expect('Content-Type', /json/)
+                    .expect(200)
+                    .end(function(err, response)
+                    {
+                        if (err) return callback(err);
+                        expect(response.body.invoice.id).to.equal(invoice.id);
+                        expect(response.body.invoice.url).to.equal(invoice.url);
+                        callback();
+                    });
+            });
+    }
 
     beforeEach(function(done)
     {
@@ -95,6 +127,20 @@ describe('Payments', function()
 
     describe('POST /api/patients/x/payments', function()
     {
+        // the gi API encodes JSON as form data. we need to decode it and return the object
+        function getGreenInvoiceDataFromRequest(requestBody)
+        {
+            return JSON.parse(url.parse('?' + decodeURIComponent(requestBody), true).query.data);
+        }
+
+        // unless specified otherwise, mock all requests towards greeninvoice by returning success
+        nock('https://api.greeninvoice.co.il')
+            .post('/api/documents/add')
+            .reply(200, function(uri, requestBody)
+                        {
+                            return {'error_code': 0, data: {ticket: '8cdd2b30-417d-d994-a924-7ea690d0b9a3'}};
+                        });
+
         describe('when creating a new payment for a patient that wholly covers appointments', function()
         {
             it('should respond with 201, patient info and create an object', function(done)
@@ -102,7 +148,8 @@ describe('Payments', function()
                 var newPayment =
                 {
                     when: (new Date()).toISOString(),
-                    sum: 750
+                    sum: 750,
+                    transaction: {type: 'cash'}
                 };
 
                 patient = patientFixtures[1];
@@ -142,7 +189,8 @@ describe('Payments', function()
                 var newPayment =
                 {
                     when: (new Date()).toISOString(),
-                    sum: 745
+                    sum: 745,
+                    transaction: {type: 'cash'}
                 };
 
                 patient = patientFixtures[1];
@@ -163,7 +211,8 @@ describe('Payments', function()
                 var newPayment =
                 {
                     when: (new Date()).toISOString(),
-                    sum: 5000
+                    sum: 5000,
+                    transaction: {type: 'cash'}
                 };
 
                 patient = patientFixtures[1];
@@ -174,6 +223,47 @@ describe('Payments', function()
                     .expect('Content-Type', /json/)
                     .expect(403)
                     .end(done);
+            });
+        });
+
+        describe('when creating a payment with cash', function()
+        {
+            it('should call the GI API correct settings', function(done)
+            {
+                var newPayment =
+                {
+                    when: (new Date()).toISOString(),
+                    sum: 750,
+                    transaction: {type: 'cash'}
+                };
+
+                patient = patientFixtures[1];
+
+                // expect invoice and check all parameters, including cash
+                nock('https://api.greeninvoice.co.il')
+                    .post('/api/documents/add')
+                    .reply(200, function(uri, requestBody)
+                    {
+                        invoice = getGreenInvoiceDataFromRequest(requestBody);
+                        expect(invoice.params.doc_type).to.equal(320);
+                        expect(invoice.params.client.name).to.equal(patient.name);
+                        expect(invoice.params.income[0].price).to.equal(newPayment.sum);
+                        expect(invoice.params.income[0].description).to.equal('אימון');
+                        expect(invoice.params.payment[0].type).to.equal(1);
+                        expect(invoice.params.payment[0].amount).to.equal(newPayment.sum);
+
+                        return {'error_code': 0, data: {ticket: '8cdd2b30-417d-d994-a924-7ea690d0b9a3'}};
+                    });
+
+                request(app)
+                    .post('/api/patients/' + patient._id + '/payments')
+                    .send(newPayment)
+                    .expect('Content-Type', /json/)
+                    .expect(201)
+                    .end(function(err, response)
+                    {
+                        callInvoiceCompleteWebhook(patient, response.body.payments[0], done);
+                    });
             });
         });
     });

@@ -1,5 +1,7 @@
 var _ = require('underscore');
 var async = require('async');
+var httpRequest = require('request');
+var crypto = require('crypto');
 
 var routeCommon = require('./common/common');
 var Patient = require('../models/patient');
@@ -92,6 +94,13 @@ module.exports.addRoutes = function(app, security)
             // update debt
             patient.debt = patient.calculateDebt();
 
+            // save bank details for patient if payment is cheque. this is used so that
+            // the user doesn't need to re-type bank details each type (but will be able to override them)
+            if (payment.transaction.type == 'cheque')
+            {
+                patient.bank = payment.transaction.cheque.bank;
+            }
+
             // save self
             patient.save(function(dbError, patient)
             {
@@ -106,7 +115,92 @@ module.exports.addRoutes = function(app, security)
                 }
             });
         }
-        
+
+        function issueInvoice(patient, payment, callback)
+        {
+            var privateKey = 'befec8b16bc6e91479c97a19b38a6b0b';
+            var publicKey = '1774b28d2a2d05a44996d7cf2ff45454';
+            var signer = crypto.createHmac('sha256', new Buffer(privateKey, 'utf8'));
+
+            // overall receipt object - my callback just prints the POST parameters to the Heroku log
+            var params =
+            {
+                timestamp: new Date().getTime(),
+                callback_url: 'http://localhost/api/patients/' + patient._id + '/payments/' + payment._id + '/invoices',
+                doc_type: 320,
+                client:
+                {
+                    send_email: false,
+                    name: patient.name
+                },
+                income:
+                [
+                    {
+                        price: payment.sum,
+                        description: 'אימון'
+                    }
+                ],
+                payment: []
+            };
+
+            // if this is a cheque, we need to shove details about it
+            if (payment.transaction.type == 'cheque')
+            {
+                params.payment.push({
+                                        type: 2,
+                                        amount: payment.sum,
+                                        bank: payment.transaction.cheque.bank.name,
+                                        branch: payment.transaction.cheque.bank.branch,
+                                        account: payment.transaction.cheque.bank.account,
+                                        number: payment.transaction.cheque.number,
+                                        date: payment.transaction.cheque.date
+                                      });
+            }
+            else
+            {
+                params.payment.push({
+                                          type: 1,
+                                          amount: payment.sum
+                                    });
+            }
+
+            // generate a signature for the 'data' object - the unescape(encodeURIComponent())
+            // is needed to support non-Latin characters properly
+            var jsonData = unescape(encodeURIComponent(JSON.stringify(params)));
+            var messageSignature = signer.update(jsonData).digest('base64');
+
+            // message object to POST
+            var data =
+            {
+                'apiKey': publicKey,
+                'params': params,
+                'sig': messageSignature
+            };
+
+            httpRequest(
+                {
+                    'method': 'POST',
+                    'url': 'https://api.greeninvoice.co.il/api/documents/add',
+                    'headers': {'content-type': 'application/json', 'charset': 'utf-8'},
+                    'form': {'data': JSON.stringify(data)}
+                },
+                function (error, response, body)
+                {
+                    body = JSON.parse(body);
+
+                    if (error || body.error_code !== 0)
+                    {
+                        error = error || body.error_description;
+                        callback(new Error('Failed to issue invoice: ' + error));
+                    }
+                    else
+                    {
+                        callback(body.data);
+                    }
+                }
+            );
+        }
+
         Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
         {
             if (dbError)                   response.json(403, dbError);
@@ -125,15 +219,64 @@ module.exports.addRoutes = function(app, security)
                 {
                     var payment = patientFromDb.payments.create(request.body);
 
-                    // shove the new payment
-                    patientFromDb.payments.push(payment);
-
-                    // attach to appointments
-                    attachPaymentToAppointments(payment, patientFromDb, appointmentsToAttachTo, function(error)
+                    // create invoice @ greeninvoice
+                    issueInvoice(patientFromDb, payment, function(invoice)
                     {
-                        if (error)  response.json(403, {'error': error});
-                        else        response.send(201, patientFromDb);
+                        if (invoice instanceof Error)
+                        {
+                            response.json(403, {'error': invoice});
+                        }
+                        else
+                        {
+                            // save ticket id so that when the callback is handled, we'll know to which payment
+                            // it's for
+                            payment.invoice.ticket = invoice.ticket;
+
+                            // shove the new payment
+                            patientFromDb.payments.push(payment);
+
+                            // attach to appointments
+                            attachPaymentToAppointments(payment, patientFromDb, appointmentsToAttachTo, function(error)
+                            {
+                                if (error)  response.json(403, {'error': error});
+                                else        response.send(201, patientFromDb);
+                            });
+
+                        }
                     });
+                }
+            }
+        });
+    });
+
+    // payment invoice webhook from greeninvoice
+    app.post('/api/patients/:patientId/payments/:id/invoices', function(request, response)
+    {
+        Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
+        {
+            if (dbError)                   response.json(403, dbError);
+            else if (!patientFromDb)       response.send(404);
+            else
+            {
+                var payment = patientFromDb.payments.id(request.params.id);
+
+                // does such an payment exist and does the ticket id match?
+                if (payment !== null && payment.invoice.ticket == request.body.ticket_id)
+                {
+                    // from a security POV, it would have been best to query GI here using this ticket ID but meh
+                    payment.invoice.id = request.body.id;
+                    payment.invoice.url = request.body.url;
+
+                    // save self
+                    patientFromDb.save(function(dbError, patientFromDb)
+                    {
+                        response.send(200);
+                    });
+                }
+                else
+                {
+                    // OK (don't tell whoever it is something went wrong)
+                    response.send(200);
                 }
             }
         });

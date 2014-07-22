@@ -20,6 +20,7 @@ app.configure(function()
     app.set('view engine', 'jade');
     app.use(express.static('client'));
     app.use(express.logger('dev'));
+    app.use(express.urlencoded());
     app.use(express.json());
     app.use(express.methodOverride());
 

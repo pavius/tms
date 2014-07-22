@@ -6,7 +6,7 @@
   "author": "Eran Duchan",
   "license": "MIT",
   "engines": {
-        "node": "0.10.x"
+    "node": "0.10.x"
   },
   "scripts": {
     "test": "cd server && mocha",
@@ -16,7 +16,6 @@
     "type": "git",
     "url": "https://github.com/pavius/tms.git"
   },
-
   "dependencies": {
     "express": "~3.4.4",
     "mongoose": "~3.6.2",
@@ -29,12 +28,14 @@
     "underscore": "~1.6.0",
     "async": "~0.9.0",
     "bower": "~1.3.3",
-    "newrelic": "~1.7.0"
+    "newrelic": "~1.7.0",
+    "request": "~2.37.0"
   },
-
   "devDependencies": {
     "supertest": "latest",
     "chai": "latest",
-    "mocha": "latest"
+    "mocha": "latest",
+    "nock": "~0.42.1",
+    "url": "~0.10.1"
   }
 }
