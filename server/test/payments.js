@@ -1,5 +1,6 @@
 var request = require('supertest');
 var expect = require('chai').expect;
+var assert = require('chai').assert;
 var async = require('async');
 var nock = require('nock');
 var url = require('url');
@@ -73,8 +74,7 @@ describe('Payments', function()
                         },
                         {
                             when: (new Date()).toISOString(),
-                            sum: 1500,
-                            invoice: 'http://www.google.com'
+                            sum: 1500
                         }
                     ]
                 },
@@ -228,7 +228,7 @@ describe('Payments', function()
 
         describe('when creating a payment with cash', function()
         {
-            it('should call the GI API correct settings', function(done)
+            it('should call the GI API with correct settings', function(done)
             {
                 var newPayment =
                 {
@@ -263,6 +263,81 @@ describe('Payments', function()
                     .end(function(err, response)
                     {
                         callInvoiceCompleteWebhook(patient, response.body.payments[0], done);
+                    });
+            });
+        });
+
+        describe('when creating a payment with cheque', function()
+        {
+            it('should call the GI API with correct settings and update patient bank info', function(done)
+            {
+                var newPayment =
+                {
+                    when: (new Date()).toISOString(),
+                    sum: 750,
+                    transaction:
+                    {
+                        type: 'cheque',
+                        cheque:
+                        {
+                            number: 123,
+                            date: (new Date()).toISOString(),
+                            bank:
+                            {
+                                name: 'Whatever bank',
+                                branch: 'Some branch',
+                                account: 'Foo account'
+                            }
+                        }
+                    }
+                };
+
+                patient = patientFixtures[1];
+
+                // expect invoice and check all parameters, including cash
+                nock('https://api.greeninvoice.co.il')
+                    .post('/api/documents/add')
+                    .reply(200, function(uri, requestBody)
+                    {
+                        invoice = getGreenInvoiceDataFromRequest(requestBody);
+                        expect(invoice.params.doc_type).to.equal(320);
+                        expect(invoice.params.client.name).to.equal(patient.name);
+                        expect(invoice.params.income[0].price).to.equal(newPayment.sum);
+                        expect(invoice.params.income[0].description).to.equal('אימון');
+                        expect(invoice.params.payment[0].type).to.equal(2);
+                        expect(invoice.params.payment[0].amount).to.equal(newPayment.sum);
+                        expect(invoice.params.payment[0].bank).to.equal(newPayment.transaction.cheque.bank.name);
+                        expect(invoice.params.payment[0].branch).to.equal(newPayment.transaction.cheque.bank.branch);
+                        expect(invoice.params.payment[0].account).to.equal(newPayment.transaction.cheque.bank.account);
+                        assert.equal(invoice.params.payment[0].number, newPayment.transaction.cheque.number);
+                        expect(invoice.params.payment[0].date).to.equal(newPayment.transaction.cheque.date.slice(0, 10));
+
+                        return {'error_code': 0, data: {ticket: '8cdd2b30-417d-d994-a924-7ea690d0b9a3'}};
+                    });
+
+                request(app)
+                    .post('/api/patients/' + patient._id + '/payments')
+                    .send(newPayment)
+                    .expect('Content-Type', /json/)
+                    .expect(201)
+                    .end(function(err, response)
+                    {
+                        // call webhook and on completion, check that patient has updated bank details
+                        callInvoiceCompleteWebhook(patient, response.body.payments[0], function(err, response)
+                        {
+                            // verify that payment was updated with invoice info
+                            request(app)
+                                .get('/api/patients/' + patient._id)
+                                .expect('Content-Type', /json/)
+                                .expect(200)
+                                .end(function(err, response)
+                                {
+                                    expect(response.body.bank.name).to.equal(newPayment.transaction.cheque.bank.name);
+                                    expect(response.body.bank.branch).to.equal(newPayment.transaction.cheque.bank.branch);
+                                    expect(response.body.bank.account).to.equal(newPayment.transaction.cheque.bank.account);
+                                    done(err);
+                                });
+                        });
                     });
             });
         });

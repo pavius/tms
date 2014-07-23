@@ -153,7 +153,7 @@ module.exports.addRoutes = function(app, security)
                                         branch: payment.transaction.cheque.bank.branch,
                                         account: payment.transaction.cheque.bank.account,
                                         number: payment.transaction.cheque.number,
-                                        date: payment.transaction.cheque.date
+                                        date: payment.transaction.cheque.date.toISOString().slice(0, 10)
                                       });
             }
             else
