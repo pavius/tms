@@ -126,7 +126,9 @@ module.exports.addRoutes = function(app, security)
             var params =
             {
                 timestamp: new Date().getTime(),
-                callback_url: 'http://localhost/api/patients/' + patient._id + '/payments/' + payment._id + '/invoices',
+                // callback_url: 'http://localhost/,
+                // callback_url: 'http://requestb.in/1cncanu1',
+                callback_url: 'https://lbdpdylmue.localtunnel.me/api/patients/' + patient._id + '/payments/' + payment._id + '/invoices',
                 doc_type: 320,
                 client:
                 {
@@ -164,6 +166,9 @@ module.exports.addRoutes = function(app, security)
                                     });
             }
 
+            console.log("Issuing invoice");
+            console.log(params);
+
             // generate a signature for the 'data' object - the unescape(encodeURIComponent())
             // is needed to support non-Latin characters properly
             var jsonData = unescape(encodeURIComponent(JSON.stringify(params)));
@@ -195,6 +200,7 @@ module.exports.addRoutes = function(app, security)
                     }
                     else
                     {
+                        console.log(body);
                         callback(body.data);
                     }
                 }

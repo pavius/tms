@@ -129,8 +129,8 @@ angular.module('tms.patient.controllers',
 }])
 
 .controller('PatientDetailController', 
-            ['$scope', '$log', '$routeParams', '$modal', '$location', 'ErrorHandler', 'Patient', 'Appointment', 'AppointmentModal', 'Payment',
-            function($scope, $log, $routeParams, $modal, $location, errorHandler, Patient, Appointment, AppointmentModal, Payment)
+            ['$scope', '$log', '$routeParams', '$modal', '$location', 'ErrorHandler', 'Patient', 'Appointment', 'AppointmentModal', 'Payment', 'PaymentModal',
+            function($scope, $log, $routeParams, $modal, $location, errorHandler, Patient, Appointment, AppointmentModal, Payment, PaymentModal)
 {
     $scope.appointment = null;
     $scope.patient = {};
@@ -184,6 +184,7 @@ angular.module('tms.patient.controllers',
         // save into scope
         $scope.patient.status = patientResponse.status;
         $scope.patient.debt = patientResponse.debt;
+        $scope.patient.bank = patientResponse.bank;
     }
 
     function translateStatus(status)
@@ -270,38 +271,25 @@ angular.module('tms.patient.controllers',
     $scope.createPayment = function()
     {
         // pop up the modal
-        paymentModal = $modal.open({templateUrl: './partials/payment-modal',
-                                    controller: 'PaymentModalController',
-                                    windowClass: 'payment',
-                                    size: 'sm',
-                                    resolve:
-                                    {
-                                        patient: function(){return $scope.patient;}
-                                    }});
+        PaymentModal.create($scope.patient,
+            function(updatedPatient)
+            {
+                // shove this new payment to the list
+                $scope.patient.payments.push(updatedPatient.payments[0]);
 
-        paymentModal.result.then(function(newPayment)
-        {
-            // update in server
-            Payment.save({patientId: $scope.patient._id}, newPayment,
-                function(dbObject)
+                // update patient to reflect new stuff
+                updateScopePatientWithResponse(updatedPatient);
+
+                // update appointments with their new payments
+                updatedPatient.appointments.forEach(function(appointment)
                 {
-                    // shove this payment to the list
-                    $scope.patient.payments.push(dbObject.payments[0]);
-
-                    // update patient
-                    updateScopePatientWithResponse(dbObject);
-
-                    // update appointments with their new payments
-                    dbObject.appointments.forEach(function(appointment)
-                    {
-                        getAppointmentById($scope.patient, appointment._id).payment = dbObject.payments[0]._id;
-                    });
-                },
-                function(error)
-                {
-                    $scope.errorHandler.handleError('create payment', error);
+                    getAppointmentById($scope.patient, appointment._id).payment = updatedPatient.payments[0]._id;
                 });
-        });
+            },
+            function(error)
+            {
+                $scope.errorHandler.handleError('create payment', {statusText: error});
+            });
     };
 
     $scope.toggleAppointmentBoolean = function(appointment, name)

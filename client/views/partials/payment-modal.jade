@@ -1,42 +1,76 @@
 .modal-body
 
-    div#common
+    div#common(ng-disabled='inProgress')
 
         .input-group
-            span.input-group-addon ש"ח
-            input.form-control(type='text', placeholder='{{payment.sum}}', ng-model='payment.sum')
-            span.input-group-addon סכום
+            input.form-control(type='text', ng-model='patient.name', ng-disabled='inProgress')
+            span.input-group-addon ע"ש
+
+        .clearfix
+
+            .col-xs-5.col-left
+
+                .input-group
+                    input.form-control(type='text', placeholder='{{payment.sum}}', ng-model='payment.sum', ng-disabled='inProgress')
+                    span.input-group-addon ע"ס
+
+            .col-xs-7
+
+                .input-group
+                    select.patient-dropdown(ng-model='payment.transaction.type', ng-disabled='inProgress')
+                        option(value='cash') מזומן
+                        option(value='cheque') צ'ק
+                    span.input-group-addon סוג
+
+    div#checkPayment(ng-show='payment.transaction.type=="cheque"').clearfix
 
         .input-group
-            input.form-control(type='text', ng-model='payment.invoice.name')
-            span.input-group-addon על שם
-
-        select.patient-dropdown(ng-model='payment.type')
-            option(value='cash') מזומן
-            option(value='cheque') צ'ק
-
-    div#checkPayment(ng-show='payment.type=="cheque"')
-
-        .input-group
-            input.form-control(type='text', ng-model='payment.invoice.bank')
+            select.patient-dropdown(ng-model='payment.transaction.cheque.bank.name', ng-disabled='inProgress')
+                option(value='HSBC') HSBC
+                option(value='אגוד') אגוד
+                option(value='אוצר החייל') אוצר החייל
+                option(value='דיסקונט') דיסקונט
+                option(value='הפועלים') הפועלים
+                option(value='יהב') יהב
+                option(value='יורוטרייד') יורוטרייד
+                option(value='ירושלים') ירושלים
+                option(value='ישראל') ישראל
+                option(value='לאומי') לאומי
+                option(value='מזרחי טפחות') מזרחי טפחות
+                option(value='מסד') מסד
+                option(value='מרכנתיל') מרכנתיל
+                option(value='ההבינלאומי') ההבינלאומי
+                option(value='יובנק') יובנק
+                option(value='סיטי בנק') סיטי בנק
+                option(value='פועלי אגודת ישראל') פועלי אגודת ישראל
+                option(value='דקסיה') דקסיה
+                option(value='ערבי ישראלי') ערבי ישראלי
             span.input-group-addon בנק
 
-        .input-group
-            input.form-control(type='text', ng-model='payment.invoice.branch')
-            span.input-group-addon סניף
+        .clearfix
 
-        .input-group
-            input.form-control(type='text', ng-model='payment.invoice.account')
-            span.input-group-addon חשבון
+            .col-xs-7.col-left
 
-        .input-group
-            input.form-control(type='text', ng-model='payment.invoice.chequeNumber')
+                .input-group
+                    input.form-control(type='text', ng-model='payment.transaction.cheque.bank.account', ng-disabled='inProgress')
+                    span.input-group-addon חשבון
+
+            .col-xs-5
+
+                .input-group
+                    input.form-control(type='text', ng-model='payment.transaction.cheque.bank.branch', ng-disabled='inProgress')
+                    span.input-group-addon סניף
+
+        .input-group.clearfix
+            input.form-control(type='text', ng-model='payment.transaction.cheque.number', ng-disabled='inProgress')
             span.input-group-addon מספר צ'ק
 
 
 .modal-footer
 
-    button.btn.btn-sm.btn-primary.pull-left(ng-click='create()') צור תשלום
+    button.btn.btn-sm.btn-primary.pull-left(ng-click='createOrUpdate()', ng-disabled='inProgress')
+        i.fa.fa-cog.fa-spin(ng-show='inProgress')
+        | צור תשלום
 
-    button.btn.btn-sm.btn-default.pull-left(ng-click='cancel()') סגור
+    button.btn.btn-sm.btn-default.pull-left(ng-click='cancel()', ng-disabled='inProgress') סגור
     

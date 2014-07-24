@@ -19,8 +19,8 @@ angular.module('tms.appointment.controllers', [])
 }])
 
 .controller('AppointmentModalController', 
-            ['$scope', '$modalInstance', 'Appointment', 'Patient', 'mode', 'patient', 'appointment',
-            function($scope, $modalInstance, Appointment, Patient, mode, patient, appointment)
+            ['$scope', '$modalInstance', 'Patient', 'Appointment', 'mode', 'patient', 'appointment',
+            function($scope, $modalInstance, Patient, Appointment, mode, patient, appointment)
 {
     $scope.dt = Date.now();
     $scope.mode = mode;

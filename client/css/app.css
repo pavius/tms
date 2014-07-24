@@ -257,7 +257,25 @@ td.zoom-in
 
 .modal.payment span.input-group-addon
 {
-    width: 70px;
+    width: 50px;
+}
+
+.modal.payment .input-group
+{
+    width: 100%;
+}
+
+.modal.payment .col-xs-5,
+.modal.payment .col-xs-6,
+.modal.payment .col-xs-7
+{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+button .fa
+{
+    margin-left: 5px;
 }
 
 /*

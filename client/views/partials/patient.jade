@@ -55,10 +55,15 @@ row.clearfix
                         tr
                             th מתי
                             th סכום
+                            th חשבונית
                     tbody
                         tr(ng-repeat="payment in patient.payments | orderBy:'-when'")
                             td {{payment.when | date:'dd MMMM HH:mm'}}
                             td {{payment.sum}}
+                            td
+                                i.glyphicon.glyphicon-remove(ng-show='!payment.invoice.url')
+                                a(ng-href='{{payment.invoice.url}}')
+                                    i.glyphicon.glyphicon-list-alt(ng-show='payment.invoice.url')
 
         tab(heading='פרופיל')
 
