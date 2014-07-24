@@ -37,7 +37,7 @@ angular.module('tms.payment.services', ['ngResource'])
                 cheque:
                 {
                     number: '',
-                    date: (new Date()).toISOString(),
+                    date: new Date(),
                     bank:
                     {
                         name: patient.bank ? patient.bank.name : '',
@@ -47,7 +47,7 @@ angular.module('tms.payment.services', ['ngResource'])
                 },
                 transfer:
                 {
-                    date: (new Date()).toISOString(),
+                    date: new Date(),
                     bank:
                     {
                         name: patient.bank ? patient.bank.name : '',

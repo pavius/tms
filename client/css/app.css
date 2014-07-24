@@ -279,6 +279,16 @@ button .fa
     margin-left: 5px;
 }
 
+.ui-datepicker
+{
+    z-index: 1100 !important;
+}
+
+.input-group input[readonly="readonly"].datepicker
+{
+    background-color: #ffffff;
+}
+
 /*
  * RTL checkbox
  */

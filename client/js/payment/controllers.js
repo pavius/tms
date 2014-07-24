@@ -61,7 +61,6 @@ angular.module('tms.payment.controllers', [])
                             Payment.get({patientId: $scope.patient._id, id: updatedPatient.payments[0]._id}, function(updatedPayment)
                             {
                                 // update the payment in the patient
-                                console.log(updatedPayment);
                                 updatedPatient.payments[0] = updatedPayment;
 
                                 // if there's an invoice url, close

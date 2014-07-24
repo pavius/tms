@@ -2,6 +2,7 @@ angular.module('tms',
 [
     'ngRoute',
     'ui.select2',
+    'ui.date',
     'tms.common.filters',
     'tms.dashboard.controllers',
     'tms.dashboard.controllers',

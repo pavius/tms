@@ -114,6 +114,15 @@ module.exports.addRoutes = function(app, security)
             });
         }
 
+        function formatDateForGreenInvoice(date)
+        {
+            var yyyy = date.getFullYear().toString();
+            var mm = (date.getMonth() + 1).toString();
+            var dd  = date.getDate().toString();
+
+            return yyyy + '-' + (mm[1] ? mm : "0" + mm[0]) + '-' + (dd[1] ? dd : "0" + dd[0]);
+        }
+
         function issueInvoice(patient, payment, callback)
         {
             var privateKey = 'befec8b16bc6e91479c97a19b38a6b0b';
@@ -153,10 +162,10 @@ module.exports.addRoutes = function(app, security)
                                         branch: payment.transaction.cheque.bank.branch,
                                         account: payment.transaction.cheque.bank.account,
                                         number: payment.transaction.cheque.number,
-                                        date: payment.transaction.cheque.date.toISOString().slice(0, 10)
+                                        date: formatDateForGreenInvoice(payment.transaction.cheque.date)
                                       });
             }
-            if (payment.transaction.type == 'transfer')
+            else if (payment.transaction.type == 'transfer')
             {
                 params.payment.push({
                     type: 4,
@@ -164,7 +173,7 @@ module.exports.addRoutes = function(app, security)
                     bank: payment.transaction.transfer.bank.name,
                     branch: payment.transaction.transfer.bank.branch,
                     account: payment.transaction.transfer.bank.account,
-                    date: payment.transaction.transfer.date.toISOString().slice(0, 10)
+                    date: formatDateForGreenInvoice(payment.transaction.transfer.date)
                 });
             }
             else
@@ -204,6 +213,7 @@ module.exports.addRoutes = function(app, security)
 
                     if (error || body.error_code !== 0)
                     {
+                        console.log(body);
                         error = error || body.error_description;
                         callback(new Error('Failed to issue invoice: ' + error));
                     }

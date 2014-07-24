@@ -47,6 +47,10 @@
             input.form-control(type='text', ng-model='payment.transaction.cheque.number', ng-disabled='inProgress')
             span.input-group-addon מספר צ'ק
 
+        .input-group
+            input.form-control.datepicker(ui-date='', ng-model='payment.transaction.cheque.date', readonly='readonly')
+            span.input-group-addon תאריך
+
     div#transferPayment(ng-show='payment.transaction.type=="transfer"').clearfix
 
         .input-group
@@ -66,6 +70,10 @@
                 .input-group
                     input.form-control(type='text', ng-model='payment.transaction.transfer.bank.branch', ng-disabled='inProgress')
                     span.input-group-addon סניף
+
+        .input-group
+            input.form-control.datepicker(ui-date='', ng-model='payment.transaction.transfer.date', readonly='readonly')
+            span.input-group-addon תאריך
 
 .modal-footer
 
