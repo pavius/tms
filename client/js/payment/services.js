@@ -44,6 +44,16 @@ angular.module('tms.payment.services', ['ngResource'])
                         branch: patient.bank ? patient.bank.branch : '',
                         account: patient.bank ? patient.bank.account: ''
                     }
+                },
+                transfer:
+                {
+                    date: (new Date()).toISOString(),
+                    bank:
+                    {
+                        name: patient.bank ? patient.bank.name : '',
+                        branch: patient.bank ? patient.bank.branch : '',
+                        account: patient.bank ? patient.bank.account: ''
+                    }
                 }
             }
         };

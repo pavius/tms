@@ -20,31 +20,13 @@
                     select.patient-dropdown(ng-model='payment.transaction.type', ng-disabled='inProgress')
                         option(value='cash') מזומן
                         option(value='cheque') צ'ק
+                        option(value='transfer') העברה בנקאית
                     span.input-group-addon סוג
 
     div#checkPayment(ng-show='payment.transaction.type=="cheque"').clearfix
 
         .input-group
-            select.patient-dropdown(ng-model='payment.transaction.cheque.bank.name', ng-disabled='inProgress')
-                option(value='HSBC') HSBC
-                option(value='אגוד') אגוד
-                option(value='אוצר החייל') אוצר החייל
-                option(value='דיסקונט') דיסקונט
-                option(value='הפועלים') הפועלים
-                option(value='יהב') יהב
-                option(value='יורוטרייד') יורוטרייד
-                option(value='ירושלים') ירושלים
-                option(value='ישראל') ישראל
-                option(value='לאומי') לאומי
-                option(value='מזרחי טפחות') מזרחי טפחות
-                option(value='מסד') מסד
-                option(value='מרכנתיל') מרכנתיל
-                option(value='ההבינלאומי') ההבינלאומי
-                option(value='יובנק') יובנק
-                option(value='סיטי בנק') סיטי בנק
-                option(value='פועלי אגודת ישראל') פועלי אגודת ישראל
-                option(value='דקסיה') דקסיה
-                option(value='ערבי ישראלי') ערבי ישראלי
+            select.patient-dropdown(ng-model='payment.transaction.cheque.bank.name', ng-options='getBankId(bank) as getBankId(bank) for bank in banks', ng-disabled='inProgress')
             span.input-group-addon בנק
 
         .clearfix
@@ -65,6 +47,25 @@
             input.form-control(type='text', ng-model='payment.transaction.cheque.number', ng-disabled='inProgress')
             span.input-group-addon מספר צ'ק
 
+    div#transferPayment(ng-show='payment.transaction.type=="transfer"').clearfix
+
+        .input-group
+            select.patient-dropdown(ng-model='payment.transaction.transfer.bank.name', ng-options='getBankId(bank) as getBankId(bank) for bank in banks', ng-disabled='inProgress')
+            span.input-group-addon בנק
+
+        .clearfix
+
+            .col-xs-7.col-left
+
+                .input-group
+                    input.form-control(type='text', ng-model='payment.transaction.transfer.bank.account', ng-disabled='inProgress')
+                    span.input-group-addon חשבון
+
+            .col-xs-5
+
+                .input-group
+                    input.form-control(type='text', ng-model='payment.transaction.transfer.bank.branch', ng-disabled='inProgress')
+                    span.input-group-addon סניף
 
 .modal-footer
 

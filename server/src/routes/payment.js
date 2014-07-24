@@ -96,10 +96,8 @@ module.exports.addRoutes = function(app, security)
 
             // save bank details for patient if payment is cheque. this is used so that
             // the user doesn't need to re-type bank details each type (but will be able to override them)
-            if (payment.transaction.type == 'cheque')
-            {
-                patient.bank = payment.transaction.cheque.bank;
-            }
+            if (payment.transaction.type == 'cheque') patient.bank = payment.transaction.cheque.bank;
+            else if (payment.transaction.type == 'transfer') patient.bank = payment.transaction.transfer.bank;
 
             // save self
             patient.save(function(dbError, patient)
@@ -128,7 +126,7 @@ module.exports.addRoutes = function(app, security)
                 timestamp: new Date().getTime(),
                 // callback_url: 'http://localhost/,
                 // callback_url: 'http://requestb.in/1cncanu1',
-                callback_url: 'https://lbdpdylmue.localtunnel.me/api/patients/' + patient._id + '/payments/' + payment._id + '/invoices',
+                callback_url: 'https://pavius.localtunnel.me/api/patients/' + patient._id + '/payments/' + payment._id + '/invoices',
                 doc_type: 320,
                 client:
                 {
@@ -158,11 +156,22 @@ module.exports.addRoutes = function(app, security)
                                         date: payment.transaction.cheque.date.toISOString().slice(0, 10)
                                       });
             }
+            if (payment.transaction.type == 'transfer')
+            {
+                params.payment.push({
+                    type: 4,
+                    amount: payment.sum,
+                    bank: payment.transaction.transfer.bank.name,
+                    branch: payment.transaction.transfer.bank.branch,
+                    account: payment.transaction.transfer.bank.account,
+                    date: payment.transaction.transfer.date.toISOString().slice(0, 10)
+                });
+            }
             else
             {
                 params.payment.push({
-                                          type: 1,
-                                          amount: payment.sum
+                                        type: 1,
+                                        amount: payment.sum
                                     });
             }
 

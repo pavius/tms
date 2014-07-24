@@ -250,7 +250,8 @@ td.zoom-in
     text-align: left;
 }
 
-.modal.payment #checkPayment
+.modal.payment #checkPayment,
+.modal.payment #transferPayment
 {
     margin-top: 15px;
 }

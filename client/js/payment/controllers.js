@@ -12,6 +12,29 @@ angular.module('tms.payment.controllers', [])
     $scope.patient = patient;
     $scope.payment = payment;
     $scope.inProgress = false;
+    $scope.banks = [
+        {name: 'HSBC', number: 23},
+        {name: 'איגוד', number: 13},
+        {name: 'אוצר החייל', number: 14},
+        {name: 'דיסקונט', number: 11},
+        {name: 'הפועלים', number: 12},
+        {name: 'יהב', number: 04},
+        {name: 'יורוטרייד', number: 01},
+        {name: 'ירושלים', number: 54},
+        {name: 'ישראל', number: 99},
+        {name: 'לאומי', number: 10},
+        {name: 'מזרחי טפחות', number: 20},
+        {name: 'מסד', number: 46},
+        {name: 'מרכנתיל', number: 17},
+        {name: 'הבינלאומי', number: 31},
+        {name: 'יובנק', number: 26},
+        {name: 'סיטי בנק', number: 22}
+    ];
+
+    $scope.getBankId = function(bank)
+    {
+        return bank.name + ' (' + bank.number + ')';
+    }
 
     $scope.createOrUpdate = function()
     {

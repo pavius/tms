@@ -12,10 +12,20 @@ var paymentSchema = mongoose.Schema
     },
     transaction:
     {
-        type: {type: String, enum: ['cash', 'cheque'], default: 'cash'},
+        type: {type: String, enum: ['cash', 'cheque', 'transfer'], default: 'cash'},
         cheque:
         {
             number: {type: String},
+            date: {type: Date},
+            bank:
+            {
+                name: {type: String},
+                branch: {type: String},
+                account: {type: String}
+            }
+        },
+        transfer:
+        {
             date: {type: Date},
             bank:
             {
