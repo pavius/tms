@@ -1,7 +1,8 @@
 row
     alert(ng-repeat='alert in errorHandler.alerts', type='{{alert.type}}', close='errorHandler.closeAlert($index)') {{alert.message}}
 
-row
+row#patientsToolbar
+
     button.btn.btn-sm.btn-primary.pull-right(ng-click='create()') צור מטופל
 
     .input-group.pull-left(style='width: 100px')

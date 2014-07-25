@@ -23,6 +23,15 @@
                         option(value='transfer') העברה בנקאית
                     span.input-group-addon סוג
 
+            .clearfix(ng-show='patient.email')
+                input#emailInvoice(type='checkbox', ng-model='payment.emailInvoice')
+                label#emailInvoice(for='emailInvoice') שלח חשבונית במייל ל: {{patient.email}}
+
+            .clearfix(ng-show='!patient.email')#noEmailWarning
+                i.fa.fa-warning
+                span למטופל לא מוגדרת כתובת מייל. החשבונית לא תישלח אוטומטית.
+
+
     div#checkPayment(ng-show='payment.transaction.type=="cheque"').clearfix
 
         .input-group

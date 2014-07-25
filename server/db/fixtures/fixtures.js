@@ -12,7 +12,7 @@ patients =
     {
         name: "אדולף",
         primaryPhone: "054 123 4567",
-        email: "mein.mail@here.com",
+        email: "pavius@gmail.com",
         lastContact: generateTimeFromNow(-6, 0, 0).toISOString(),
         appointments:
         [

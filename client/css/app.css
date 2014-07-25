@@ -289,21 +289,32 @@ button .fa
     background-color: #ffffff;
 }
 
+label#emailInvoice
+{
+    font-weight: normal;
+    margin-right: 6px;
+}
+
+#noEmailWarning
+{
+    color: red;
+}
+
 /*
  * RTL checkbox
  */
 
-.cbx-container
+#patientsToolbar .cbx-container
 {
     padding-top: 5px
 }
 
-input.cbx
+#patientsToolbar input.cbx
 {
     float: right;
 }
 
-label.cbx
+#patientsToolbar label.cbx
 {
     float: left;
     padding: 0px 4px 0px 8px;

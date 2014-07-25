@@ -44,6 +44,18 @@ describe('Payments', function()
             });
     }
 
+    function formatDateForGreenInvoice(date)
+    {
+        if (!(date instanceof Date))
+            date = new Date(date);
+
+        var yyyy = date.getFullYear().toString();
+        var mm = (date.getMonth() + 1).toString();
+        var dd  = date.getDate().toString();
+
+        return yyyy + '-' + (mm[1] ? mm : "0" + mm[0]) + '-' + (dd[1] ? dd : "0" + dd[0]);
+    }
+
     beforeEach(function(done)
     {
         patientFixtures =
@@ -106,6 +118,8 @@ describe('Payments', function()
 
         // inject test fixtures
         common.injectFixtures(patientFixtures, done);
+
+        nock.cleanAll();
     });
 
     describe('GET /api/patients/x/payments', function()
@@ -273,15 +287,16 @@ describe('Payments', function()
             {
                 var newPayment =
                 {
-                    when: (new Date()).toISOString(),
+                    when: new Date(),
                     sum: 750,
+                    emailInvoice: true,
                     transaction:
                     {
                         type: 'cheque',
                         cheque:
                         {
                             number: 123,
-                            date: (new Date()).toISOString(),
+                            date: new Date(),
                             bank:
                             {
                                 name: 'Whatever bank',
@@ -302,6 +317,7 @@ describe('Payments', function()
                         invoice = getGreenInvoiceDataFromRequest(requestBody);
                         expect(invoice.params.doc_type).to.equal(320);
                         expect(invoice.params.client.name).to.equal(patient.name);
+                        expect(invoice.params.client.send_email).to.equal(newPayment.emailInvoice);
                         expect(invoice.params.income[0].price).to.equal(newPayment.sum);
                         expect(invoice.params.income[0].description).to.equal('אימון');
                         expect(invoice.params.payment[0].type).to.equal(2);
@@ -310,7 +326,7 @@ describe('Payments', function()
                         expect(invoice.params.payment[0].branch).to.equal(newPayment.transaction.cheque.bank.branch);
                         expect(invoice.params.payment[0].account).to.equal(newPayment.transaction.cheque.bank.account);
                         assert.equal(invoice.params.payment[0].number, newPayment.transaction.cheque.number);
-                        expect(invoice.params.payment[0].date).to.equal(newPayment.transaction.cheque.date.slice(0, 10));
+                        expect(invoice.params.payment[0].date).to.equal(formatDateForGreenInvoice(newPayment.transaction.cheque.date));
 
                         return {'error_code': 0, data: {ticket: '8cdd2b30-417d-d994-a924-7ea690d0b9a3'}};
                     });
@@ -348,14 +364,15 @@ describe('Payments', function()
             {
                 var newPayment =
                 {
-                    when: (new Date()).toISOString(),
+                    when: new Date(),
                     sum: 750,
+                    emailInvoice: false,
                     transaction:
                     {
                         type: 'transfer',
                         transfer:
                         {
-                            date: (new Date()).toISOString(),
+                            date: new Date(),
                             bank:
                             {
                                 name: 'Whatever bank',
@@ -376,14 +393,15 @@ describe('Payments', function()
                         invoice = getGreenInvoiceDataFromRequest(requestBody);
                         expect(invoice.params.doc_type).to.equal(320);
                         expect(invoice.params.client.name).to.equal(patient.name);
+                        expect(invoice.params.client.send_email).to.equal(newPayment.emailInvoice);
                         expect(invoice.params.income[0].price).to.equal(newPayment.sum);
                         expect(invoice.params.income[0].description).to.equal('אימון');
-                        expect(invoice.params.payment[0].type).to.equal(2);
+                        expect(invoice.params.payment[0].type).to.equal(4);
                         expect(invoice.params.payment[0].amount).to.equal(newPayment.sum);
                         expect(invoice.params.payment[0].bank).to.equal(newPayment.transaction.transfer.bank.name);
                         expect(invoice.params.payment[0].branch).to.equal(newPayment.transaction.transfer.bank.branch);
                         expect(invoice.params.payment[0].account).to.equal(newPayment.transaction.transfer.bank.account);
-                        expect(invoice.params.payment[0].date).to.equal(newPayment.transaction.transfer.date.slice(0, 10));
+                        expect(invoice.params.payment[0].date).to.equal(formatDateForGreenInvoice(newPayment.transaction.transfer.date));
 
                         return {'error_code': 0, data: {ticket: '8cdd2b30-417d-d994-a924-7ea690d0b9a3'}};
                     });

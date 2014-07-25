@@ -116,6 +116,9 @@ module.exports.addRoutes = function(app, security)
 
         function formatDateForGreenInvoice(date)
         {
+            if (!(date instanceof Date))
+                date = new Date(date);
+
             var yyyy = date.getFullYear().toString();
             var mm = (date.getMonth() + 1).toString();
             var dd  = date.getDate().toString();
@@ -139,8 +142,9 @@ module.exports.addRoutes = function(app, security)
                 doc_type: 320,
                 client:
                 {
-                    send_email: false,
-                    name: patient.name
+                    send_email: payment.emailInvoice,
+                    name: patient.name,
+                    email: patient.email
                 },
                 income:
                 [
@@ -244,8 +248,12 @@ module.exports.addRoutes = function(app, security)
                 {
                     var payment = patientFromDb.payments.create(request.body);
 
+                    // save candidate ID in the body. we use the request body because it may contain fields not in
+                    // the model (like "send email")
+                    request.body._id = payment._id;
+
                     // create invoice @ greeninvoice
-                    issueInvoice(patientFromDb, payment, function(invoice)
+                    issueInvoice(patientFromDb, request.body, function(invoice)
                     {
                         if (invoice instanceof Error)
                         {
