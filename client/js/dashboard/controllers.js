@@ -21,7 +21,7 @@ angular.module('tms.dashboard.controllers',
             function($scope, $location, errorHandler, Patient, Todo, AppointmentModal)
 {
     $scope.todos = [];
-    $scope.setPatientAppointmentTodos = [];
+    $scope.lowPriorityTodos = [];
     $scope.appointmentsThisWeek = [];
     $scope.appointmentsNextWeek = [];
     $scope.errorHandler = errorHandler;
@@ -44,7 +44,7 @@ angular.module('tms.dashboard.controllers',
         if (patient.debt.total &&
             (Date.now() - Date.parse(patient.debt.oldestNonPaidAppointment)) > (2 * 31 * 24 * 60 * 60 * 1000))
         {
-            $scope.todos.push(Todo.createCollectDebtTodo(patient, patient.debt));
+            $scope.lowPriorityTodos.push(Todo.createCollectDebtTodo(patient, patient.debt));
         }
     }
 
@@ -134,7 +134,7 @@ angular.module('tms.dashboard.controllers',
                     // check if this patient has an appointment
                     if (!patientHasFutureAppointment)
                     {
-                        $scope.setPatientAppointmentTodos.push(Todo.createSetPatientAppointment(patient));
+                        $scope.lowPriorityTodos.push(Todo.createSetPatientAppointment(patient));
                     }
                 }
             });

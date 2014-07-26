@@ -1,65 +1,93 @@
 row
     alert(ng-repeat='alert in errorHandler.alerts', type='{{alert.type}}', close='errorHandler.closeAlert($index)') {{alert.message}}
 
+
 row.clearfix
-    h3.dashboard-title.pull-right לבצע
-    button#dashboard-create-appointment.btn.btn-sm.btn-primary.pull-left(ng-click='createAppointment()') צור פגישה
 
-row
-    p(ng-show='todos.length == 0') אין משימות לביצוע
+    row.clearfix
 
-    table.table.dashboard-table
-        tbody
-            tr(ng-repeat="todo in todos | orderBy: 'importance()'")
-                td#dashboard-checkbox-column
-                    form
-                        input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)', ng-show='todo.complete')
-                td
-                    {{todo.toString()}}
-                td.zoom-in
-                    a.location-selector(ng-click='todo.view()')
-                        i.glyphicon.glyphicon-zoom-in
+        h3.dashboard-title.pull-right משימות
+        button#dashboard-create-appointment.btn.btn-sm.btn-primary.pull-left(ng-click='createAppointment()') צור פגישה
 
-row
-    h3.dashboard-title פגישות השבוע ({{totalNumberOfAppointmentsThisWeek}})
+    row.clearfix
 
-    p(ng-show='appointmentsThisWeek.length == 0') אין פגישות השבוע
+        tabset.dashboard
 
-    table.table.dashboard-table
-        tbody
-            tr(ng-repeat="appointment in appointmentsThisWeek | orderBy:'when'")
-                td
-                    span.fa.fa-skype(ng-show='appointment.type == "skype"')
-                    {{appointment.when | date:"EEEE, dd MMMM 'ב-' HH:mm"}} עם {{appointment.patient.name}}
-                td.zoom-in
-                    a.location-selector(href='patients/{{appointment.patient._id}}')
-                        i.glyphicon.glyphicon-zoom-in
+            tab#todos(ng-attr-heading='חשוב ({{todos.length}})')
 
-row
-    h3.dashboard-title פגישות בשבוע הבא ({{appointmentsNextWeek.length}})
+                row
+                    p(ng-show='todos.length == 0') אין משימות לביצוע
 
-    p(ng-show='appointmentsNextWeek.length == 0') אין פגישות בשבוע הבא
+                    table.table.dashboard-table
+                        tbody
+                            tr(ng-repeat="todo in todos | orderBy: 'importance()'")
+                                td#dashboard-checkbox-column
+                                    form
+                                        input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)', ng-show='todo.complete')
+                                td
+                                    {{todo.toString()}}
+                                td.zoom-in
+                                    a.location-selector(ng-click='todo.view()')
+                                        i.glyphicon.glyphicon-zoom-in
 
-    table.table.dashboard-table
-        tbody
-            tr(ng-repeat="appointment in appointmentsNextWeek | orderBy:'when'")
-                td
-                    span.fa.fa-skype(ng-show='appointment.type == "skype"')
-                    {{appointment.when | date:"EEEE, dd MMMM 'ב-' HH:mm"}} עם {{appointment.patient.name}}
-                td.zoom-in
-                    a.location-selector(href='patients/{{appointment.patient._id}}')
-                        i.glyphicon.glyphicon-zoom-in
+            tab#todos(ng-attr-heading='אחר כך ({{lowPriorityTodos.length}})')
 
-row
-    h3.dashboard-title תיאום פגישות
+                row
+                    p(ng-show='lowPriorityTodos.length == 0') אין משימות לביצוע
 
-    p(ng-show='setPatientAppointmentTodos.length == 0') לכל המטופלים תואמו פגישות
+                    table.table.dashboard-table
+                        tbody
+                            tr(ng-repeat="todo in lowPriorityTodos | orderBy: 'importance()'")
+                                td
+                                    {{todo.toString()}}
+                                td.zoom-in
+                                    a.location-selector(ng-click='todo.view()')
+                                        i.glyphicon.glyphicon-zoom-in
 
-    table.table.dashboard-table
-        tbody
-            tr(ng-repeat="todo in setPatientAppointmentTodos | orderBy: 'importance()'")
-                td
-                    {{todo.toString()}}
-                td.zoom-in
-                    a.location-selector(ng-click='todo.view()')
-                        i.glyphicon.glyphicon-zoom-in
+
+row.clearfix
+
+    row.clearfix
+
+        h3.dashboard-title.pull-right פגישות
+
+    row.clearfix
+
+        tabset.dashboard
+
+            tab#todos(ng-attr-heading='השבוע ({{totalNumberOfAppointmentsThisWeek}})')
+
+                p(ng-show='appointmentsThisWeek.length == 0') אין פגישות השבוע
+
+                table.table.dashboard-table
+
+                    tbody
+
+                        tr(ng-repeat="appointment in appointmentsThisWeek | orderBy:'when'")
+
+                            td
+                                span.fa.fa-skype(ng-show='appointment.type == "skype"')
+                                {{appointment.when | date:"EEEE, dd MMMM 'ב-' HH:mm"}} עם {{appointment.patient.name}}
+
+                            td.zoom-in
+                                a.location-selector(href='patients/{{appointment.patient._id}}')
+                                    i.glyphicon.glyphicon-zoom-in
+
+            tab#todos(ng-attr-heading='שבוע הבא ({{appointmentsNextWeek.length}})')
+
+                p(ng-show='appointmentsNextWeek.length == 0') אין פגישות בשבוע הבא
+
+                table.table.dashboard-table
+
+                    tbody
+
+                        tr(ng-repeat="appointment in appointmentsNextWeek | orderBy:'when'")
+
+                            td
+                                span.fa.fa-skype(ng-show='appointment.type == "skype"')
+                                {{appointment.when | date:"EEEE, dd MMMM 'ב-' HH:mm"}} עם {{appointment.patient.name}}
+
+                            td.zoom-in
+                                a.location-selector(href='patients/{{appointment.patient._id}}')
+                                    i.glyphicon.glyphicon-zoom-in
+
