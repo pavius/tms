@@ -185,6 +185,7 @@ angular.module('tms.patient.controllers',
         $scope.patient.status = patientResponse.status;
         $scope.patient.debt = patientResponse.debt;
         $scope.patient.bank = patientResponse.bank;
+        $scope.patient.invoiceRecipient = patientResponse.invoiceRecipient;
     }
 
     function translateStatus(status)

@@ -248,7 +248,7 @@ describe('Payments', function()
                 {
                     when: (new Date()).toISOString(),
                     sum: 750,
-                    transaction: {type: 'cash'}
+                    transaction: {type: 'cash', invoiceRecipient: 'Some guy'}
                 };
 
                 patient = patientFixtures[1];
@@ -260,7 +260,7 @@ describe('Payments', function()
                     {
                         invoice = getGreenInvoiceDataFromRequest(requestBody);
                         expect(invoice.params.doc_type).to.equal(320);
-                        expect(invoice.params.client.name).to.equal(patient.name);
+                        expect(invoice.params.client.name).to.equal(newPayment.transaction.invoiceRecipient);
                         expect(invoice.params.income[0].price).to.equal(newPayment.sum);
                         expect(invoice.params.income[0].description).to.equal('אימון');
                         expect(invoice.params.payment[0].type).to.equal(1);
@@ -276,7 +276,19 @@ describe('Payments', function()
                     .expect(201)
                     .end(function(err, response)
                     {
-                        callInvoiceCompleteWebhook(patient, response.body.payments[0], done);
+                        callInvoiceCompleteWebhook(patient, response.body.payments[0], function(err, response)
+                        {
+                            // verify that payment was updated with invoice info
+                            request(app)
+                                .get('/api/patients/' + patient._id)
+                                .expect('Content-Type', /json/)
+                                .expect(200)
+                                .end(function(err, response)
+                                {
+                                    expect(response.body.invoiceRecipient).to.equal(newPayment.transaction.invoiceRecipient);
+                                    done(err);
+                                });
+                        });
                     });
             });
         });

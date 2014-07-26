@@ -25,7 +25,8 @@ var patientSchema = mongoose.Schema
         name: {type: String},
         branch: {type: String},
         account: {type: String}
-    }
+    },
+    invoiceRecipient: {type: String}
 });
 
 // calculate new status

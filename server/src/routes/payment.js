@@ -94,11 +94,6 @@ module.exports.addRoutes = function(app, security)
             // update debt
             patient.debt = patient.calculateDebt();
 
-            // save bank details for patient if payment is cheque. this is used so that
-            // the user doesn't need to re-type bank details each type (but will be able to override them)
-            if (payment.transaction.type == 'cheque') patient.bank = payment.transaction.cheque.bank;
-            else if (payment.transaction.type == 'transfer') patient.bank = payment.transaction.transfer.bank;
-
             // save self
             patient.save(function(dbError, patient)
             {
@@ -140,7 +135,7 @@ module.exports.addRoutes = function(app, security)
                 client:
                 {
                     send_email: payment.emailInvoice,
-                    name: patient.name,
+                    name: payment.transaction.invoiceRecipient || patient.name,
                     email: patient.email
                 },
                 income:
@@ -270,6 +265,14 @@ module.exports.addRoutes = function(app, security)
 
                             // shove the new payment
                             patientFromDb.payments.push(payment);
+
+                            // save bank details for patient if payment is cheque. this is used so that
+                            // the user doesn't need to re-type bank details each type (but will be able to override them)
+                            if (request.body.transaction.type == 'cheque') patientFromDb.bank = request.body.transaction.cheque.bank;
+                            else if (request.body.transaction.type == 'transfer') patientFromDb.bank = request.body.transaction.transfer.bank;
+
+                            // save the invoice recipient for this patient
+                            patientFromDb.invoiceRecipient = request.body.transaction.invoiceRecipient;
 
                             // attach to appointments
                             attachPaymentToAppointments(payment, patientFromDb, appointmentsToAttachTo, function(error)
