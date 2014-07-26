@@ -66,17 +66,6 @@ angular.module('tms.todo.services',
 
     CollectDebtTodo.prototype.importance = function() { return 100; }
 
-    CollectDebtTodo.prototype.complete = function(callback)
-    {
-        if (window.confirm("האם לשלוח חשבונית ל" + this.patient.name + "?"))
-        {
-            Payment.save({patientId: this.patient._id}, {sum: this.debt.total, when: Date.now()}, function(payment)
-            {
-                callback();
-            });
-        }
-    }
-
     CollectDebtTodo.prototype.view = function(callback)
     {
         $location.path('patients/' + this.patient._id);

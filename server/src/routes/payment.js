@@ -128,17 +128,14 @@ module.exports.addRoutes = function(app, security)
 
         function issueInvoice(patient, payment, callback)
         {
-            var privateKey = 'befec8b16bc6e91479c97a19b38a6b0b';
-            var publicKey = '1774b28d2a2d05a44996d7cf2ff45454';
+            var privateKey = process.env.GREENINVOICE_PRIVATE_KEY || '';
+            var publicKey = process.env.GREENINVOICE_PUBLIC_KEY || '';
             var signer = crypto.createHmac('sha256', new Buffer(privateKey, 'utf8'));
 
-            // overall receipt object - my callback just prints the POST parameters to the Heroku log
             var params =
             {
                 timestamp: new Date().getTime(),
-                // callback_url: 'http://localhost/,
-                // callback_url: 'http://requestb.in/1cncanu1',
-                callback_url: 'https://pavius.localtunnel.me/api/patients/' + patient._id + '/payments/' + payment._id + '/invoices',
+                callback_url: (process.env.ROOT_URL || 'https://pavius.localtunnel.me') + '/api/patients/' + patient._id + '/payments/' + payment._id + '/invoices',
                 doc_type: 320,
                 client:
                 {
@@ -188,7 +185,7 @@ module.exports.addRoutes = function(app, security)
                                     });
             }
 
-            console.log("Issuing invoice");
+            console.log("Issuing invoice: ");
             console.log(params);
 
             // generate a signature for the 'data' object - the unescape(encodeURIComponent())
@@ -217,12 +214,14 @@ module.exports.addRoutes = function(app, security)
 
                     if (error || body.error_code !== 0)
                     {
+                        console.log("Got GreenInvoice webhook with error:");
                         console.log(body);
                         error = error || body.error_description;
                         callback(new Error('Failed to issue invoice: ' + error));
                     }
                     else
                     {
+                        console.log("Got GreenInvoice webhook:");
                         console.log(body);
                         callback(body.data);
                     }
@@ -251,6 +250,10 @@ module.exports.addRoutes = function(app, security)
                     // save candidate ID in the body. we use the request body because it may contain fields not in
                     // the model (like "send email")
                     request.body._id = payment._id;
+
+                    /* TODO: use redis to store the payment temporarily and have the webhook verify the ticket id
+                     * stored in redis and then continue with what's going on here. the issue is that the webhook
+                     * may be called before the patient is saved, theoretically */
 
                     // create invoice @ greeninvoice
                     issueInvoice(patientFromDb, request.body, function(invoice)

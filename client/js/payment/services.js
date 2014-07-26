@@ -31,7 +31,7 @@ angular.module('tms.payment.services', ['ngResource'])
         payment = {
             sum: patient.debt.total,
             patient: patient._id,
-            emailInvoice: true,
+            emailInvoice: patient.email ? true : false,
             transaction:
             {
                 type: 'cash',
