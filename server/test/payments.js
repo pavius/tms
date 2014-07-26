@@ -147,14 +147,6 @@ describe('Payments', function()
             return JSON.parse(url.parse('?' + decodeURIComponent(requestBody), true).query.data);
         }
 
-        // unless specified otherwise, mock all requests towards greeninvoice by returning success
-        nock('https://api.greeninvoice.co.il')
-            .post('/api/documents/add')
-            .reply(200, function(uri, requestBody)
-                        {
-                            return {'error_code': 0, data: {ticket: '8cdd2b30-417d-d994-a924-7ea690d0b9a3'}};
-                        });
-
         describe('when creating a new payment for a patient that wholly covers appointments', function()
         {
             it('should respond with 201, patient info and create an object', function(done)
@@ -167,6 +159,14 @@ describe('Payments', function()
                 };
 
                 patient = patientFixtures[1];
+
+                // unless specified otherwise, mock all requests towards greeninvoice by returning success
+                nock('https://api.greeninvoice.co.il')
+                    .post('/api/documents/add')
+                    .reply(200, function(uri, requestBody)
+                    {
+                        return {'error_code': 0, data: {ticket: '8cdd2b30-417d-d994-a924-7ea690d0b9a3'}};
+                    });
 
                 request(app)
                     .post('/api/patients/' + patient._id + '/payments')

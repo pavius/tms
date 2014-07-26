@@ -33,7 +33,7 @@ app.configure(function()
 });
 
 // load routes from all modules
-_.each(['auth', 'patient', 'appointment', 'payment', 'client'], function(route)
+_.each(['auth', 'patient', 'appointment', 'payment', 'todo', 'client'], function(route)
 {
     require('./routes/' + route).addRoutes(app, passport);
 });
