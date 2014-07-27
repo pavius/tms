@@ -8,6 +8,7 @@ angular.module('tms',
     'tms.dashboard.controllers',
     'tms.patient.controllers',
     'tms.appointment.controllers',
+    'tms.todo.controllers',
     'tms.todo.services'
 ])
 

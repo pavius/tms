@@ -22,14 +22,20 @@ row.dashboard
 
                         table.table.dashboard-table
                             tbody
+
                                 tr(ng-repeat="todo in todos | orderBy: 'importance()'")
+
                                     td#dashboard-checkbox-column
+
                                         form
                                             input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)', ng-show='todo.complete')
+
                                     td
                                         {{todo.toString()}}
+
                                     td.zoom-in
-                                        a.location-selector(ng-click='todo.view()')
+
+                                        a.location-selector(ng-click='todo.view()', ng-show='todo.view')
                                             i.glyphicon.glyphicon-zoom-in
 
                 tab#todos(ng-attr-heading='אחר כך ({{lowPriorityTodos.length}})')

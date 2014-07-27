@@ -17,8 +17,8 @@ angular.module('tms.dashboard.controllers',
 }]) 
 
 .controller('DashboardController',
-            ['$scope', '$location', 'ErrorHandler', 'Patient', 'Todo', 'AppointmentModal',
-            function($scope, $location, errorHandler, Patient, Todo, AppointmentModal)
+            ['$scope', '$location', 'ErrorHandler', 'Patient', 'Todo', 'TodoModal', 'AppointmentModal',
+            function($scope, $location, errorHandler, Patient, Todo, TodoModal, AppointmentModal)
 {
     $scope.todos = [];
     $scope.lowPriorityTodos = [];
@@ -27,33 +27,30 @@ angular.module('tms.dashboard.controllers',
     $scope.errorHandler = errorHandler;
     $scope.totalNumberOfAppointmentsThisWeek = 0;
 
-    $scope.completeTodoAndRemove = function(todo, index)
-    {
-        if (todo.done)
-        {
-            todo.complete(function()
-            {
-                $scope.todos.splice(index, 1);
-            });
-        }
-    }
-
     function checkPatientDebtAndCreateTodo(patient)
     {
         // if patients oldest unpaid appointment is 2 months old, we want to know about it
         if (patient.debt.total &&
             (Date.now() - Date.parse(patient.debt.oldestNonPaidAppointment)) > (2 * 31 * 24 * 60 * 60 * 1000))
         {
-            $scope.lowPriorityTodos.push(Todo.createCollectDebtTodo(patient, patient.debt));
+            addTodoToArray(Todo.createCollectDebtTodo(patient, patient.debt), $scope.lowPriorityTodos);
         }
     }
 
-    $scope.createAppointment = function()
+    function addTodoToArray(todo, array)
     {
-        AppointmentModal.create(null, function(updatedPatient)
-        {
-            $scope.errorHandler.openAlert('success', "פגישה עם " + updatedPatient.name + " נוצרה בהצלחה");
-        });
+        array.push(todo);
+        todo.array = array;
+    }
+
+    function addCustomTodo(todo)
+    {
+        dashboardTodo = Todo.createCustomTodo(todo);
+
+        if (todo.type == 'urgent')
+            addTodoToArray(dashboardTodo, $scope.todos);
+        else
+            addTodoToArray(dashboardTodo, $scope.lowPriorityTodos);
     }
 
     function getDayInMs()
@@ -74,6 +71,33 @@ angular.module('tms.dashboard.controllers',
     {
         var thisWeekEndDate = new Date(getStartOfWeekDate().getTime() + 6 * getDayInMs());
         return new Date(thisWeekEndDate.getFullYear(), thisWeekEndDate.getMonth(), thisWeekEndDate.getDate(), 23, 59, 59);
+    }
+
+    $scope.completeTodoAndRemove = function(todo, index)
+    {
+        if (todo.done)
+        {
+            todo.complete(function()
+            {
+                todo.array.splice(todo.array.indexOf(todo), 1);
+            });
+        }
+    }
+
+    $scope.createAppointment = function()
+    {
+        AppointmentModal.create(null, function(updatedPatient)
+        {
+            $scope.errorHandler.openAlert('success', "פגישה עם " + updatedPatient.name + " נוצרה בהצלחה");
+        });
+    }
+
+    $scope.createTodo = function()
+    {
+        TodoModal.create(function(updatedTodo)
+        {
+            addCustomTodo(updatedTodo);
+        });
     }
 
     // get all active patients along with relevant appointment info
@@ -104,7 +128,7 @@ angular.module('tms.dashboard.controllers',
                     {
                         // is it unsummarized?
                         if (!appointment.summarySent)
-                            $scope.todos.push(Todo.createSummarizeAppointmentTodo(patient, appointment));
+                            addTodoToArray(Todo.createSummarizeAppointmentTodo(patient, appointment), $scope.todos);
                     }
                     // future appointment
                     else
@@ -134,7 +158,7 @@ angular.module('tms.dashboard.controllers',
                     // check if this patient has an appointment
                     if (!patientHasFutureAppointment)
                     {
-                        $scope.lowPriorityTodos.push(Todo.createSetPatientAppointment(patient));
+                        addTodoToArray(Todo.createSetPatientAppointment(patient), $scope.lowPriorityTodos);
                     }
                 }
             });
@@ -158,5 +182,19 @@ angular.module('tms.dashboard.controllers',
         function(error)
         {
             $scope.errorHandler.handleError('read inactive patients', error);
+        });
+
+    // get all incomplete todos
+    Todo.resource.query({complete: 'false'},
+        function(todos)
+        {
+            todos.forEach(function(todo)
+            {
+                addCustomTodo(todo);
+            });
+        },
+        function(error)
+        {
+            $scope.errorHandler.handleError('read todos', error);
         });
 }]);

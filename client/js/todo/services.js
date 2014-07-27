@@ -10,6 +10,15 @@ angular.module('tms.todo.services',
          function($resource, $location, Appointment, Payment, Patient)
 {
     //
+    // A todo resource, mapped to the backend
+    //
+
+    var todoResource = $resource('api/todos/:id', {},
+        {
+            update: {method:'PUT'}
+        });
+
+    //
     // A summary is required for a patient
     //
     function SummarizeAppointmentTodo(patient, appointment)
@@ -115,6 +124,29 @@ angular.module('tms.todo.services',
         return "ליצור קשר עם " + this.patient.name;
     }
 
+    //
+    // A custom created todo
+    //
+    function CustomTodo(todo)
+    {
+        this.todo = todo;
+        this.done = false;
+    }
+
+    CustomTodo.prototype.importance = function() { return 20; }
+
+    CustomTodo.prototype.complete = function(callback)
+    {
+        todoResource.update({id: this.todo._id}, {complete: true}, function(todo)
+        {
+            callback();
+        });
+    }
+
+    CustomTodo.prototype.toString = function()
+    {
+        return this.todo.text;
+    }
 
     //
     // A new patient needs to have an appointment
@@ -144,6 +176,42 @@ angular.module('tms.todo.services',
         createSummarizeAppointmentTodo: function(patient, appointment) { return new SummarizeAppointmentTodo(patient, appointment); },
         createCollectDebtTodo: function(patient, debt) { return new CollectDebtTodo(patient, debt); },
         createContactPatientTodo: function(patient) { return new ContactPatientTodo(patient); },
-        createSetPatientAppointment: function(patient) { return new SetPatientAppointment(patient); }
+        createSetPatientAppointment: function(patient) { return new SetPatientAppointment(patient); },
+        createCustomTodo: function(todo) { return new CustomTodo(todo); },
+        resource: todoResource
+    }
+}])
+.service('TodoModal', ['$modal', function($modal)
+{
+    function openModal(mode, todo)
+    {
+        return $modal.open({templateUrl: './partials/todo-modal',
+            controller: 'TodoModalController',
+            windowClass: 'todo',
+            size: 'md',
+            resolve:
+            {
+                todo: function() {return todo;},
+                mode: function() {return mode;}
+            }});
+    }
+
+    this.create = function(successCallback, errorCallback)
+    {
+        // build the default todo
+        todo = {
+            text: '',
+            type: 'urgent'
+        };
+
+        // pop up the modal
+        todoModal = openModal('create', todo);
+
+        todoModal.result.then(function(result)
+        {
+            successCallback(result.updatedTodo);
+        });
     }
 }]);
+
+
