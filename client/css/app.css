@@ -296,6 +296,11 @@ label#emailInvoice
     color: red;
 }
 
+.modal.todo textarea
+{
+    margin-bottom: 15px;
+}
+
 /*
  * Dashboard nav
  */

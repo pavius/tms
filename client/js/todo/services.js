@@ -28,7 +28,7 @@ angular.module('tms.todo.services',
         this.done = false;
     }
 
-    SummarizeAppointmentTodo.prototype.importance = function() { return 0; }
+    SummarizeAppointmentTodo.prototype.importance = function() { return 10; }
 
     SummarizeAppointmentTodo.prototype.complete = function(callback)
     {
@@ -99,7 +99,7 @@ angular.module('tms.todo.services',
         this.done = false;
     }
 
-    ContactPatientTodo.prototype.importance = function() { return 10; }
+    ContactPatientTodo.prototype.importance = function() { return 20; }
 
     ContactPatientTodo.prototype.complete = function(callback)
     {
@@ -133,7 +133,7 @@ angular.module('tms.todo.services',
         this.done = false;
     }
 
-    CustomTodo.prototype.importance = function() { return 20; }
+    CustomTodo.prototype.importance = function() { return 5; }
 
     CustomTodo.prototype.complete = function(callback)
     {
