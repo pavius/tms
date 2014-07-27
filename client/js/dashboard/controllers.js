@@ -20,6 +20,7 @@ angular.module('tms.dashboard.controllers',
             ['$scope', '$location', 'ErrorHandler', 'Patient', 'Todo', 'TodoModal', 'AppointmentModal',
             function($scope, $location, errorHandler, Patient, Todo, TodoModal, AppointmentModal)
 {
+    $scope.loading = true;
     $scope.todos = [];
     $scope.lowPriorityTodos = [];
     $scope.appointmentsThisWeek = [];
@@ -100,101 +101,132 @@ angular.module('tms.dashboard.controllers',
         });
     }
 
-    // get all active patients along with relevant appointment info
-    Patient.query({status: '^active|new',
-                   select: 'name email bank status manualStatus debt lastContact appointments._id appointments.when appointments.summarySent appointments.type'},
-        function(patients)
-        {
-            patients.forEach(function (patient)
+    function loadActivePatients(callback)
+    {
+        // get all active patients along with relevant appointment info
+        Patient.query({status: '^active|new',
+                select: 'name email bank status manualStatus debt lastContact appointments._id appointments.when appointments.summarySent appointments.type'},
+            function(patients)
             {
-                var patientHasFutureAppointment = false;
-
-                // scan appointments and do stuff
-                patient.appointments.forEach(function (appointment)
+                patients.forEach(function (patient)
                 {
-                    var appointmentDate = Date.parse(appointment.when);
-                    weekStart = getStartOfWeekDate();
-                    weekEnd = getEndOfWeekDate();
-                    nextWeekEnd = new Date(getEndOfWeekDate().getTime() + (7 * getDayInMs()) - 1000);
+                    var patientHasFutureAppointment = false;
 
-                    // is this an appointment which occurred this week?
-                    if ((appointmentDate >= weekStart.getTime()) && (appointmentDate <= weekEnd.getTime()))
+                    // scan appointments and do stuff
+                    patient.appointments.forEach(function (appointment)
                     {
-                        $scope.totalNumberOfAppointmentsThisWeek++;
-                    }
+                        var appointmentDate = Date.parse(appointment.when);
+                        weekStart = getStartOfWeekDate();
+                        weekEnd = getEndOfWeekDate();
+                        nextWeekEnd = new Date(getEndOfWeekDate().getTime() + (7 * getDayInMs()) - 1000);
 
-                    // is this an appointment which occurred in teh past?
-                    if (appointmentDate <= Date.now())
-                    {
-                        // is it unsummarized?
-                        if (!appointment.summarySent)
-                            addTodoToArray(Todo.createSummarizeAppointmentTodo(patient, appointment), $scope.todos);
-                    }
-                    // future appointment
-                    else
-                    {
-                        patientHasFutureAppointment = true;
-
-                        // is it this week?
-                        if (appointmentDate <= weekEnd)
+                        // is this an appointment which occurred this week?
+                        if ((appointmentDate >= weekStart.getTime()) && (appointmentDate <= weekEnd.getTime()))
                         {
-                            appointment.patient = patient;
-                            $scope.appointmentsThisWeek.push(appointment);
+                            $scope.totalNumberOfAppointmentsThisWeek++;
                         }
-                        // is it next week?
-                        else if (appointmentDate <= nextWeekEnd)
+
+                        // is this an appointment which occurred in teh past?
+                        if (appointmentDate <= Date.now())
                         {
-                            appointment.patient = patient;
-                            $scope.appointmentsNextWeek.push(appointment);
+                            // is it unsummarized?
+                            if (!appointment.summarySent)
+                                addTodoToArray(Todo.createSummarizeAppointmentTodo(patient, appointment), $scope.todos);
+                        }
+                        // future appointment
+                        else
+                        {
+                            patientHasFutureAppointment = true;
+
+                            // is it this week?
+                            if (appointmentDate <= weekEnd)
+                            {
+                                appointment.patient = patient;
+                                $scope.appointmentsThisWeek.push(appointment);
+                            }
+                            // is it next week?
+                            else if (appointmentDate <= nextWeekEnd)
+                            {
+                                appointment.patient = patient;
+                                $scope.appointmentsNextWeek.push(appointment);
+                            }
+                        }
+                    });
+
+                    // check for outstanding debt
+                    checkPatientDebtAndCreateTodo(patient);
+
+                    if (patient.getStatus() == 'new')
+                    {
+                        // check if this patient has an appointment
+                        if (!patientHasFutureAppointment)
+                        {
+                            addTodoToArray(Todo.createSetPatientAppointment(patient), $scope.lowPriorityTodos);
                         }
                     }
+
+                    callback();
+                });
+            },
+            function(error)
+            {
+                $scope.errorHandler.handleError('read active patients', error);
+                callback(error);
+            }
+        );
+    }
+
+    function loadInactivePatients(callback)
+    {
+        // get all inactive patients and check for debt
+        Patient.query({status: 'inactive',
+                select: 'name debt'},
+            function(patients)
+            {
+                patients.forEach(function(patient)
+                {
+                    checkPatientDebtAndCreateTodo(patient);
                 });
 
-                // check for outstanding debt
-                checkPatientDebtAndCreateTodo(patient);
-
-                if (patient.getStatus() == 'new')
-                {
-                    // check if this patient has an appointment
-                    if (!patientHasFutureAppointment)
-                    {
-                        addTodoToArray(Todo.createSetPatientAppointment(patient), $scope.lowPriorityTodos);
-                    }
-                }
+                callback();
+            },
+            function(error)
+            {
+                $scope.errorHandler.handleError('read inactive patients', error);
+                callback(error);
             });
-        },
-        function(error)
+    }
+
+    function loadIncompleteTodos(callback)
+    {
+        // get all incomplete todos
+        Todo.resource.query({complete: 'false'},
+            function(todos)
+            {
+                todos.forEach(function(todo)
+                {
+                    addCustomTodo(todo);
+                });
+
+                callback();
+            },
+            function(error)
+            {
+                $scope.errorHandler.handleError('read todos', error);
+                callback(error);
+            });
+    }
+
+    // requires two queries
+    async.parallel(
+        [
+            loadActivePatients,
+            loadInactivePatients,
+            loadIncompleteTodos
+        ],
+        function()
         {
-            $scope.errorHandler.handleError('read active patients', error);
+            $scope.loading = false;
         }
     );
-
-    // get all inactive patients and check for debt
-    Patient.query({status: 'inactive',
-                   select: 'name debt'},
-        function(patients)
-        {
-            patients.forEach(function(patient)
-            {
-                checkPatientDebtAndCreateTodo(patient);
-            });
-        },
-        function(error)
-        {
-            $scope.errorHandler.handleError('read inactive patients', error);
-        });
-
-    // get all incomplete todos
-    Todo.resource.query({complete: 'false'},
-        function(todos)
-        {
-            todos.forEach(function(todo)
-            {
-                addCustomTodo(todo);
-            });
-        },
-        function(error)
-        {
-            $scope.errorHandler.handleError('read todos', error);
-        });
 }]);

@@ -301,17 +301,27 @@ label#emailInvoice
     margin-bottom: 15px;
 }
 
+.loading
+{
+    position: absolute;
+    font-size: 10em;
+    left: 50%;
+    top: 40%;
+    color: #888;
+    opacity: 0.5;
+}
+
 /*
  * Dashboard nav
  */
 
-.dashboard ul.nav.nav-tabs
+.dashboard-contents ul.nav.nav-tabs
 {
     padding-right: 0px;
     border-bottom: none;
 }
 
-.dashboard .nav-tabs>li>a
+.dashboard-contents .nav-tabs>li>a
 {
     padding: 5px 10px;
     background-color: rgba(148, 191, 216, 0.2);
@@ -322,9 +332,9 @@ label#emailInvoice
     margin-left: 8px;
 }
 
-.dashboard .nav-tabs>li.active>a,
-.dashboard .nav-tabs>li.active>a:hover,
-.dashboard .nav-tabs>li.active>a:focus
+.dashboard-contents .nav-tabs>li.active>a,
+.dashboard-contents .nav-tabs>li.active>a:hover,
+.dashboard-contents .nav-tabs>li.active>a:focus
 {
     background-color: rgba(148, 191, 216, 0.5);
     font-weight: bold;
@@ -396,6 +406,13 @@ label#emailInvoice
     #appointment-datepicker
     {
         padding-right: 25px;
+    }
+
+    .loading
+    {
+        font-size: 7em;
+        left: 38%;
+        top: 38%;
     }
 }
 

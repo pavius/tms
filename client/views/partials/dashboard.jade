@@ -1,7 +1,7 @@
 row
     alert(ng-repeat='alert in errorHandler.alerts', type='{{alert.type}}', close='errorHandler.closeAlert($index)') {{alert.message}}
 
-row.dashboard
+row.dashboard-contents(ng-show='!loading')
 
     row.clearfix
 
@@ -109,3 +109,5 @@ row.dashboard
                                     a.location-selector(href='patients/{{appointment.patient._id}}')
                                         i.glyphicon.glyphicon-zoom-in
 
+row.loading(ng-show='loading')
+    i.fa.fa-circle-o-notch.fa-spin

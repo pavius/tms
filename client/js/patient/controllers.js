@@ -31,6 +31,7 @@ angular.module('tms.patient.controllers',
             ['$scope', '$log', '$location', '$modal', 'ErrorHandler', 'Patient',
             function($scope, $log, $location, $modal, errorHandler, Patient)
 {
+    $scope.loading = true;
     $scope.searchTerm = '';
     $scope.showActivePatientsOnly = true;
     $scope.patients = [];
@@ -57,7 +58,7 @@ angular.module('tms.patient.controllers',
         });
     };
 
-    $scope.reloadPatients = function()
+    $scope.reloadPatients = function(done)
     {
         $scope.patients = [];
 
@@ -86,21 +87,52 @@ angular.module('tms.patient.controllers',
                     // get all patients who do not have manual status and are active/new
                     function(callback)
                     {
-                        Patient.query({manualStatus: 'undefined', status: '^active|new', select: '-appointments'}, addPatientsIfUnique, handlePatientLoadError);
+                        Patient.query({manualStatus: 'undefined', status: '^active|new', select: '-appointments'},
+                            function(patients)
+                            {
+                                addPatientsIfUnique(patients);
+                                callback();
+                            },
+                            function(error)
+                            {
+                                handlePatientLoadError(error);
+                                callback(error);
+                            });
                     },
 
                     // get all patients who are manually defined as active/new
                     function(callback)
                     {
-                        Patient.query({manualStatus: '^active|new', select: '-appointments'}, addPatientsIfUnique, handlePatientLoadError);
+                        Patient.query({manualStatus: '^active|new', select: '-appointments'},
+                            function(patients)
+                            {
+                                addPatientsIfUnique(patients);
+                                callback();
+                            },
+                            function(error)
+                            {
+                                handlePatientLoadError(error);
+                                callback(error);
+                            });
                     }
-                ]
+                ],
+                done
             );
         }
         else
         {
             // just get'em all
-            Patient.query({select: '-appointments'}, addPatientsIfUnique, handlePatientLoadError);
+            Patient.query({select: '-appointments'},
+                function(patients)
+                {
+                    addPatientsIfUnique(patients);
+                    done();
+                },
+                function(error)
+                {
+                    handlePatientLoadError(error);
+                    done(error);
+                });
         }
     };
 
@@ -124,14 +156,23 @@ angular.module('tms.patient.controllers',
         }
     }
 
-    // do the reload
-    $scope.reloadPatients();
+    // requires two queries
+    async.parallel(
+        [
+            $scope.reloadPatients
+        ],
+        function()
+        {
+            $scope.loading = false;
+        }
+    );
 }])
 
 .controller('PatientDetailController', 
             ['$scope', '$log', '$routeParams', '$modal', '$location', 'ErrorHandler', 'Patient', 'Appointment', 'AppointmentModal', 'Payment', 'PaymentModal',
             function($scope, $log, $routeParams, $modal, $location, errorHandler, Patient, Appointment, AppointmentModal, Payment, PaymentModal)
 {
+    $scope.loading = true;
     $scope.appointment = null;
     $scope.patient = {};
     $scope.debt = 0;
@@ -346,15 +387,28 @@ angular.module('tms.patient.controllers',
         else                                           return 'glyphicon glyphicon-remove';     
     };
 
-    // load the patient
-    Patient.get({id: $routeParams.id},
-        function(patient)
+    // requires two queries
+    async.parallel(
+        [
+            function(callback)
+            {
+                Patient.get({id: $routeParams.id},
+                    function(patient)
+                    {
+                        $scope.patient = patient;
+                        callback();
+                    },
+                    function(error)
+                    {
+                        $scope.errorHandler.handleError('read patient info', error);
+                        callback(error);
+                    }
+                );
+            }
+        ],
+        function()
         {
-            $scope.patient = patient;
-        },
-        function(error)
-        {
-            $scope.errorHandler.handleError('read patient info', error);
+            $scope.loading = false;
         }
     );
 }])

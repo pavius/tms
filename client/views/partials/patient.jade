@@ -1,127 +1,131 @@
 row
     alert(ng-repeat='alert in errorHandler.alerts', type='{{alert.type}}', close='errorHandler.closeAlert($index)') {{alert.message}}
 
-row
-    h3.view-header
-        {{patient.name}}
-        small
-            {{patient.email}}
+.patient-contents(ng-show='!loading')
+    row
+        h3.view-header
+            {{patient.name}}
+            small
+                {{patient.email}}
 
-row.clearfix
+    row.clearfix
 
-    tabset
+        tabset
 
-        tab#appointments-tab(heading='פגישות')
+            tab#appointments-tab(heading='פגישות')
 
-            row
-                .col-xs-12
-                    
-                    button.btn.btn-sm.btn-primary.pull-right(ng-click='createAppointment()') צור פגישה
+                row
+                    .col-xs-12
 
-            row
+                        button.btn.btn-sm.btn-primary.pull-right(ng-click='createAppointment()') צור פגישה
 
-                table.table
-                    thead
-                        tr
-                            th
-                            th מתי
-                            th סוכמה
-                            th שולמה
-                            th
-                    tbody
-                        tr(ng-repeat="appointment in patient.appointments | orderBy:'-when'", ng-class='getAppointmentClass(appointment)')
-                            td#patient-appointment-type-column
-                                span.fa.fa-skype(ng-show='appointment.type == "skype"')
-                            td
-                                {{appointment.when | date:'dd MMMM HH:mm'}}
-                            td
-                                i(ng-class='getAppointmentSummaryIcon(appointment)', ng-click="toggleAppointmentSummarized(appointment)")
-                            td
-                                i(ng-class='getAppointmentPaidIcon(appointment)')
-                            td(ng-click="updateAppointment(appointment)")
-                                i.glyphicon.glyphicon-zoom-in
+                row
 
-        tab(heading='תשלומים')
+                    table.table
+                        thead
+                            tr
+                                th
+                                th מתי
+                                th סוכמה
+                                th שולמה
+                                th
+                        tbody
+                            tr(ng-repeat="appointment in patient.appointments | orderBy:'-when'", ng-class='getAppointmentClass(appointment)')
+                                td#patient-appointment-type-column
+                                    span.fa.fa-skype(ng-show='appointment.type == "skype"')
+                                td
+                                    {{appointment.when | date:'dd MMMM HH:mm'}}
+                                td
+                                    i(ng-class='getAppointmentSummaryIcon(appointment)', ng-click="toggleAppointmentSummarized(appointment)")
+                                td
+                                    i(ng-class='getAppointmentPaidIcon(appointment)')
+                                td(ng-click="updateAppointment(appointment)")
+                                    i.glyphicon.glyphicon-zoom-in
 
-            row
-                .col-xs-12
-        
-                    button.btn.btn-sm.btn-primary.pull-right(ng-click='createPayment()') צור תשלום
+            tab(heading='תשלומים')
 
-            row
+                row
+                    .col-xs-12
 
-                table.table
-                    thead
-                        tr
-                            th מתי
-                            th סכום
-                            th חשבונית
-                    tbody
-                        tr(ng-repeat="payment in patient.payments | orderBy:'-when'")
-                            td {{payment.when | date:'dd MMMM HH:mm'}}
-                            td {{payment.sum}}
-                            td
-                                i.glyphicon.glyphicon-remove(ng-show='!payment.invoice.url')
-                                a(ng-href='{{payment.invoice.url}}')
-                                    i.glyphicon.glyphicon-list-alt(ng-show='payment.invoice.url')
+                        button.btn.btn-sm.btn-primary.pull-right(ng-click='createPayment()') צור תשלום
 
-        tab(heading='פרופיל')
+                row
 
-            row
-                .col-xs-12
-                    
-                    button.btn.btn-sm.btn-primary.pull-right(ng-click='update()') עדכן פרופיל
+                    table.table
+                        thead
+                            tr
+                                th מתי
+                                th סכום
+                                th חשבונית
+                        tbody
+                            tr(ng-repeat="payment in patient.payments | orderBy:'-when'")
+                                td {{payment.when | date:'dd MMMM HH:mm'}}
+                                td {{payment.sum}}
+                                td
+                                    i.glyphicon.glyphicon-remove(ng-show='!payment.invoice.url')
+                                    a(ng-href='{{payment.invoice.url}}')
+                                        i.glyphicon.glyphicon-list-alt(ng-show='payment.invoice.url')
 
-            row.clearfix
-            
-                .form-group
+            tab(heading='פרופיל')
 
-                    .input-group
-                        input.form-control(type='text', id='name', placeholder='שם', ng-model='patient.name')
-                        span.input-group-addon
-                            i.glyphicon.glyphicon-user
+                row
+                    .col-xs-12
 
-                    .input-group
-                        input.form-control(type='email', id='email', placeholder='מייל', ng-model='patient.email')
-                        span.input-group-addon
-                            i.glyphicon.glyphicon-envelope
+                        button.btn.btn-sm.btn-primary.pull-right(ng-click='update()') עדכן פרופיל
 
-                    .input-group
-                        input.form-control(type='text', id='primaryPhone', placeholder='טלפון', ng-model='patient.primaryPhone')
-                        span.input-group-addon
-                            i.glyphicon.glyphicon-phone-alt
+                row.clearfix
 
-                    row.clearfix
-                        .col-xs-6.col-left
+                    .form-group
 
-                            .input-group
-                                span.input-group-addon ש"ח
-                                input.form-control(type='text', readonly, ng-model='patient.debt.total')
-                                span.input-group-addon חוב
+                        .input-group
+                            input.form-control(type='text', id='name', placeholder='שם', ng-model='patient.name')
+                            span.input-group-addon
+                                i.glyphicon.glyphicon-user
 
-                        .col-xs-6.col-right
+                        .input-group
+                            input.form-control(type='email', id='email', placeholder='מייל', ng-model='patient.email')
+                            span.input-group-addon
+                                i.glyphicon.glyphicon-envelope
 
-                            .input-group
-                                span.input-group-addon ש"ח
-                                input.form-control(type='text', id='price', placeholder='מחיר פגישה', ng-model='patient.appointmentPrice')
-                                span.input-group-addon תמחור
+                        .input-group
+                            input.form-control(type='text', id='primaryPhone', placeholder='טלפון', ng-model='patient.primaryPhone')
+                            span.input-group-addon
+                                i.glyphicon.glyphicon-phone-alt
 
-                    hr#patient-status-separator
+                        row.clearfix
+                            .col-xs-6.col-left
 
-                    .input-group
-                        input.form-control(type='text', readonly, ng-model='effectiveStatus')
-                        span.input-group-addon סטטוס
+                                .input-group
+                                    span.input-group-addon ש"ח
+                                    input.form-control(type='text', readonly, ng-model='patient.debt.total')
+                                    span.input-group-addon חוב
 
-                    .input-group
-                        select.patient-dropdown(ng-model='patient.manualStatus')
-                            option(value='undefined') מחושב אוטומטית
-                            option(value='new') ידני: חדש
-                            option(value='active') ידני: בתהליך
-                            option(value='inactive') ידני: לא פעיל
-                            option(value='recalculate') חשב מחדש
-                        span.input-group-addon חישוב סטטוס
+                            .col-xs-6.col-right
 
-                    select.patient-dropdown(ng-model='patient.inactivityReason', ng-show='patient.getStatus() == "inactive"')
-                        option(value='undefined') לא ידועה סיבת הפסקת הטיפול
-                        option(value='completed') הטיפול הגיע לסיומו
-                        option(value='terminated') המטופל סיים את הטיפול ביוזמתו
+                                .input-group
+                                    span.input-group-addon ש"ח
+                                    input.form-control(type='text', id='price', placeholder='מחיר פגישה', ng-model='patient.appointmentPrice')
+                                    span.input-group-addon תמחור
+
+                        hr#patient-status-separator
+
+                        .input-group
+                            input.form-control(type='text', readonly, ng-model='effectiveStatus')
+                            span.input-group-addon סטטוס
+
+                        .input-group
+                            select.patient-dropdown(ng-model='patient.manualStatus')
+                                option(value='undefined') מחושב אוטומטית
+                                option(value='new') ידני: חדש
+                                option(value='active') ידני: בתהליך
+                                option(value='inactive') ידני: לא פעיל
+                                option(value='recalculate') חשב מחדש
+                            span.input-group-addon חישוב סטטוס
+
+                        select.patient-dropdown(ng-model='patient.inactivityReason', ng-show='patient.getStatus() == "inactive"')
+                            option(value='undefined') לא ידועה סיבת הפסקת הטיפול
+                            option(value='completed') הטיפול הגיע לסיומו
+                            option(value='terminated') המטופל סיים את הטיפול ביוזמתו
+
+row.loading(ng-show='loading')
+    i.fa.fa-circle-o-notch.fa-spin

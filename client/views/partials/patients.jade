@@ -1,39 +1,44 @@
 row
     alert(ng-repeat='alert in errorHandler.alerts', type='{{alert.type}}', close='errorHandler.closeAlert($index)') {{alert.message}}
 
-row#patientsToolbar
+.patients-contents(ng-show='!loading')
 
-    button.btn.btn-sm.btn-primary.pull-right(ng-click='create()') צור מטופל
+    row#patientsToolbar
 
-    .input-group.pull-left(style='width: 100px')
-        input.input-sm.form-control(type='text', id='search', placeholder='חפש', ng-model='searchTerm')
+        button.btn.btn-sm.btn-primary.pull-right(ng-click='create()') צור מטופל
 
-    .cbx-container.pull-left
-        label.cbx(for='abc') רק פעילים
-        input(type='checkbox', id='abc', ng-model='showActivePatientsOnly', ng-change='reloadPatients()').cbx
+        .input-group.pull-left(style='width: 100px')
+            input.input-sm.form-control(type='text', id='search', placeholder='חפש', ng-model='searchTerm')
 
-table.table
+        .cbx-container.pull-left
+            label.cbx(for='abc') רק פעילים
+            input(type='checkbox', id='abc', ng-model='showActivePatientsOnly', ng-change='reloadPatients()').cbx
 
-    thead
+    table.table
 
-        tr
-            th שם
-            th קשר
-            th 
+        thead
 
-    tbody
+            tr
+                th שם
+                th קשר
+                th
 
-        tr#patients-patient-row(ng-repeat="patient in patients | orderBy: ['getFreshness()', 'name'] | filter: searchFilter", ng-class='patient.getStatus() + "-patient"')
+        tbody
 
-            td#patient-list-name {{patient.name}}
+            tr#patients-patient-row(ng-repeat="patient in patients | orderBy: ['getFreshness()', 'name'] | filter: searchFilter", ng-class='patient.getStatus() + "-patient"')
 
-            td
-                a(href='mailto:{{patient.email}}', ng-show='patient.email.length').contact-glyph
-                    i.glyphicon.glyphicon-envelope
+                td#patient-list-name {{patient.name}}
 
-                a(href='tel:{{patient.primaryPhone}}', ng-show='patient.primaryPhone.length').contact-glyph
-                    i.glyphicon.glyphicon-phone-alt
+                td
+                    a(href='mailto:{{patient.email}}', ng-show='patient.email.length').contact-glyph
+                        i.glyphicon.glyphicon-envelope
 
-            td
-                a.location-selector(href='patients/{{patient._id}}')
-                    i.glyphicon.glyphicon-zoom-in
+                    a(href='tel:{{patient.primaryPhone}}', ng-show='patient.primaryPhone.length').contact-glyph
+                        i.glyphicon.glyphicon-phone-alt
+
+                td
+                    a.location-selector(href='patients/{{patient._id}}')
+                        i.glyphicon.glyphicon-zoom-in
+
+row.loading(ng-show='loading')
+    i.fa.fa-circle-o-notch.fa-spin
