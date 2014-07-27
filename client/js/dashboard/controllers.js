@@ -164,9 +164,9 @@ angular.module('tms.dashboard.controllers',
                             addTodoToArray(Todo.createSetPatientAppointment(patient), $scope.lowPriorityTodos);
                         }
                     }
-
-                    callback();
                 });
+
+                callback();
             },
             function(error)
             {
