@@ -164,9 +164,9 @@ angular.module('tms.dashboard.controllers',
                             addTodoToArray(Todo.createSetPatientAppointment(patient), $scope.lowPriorityTodos);
                         }
                     }
-
-                    callback();
                 });
+
+                callback();
             },
             function(error)
             {
@@ -217,12 +217,38 @@ angular.module('tms.dashboard.controllers',
             });
     }
 
+    function loadPatientsWithRecentAppointments(callback)
+    {
+        // appointment started ~4 hours ago until know
+        appointmentsFrom = Date.now() - (4 * 60 * 60 * 1000);
+        appointmentsTo = Date.now();
+
+        // get all inactive patients and check for debt
+        Patient.query({'appointments.when': '{gte}' + appointmentsFrom + '{lte}' + appointmentsTo,
+                select: 'name'},
+            function(patients)
+            {
+                patients.forEach(function(patient)
+                {
+                    console.log(patient);
+                });
+
+                callback();
+            },
+            function(error)
+            {
+                $scope.errorHandler.handleError('read patients with recent appointments', error);
+                callback(error);
+            });
+    }
+
     // requires two queries
     async.parallel(
         [
             loadActivePatients,
             loadInactivePatients,
-            loadIncompleteTodos
+            loadIncompleteTodos,
+            loadPatientsWithRecentAppointments
         ],
         function()
         {
