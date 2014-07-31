@@ -2,6 +2,8 @@ exports.query = function (model, rawParams, cb)
 {
     var params = buildQueryParams(model, rawParams);
 
+    console.log(params);
+
     // Create the Mongoose Query object.
     query = model.find(params.searchParams);
 
@@ -58,17 +60,7 @@ function buildQueryParams(model, rawParams)
             }
         };
 
-        if ((matches = lcKey.match(/(.+)\.(.+)/)) !== null)
-        {
-            // parse subschema
-            if (schema.paths[matches[1]].constructor.name === "DocumentArray" ||
-                schema.paths[matches[1]].constructor.name === "Mixed")
-            {
-                parseSchemaForKey(schema.paths[matches[1]].schema, matches[1] + ".", matches[2], val, operator);
-            }
-
-        }
-        else if (typeof schema === "undefined")
+        if (typeof schema === "undefined")
         {
             paramType = "String";
 

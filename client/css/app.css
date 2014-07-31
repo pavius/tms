@@ -166,6 +166,16 @@ a.contact-glyph
     text-align: right;
 }
 
+.toolbar-dropdown
+{
+    margin-left: 6px;
+    height: 30px;
+    padding: 6px 12px;
+    border-color: #CCCCCC;
+    background-color: #FFFFFF;
+    direction: rtl
+}
+
 .patient-dropdown
 {
     width: 100%;

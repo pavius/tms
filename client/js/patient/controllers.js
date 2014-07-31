@@ -33,7 +33,7 @@ angular.module('tms.patient.controllers',
 {
     $scope.loading = true;
     $scope.searchTerm = '';
-    $scope.showActivePatientsOnly = true;
+    $scope.filterType = 'active';
     $scope.patients = [];
     $scope.errorHandler = errorHandler;
 
@@ -79,7 +79,7 @@ angular.module('tms.patient.controllers',
         }
 
         // do we need only to get active/new patients?
-        if ($scope.showActivePatientsOnly)
+        if ($scope.filterType == 'active')
         {
             // requires two queries
             async.parallel(
@@ -118,6 +118,21 @@ angular.module('tms.patient.controllers',
                 ],
                 done
             );
+        }
+        else if ($scope.filterType == 'withDebt')
+        {
+            // just get'em all
+            Patient.query({'debt.total': '{gt}' + 0, select: '-appointments'},
+                function(patients)
+                {
+                    addPatientsIfUnique(patients);
+                    done();
+                },
+                function(error)
+                {
+                    handlePatientLoadError(error);
+                    done(error);
+                });
         }
         else
         {

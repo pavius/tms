@@ -10,9 +10,11 @@ row
         .input-group.pull-left(style='width: 100px')
             input.input-sm.form-control(type='text', id='search', placeholder='חפש', ng-model='searchTerm')
 
-        .cbx-container.pull-left
-            label.cbx(for='abc') רק פעילים
-            input(type='checkbox', id='abc', ng-model='showActivePatientsOnly', ng-change='reloadPatients()').cbx
+        .input-group.pull-left
+            select.toolbar-dropdown(ng-model='filterType', ng-change='reloadPatients()')
+                option(value='active') פעילים
+                option(value='all') כולם
+                option(value='withDebt') בעלי חוב
 
     table.table
 
@@ -21,6 +23,7 @@ row
             tr
                 th שם
                 th קשר
+                th(ng-show='filterType=="withDebt"') חוב
                 th
 
         tbody
@@ -36,6 +39,8 @@ row
                     a(href='tel:{{patient.primaryPhone}}', ng-show='patient.primaryPhone.length').contact-glyph
                         i.glyphicon.glyphicon-phone-alt
 
+                td(ng-show='filterType=="withDebt"')
+                    {{patient.debt.total}}
                 td
                     a.location-selector(href='patients/{{patient._id}}')
                         i.glyphicon.glyphicon-zoom-in
