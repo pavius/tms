@@ -27,6 +27,7 @@ angular.module('tms.dashboard.controllers',
     $scope.appointmentsNextWeek = [];
     $scope.errorHandler = errorHandler;
     $scope.totalNumberOfAppointmentsThisWeek = 0;
+    console.log("Controller called");
 
     function checkPatientDebtAndCreateTodo(patient)
     {

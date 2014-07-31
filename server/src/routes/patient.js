@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var async = require('async');
 
 var routeCommon = require('./common/common');
@@ -10,7 +11,15 @@ module.exports.addRoutes = function(app, security)
     // get all patients
     app.get('/api/patients', routeCommon.isLoggedInSendError, function(request, response)
     {
-        routeCommon.handleGetAll(Patient, request, response);
+        var extendedQueries = {
+            'appointmentsBetween':
+            function(args)
+            {
+                return { appointments: { $elemMatch: { when: { $gte: args[0], $lte: args[1] } } } }
+            }
+        }
+
+        routeCommon.handleGetAll(Patient, request, response, extendedQueries);
     });
 
     // get a single patient

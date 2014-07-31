@@ -2,25 +2,60 @@ var _ = require('underscore');
 var paramQuery = require('./paramquery');
 
 // common functions
-function handleGetAllDontRespondOnSuccess(modelClass, request, response, callback)
+exports.handleGetAllDontRespondOnSuccess = function(modelClass, request, response, extendedQueries, callback)
 {
-    onResult = function(dbError, dbResponse)
+    var query;
+
+    // is there an extended query?
+    if (extendedQueries)
     {
-        var validDbResponse = null;
+        // get extended queries, if any
+        query = _.find(Object.keys(extendedQueries), function (key) {
+            return key in request.query
+        });
 
-        if (dbError)    response.json(403, dbError);
-        else            validDbResponse = dbResponse;
+        if (query)
+        {
+            // get extended query arguments
+            var args = JSON.parse(request.query[query]);
 
-        callback(validDbResponse);
-    };
+            if (args)
+            {
+                // get query string
+                query = extendedQueries[query](args);
 
-    // use query
-    paramQuery.query(modelClass, request.query, onResult);
+                modelClass.find(query, function (dbError, dbResponse) {
+                    var validDbResponse = null;
+
+                    if (dbError)    response.json(403, dbError);
+                    else            validDbResponse = dbResponse;
+
+                    callback(validDbResponse);
+                });
+            }
+            else query = null;
+        }
+    }
+    // if a query object wasn't created, use paramquery
+    if (!query)
+    {
+        onResult = function(dbError, dbResponse)
+        {
+            var validDbResponse = null;
+
+            if (dbError)    response.json(403, dbError);
+            else            validDbResponse = dbResponse;
+
+            callback(validDbResponse);
+        };
+
+        paramQuery.query(modelClass, request.query, onResult);
+    }
 }
 
-function handleGetAll(modelClass, request, response)
+exports.handleGetAll = function(modelClass, request, response, extendedQueries)
 {
-    handleGetAllDontRespondOnSuccess(modelClass, request, response, function(validDbResponse)
+    module.exports.handleGetAllDontRespondOnSuccess(modelClass, request, response, extendedQueries, function(validDbResponse)
     {
         if (validDbResponse !== null)
             response.json(validDbResponse);
@@ -28,7 +63,7 @@ function handleGetAll(modelClass, request, response)
 }
 
 // gets one and if not valid, responds. otherwise returns the object
-function handleGetOneDontRespondOnSuccess(modelClass, request, response, callback)
+exports.handleGetOneDontRespondOnSuccess = function(modelClass, request, response, callback)
 {
     // shove id
     request.query._id = request.params.id;
@@ -46,16 +81,16 @@ function handleGetOneDontRespondOnSuccess(modelClass, request, response, callbac
     });
 }
 
-function handleGetOne(modelClass, request, response)
+exports.handleGetOne = function(modelClass, request, response)
 {
-    handleGetOneDontRespondOnSuccess(modelClass, request, response, function(validDbResponse)
+    module.exports.handleGetOneDontRespondOnSuccess(modelClass, request, response, function(validDbResponse)
     {
         if (validDbResponse !== null)
             response.json(validDbResponse);    
     });
 }
 
-function handleCreateDontRespondOnSuccess(modelClass, request, response, callback)
+exports.handleCreateDontRespondOnSuccess = function(modelClass, request, response, callback)
 {
     modelClass.create(request.body, function(dbError, dbResponse)
     {
@@ -68,16 +103,16 @@ function handleCreateDontRespondOnSuccess(modelClass, request, response, callbac
     });
 }
 
-function handleCreate(modelClass, request, response)
+exports.handleCreate = function(modelClass, request, response)
 {
-    handleCreateDontRespondOnSuccess(modelClass, request, response, function(validDbResponse)
+    module.exports.handleCreateDontRespondOnSuccess(modelClass, request, response, function(validDbResponse)
     {
         if (validDbResponse !== null)
             response.json(201, validDbResponse);    
     });
 }
 
-function handleUpdate(modelClass, request, response)
+exports.handleUpdate = function(modelClass, request, response)
 {
     // remove 'id' from request body, if it exists
     delete request.body._id;
@@ -89,7 +124,7 @@ function handleUpdate(modelClass, request, response)
     });
 }
 
-function handleDelete(modelClass, request, response)
+exports.handleDelete = function(modelClass, request, response)
 {
     modelClass.remove({_id: request.params.id}, function(dbError, dbResponse)
     {
@@ -116,19 +151,19 @@ function verifyLoggedIn(request, response, errorScheme, next)
     }
 }
 
-function isLoggedInRedirect(request, response, next)
+exports.isLoggedInRedirect = function(request, response, next)
 {
     // check if logged in and redirect to /login otherwise
     return verifyLoggedIn(request, response, 'redirect', next);
 }
 
-function isLoggedInSendError(request, response, next)
+exports.isLoggedInSendError = function(request, response, next)
 {
     // check if logged in and return error otherwise
     return verifyLoggedIn(request, response, 'error', next);
 }
 
-function updateDocument(doc, SchemaTarget, data)
+exports.updateDocument = function(doc, SchemaTarget, data)
 {
     for (var field in SchemaTarget.schema.paths)
     {
@@ -167,15 +202,3 @@ function setObjValue(field, data, value)
         return o[f];
     }, data);
 }
-
-exports.handleGetAllDontRespondOnSuccess = handleGetAllDontRespondOnSuccess;
-exports.handleGetAll = handleGetAll;
-exports.handleGetOneDontRespondOnSuccess = handleGetOneDontRespondOnSuccess;
-exports.handleGetOne = handleGetOne;
-exports.handleCreateDontRespondOnSuccess = handleCreateDontRespondOnSuccess;
-exports.handleCreate = handleCreate;
-exports.handleUpdate = handleUpdate;
-exports.handleDelete = handleDelete;
-exports.isLoggedInRedirect = isLoggedInRedirect;
-exports.isLoggedInSendError = isLoggedInSendError;
-exports.updateDocument = updateDocument;
