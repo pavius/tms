@@ -340,6 +340,10 @@ label#emailInvoice
     font-weight: bold;
 }
 
+.dashboard-contents .quick-access button
+{
+    margin-right: 6px;
+}
 
 /*
  * RTL checkbox

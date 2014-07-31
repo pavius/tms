@@ -17,8 +17,8 @@ angular.module('tms.dashboard.controllers',
 }]) 
 
 .controller('DashboardController',
-            ['$scope', '$location', 'ErrorHandler', 'Patient', 'Todo', 'TodoModal', 'AppointmentModal',
-            function($scope, $location, errorHandler, Patient, Todo, TodoModal, AppointmentModal)
+            ['$scope', '$location', 'ErrorHandler', 'Patient', 'Todo', 'TodoModal', 'AppointmentModal', 'PaymentModal',
+            function($scope, $location, errorHandler, Patient, Todo, TodoModal, AppointmentModal, PaymentModal)
 {
     $scope.loading = true;
     $scope.todos = [];
@@ -27,7 +27,8 @@ angular.module('tms.dashboard.controllers',
     $scope.appointmentsNextWeek = [];
     $scope.errorHandler = errorHandler;
     $scope.totalNumberOfAppointmentsThisWeek = 0;
-    console.log("Controller called");
+    $scope.patientsWithRecentAppointments = [];
+    $scope.dropdownStatus = {fastPayment: false};
 
     function checkPatientDebtAndCreateTodo(patient)
     {
@@ -73,6 +74,25 @@ angular.module('tms.dashboard.controllers',
     {
         var thisWeekEndDate = new Date(getStartOfWeekDate().getTime() + 6 * getDayInMs());
         return new Date(thisWeekEndDate.getFullYear(), thisWeekEndDate.getMonth(), thisWeekEndDate.getDate(), 23, 59, 59);
+    }
+
+    $scope.fastPaymentClick = function(patient)
+    {
+        // close the dropdown
+        $scope.dropdownStatus.fastPayment = false;
+
+        // pop up the payment modal
+        PaymentModal.create(patient,
+            function(updatedPatient)
+            {
+                $scope.errorHandler.openAlert('success', "תשלום נוצר בהצלחה עבור " + patient.name);
+
+                loadPatientsWithRecentAppointments();
+            },
+            function(error)
+            {
+                $scope.errorHandler.handleError('create payment', {statusText: error});
+            });
     }
 
     $scope.completeTodoAndRemove = function(todo, index)
@@ -225,21 +245,24 @@ angular.module('tms.dashboard.controllers',
         appointmentsTo = Date.now();
 
         // get all inactive patients and check for debt
-        Patient.query({'appointments.when': '{gte}' + appointmentsFrom + '{lte}' + appointmentsTo,
-                select: 'name'},
+        Patient.query({'appointmentsBetween': '[' + appointmentsFrom + ', ' + appointmentsTo + ']',
+                select: '-appointments -payments'},
             function(patients)
             {
+                $scope.patientsWithRecentAppointments = [];
+
                 patients.forEach(function(patient)
                 {
-                    console.log(patient);
+                    if (patient.debt.total)
+                        $scope.patientsWithRecentAppointments.push(patient);
                 });
 
-                callback();
+                if (callback) callback();
             },
             function(error)
             {
                 $scope.errorHandler.handleError('read patients with recent appointments', error);
-                callback(error);
+                if (callback) callback(error);
             });
     }
 

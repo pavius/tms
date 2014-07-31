@@ -22,9 +22,18 @@ exports.handleGetAllDontRespondOnSuccess = function(modelClass, request, respons
             if (args)
             {
                 // get query string
-                query = extendedQueries[query](args);
+                var queryString = extendedQueries[query](args);
 
-                modelClass.find(query, function (dbError, dbResponse) {
+                query = modelClass.find(queryString);
+
+                // is there a select element?
+                if ('select' in request.query)
+                {
+                    query.select(request.query.select);
+                }
+
+                query.exec(function (dbError, dbResponse)
+                {
                     var validDbResponse = null;
 
                     if (dbError)    response.json(403, dbError);
