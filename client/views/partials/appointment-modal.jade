@@ -1,46 +1,33 @@
-.modal-body#appointment-modal
-
-    row
-
-        select#appointment-modal-patient-dropdown(ui-select2='patientDropdownConfig', ng-model='$parent.selectedPatientIdx', ng-show='patients')
-            option(ng-repeat='patient in patients', value='{{$index}}'){{patient.name}}
+.modal-body.clearfix
 
     row
         .col-xs-12
+            select(ui-select2='patientDropdownConfig', ng-model='$parent.selectedPatientIdx', ng-show='patients')
+                option(ng-repeat='patient in patients', value='{{$index}}'){{patient.name}}
 
-            datepicker#appointment-datepicker(type='text', show-weeks='false', ng-model='appointment.when')
+    row
+        .col-xs-12
+            datepicker.inline-datepicker(type='text', show-weeks='false', ng-model='appointment.when')
 
-    row.clearfix
-
-        div.col-xs-6
-
-            div#appointment-settings
-
-                select.appointment-dropdown(ng-model='appointment.type')
+    row
+        .col-xs-6
+            .input-group-container
+                select(ng-model='appointment.type')
                     option(value='face-to-face') קליניקה
                     option(value='skype') סקייפ
-
-                .input-group
-                    span.input-group-addon ש"ח
-                    input.form-control(type='text', id='price', ng-model='appointment.price')
-
-                label.checkbox(ng-show='mode == "update"')
-                    input(type='checkbox', ng-model='appointment.summarySent')
-                    | סוכמה
-
-                label.checkbox(ng-show='mode == "update"')
-                    input(type='checkbox', ng-model='appointment.missed')
-                    | לא הגיע
-
-        div.col-xs-6
-
+            .input-group
+                span.input-group-addon ש"ח
+                input.form-control(type='text', id='price', ng-model='appointment.price')
+            label.checkbox(ng-show='mode == "update"')
+                input(type='checkbox', ng-model='appointment.summarySent')
+                | סוכמה
+            label.checkbox(ng-show='mode == "update"')
+                input(type='checkbox', ng-model='appointment.missed')
+                | לא הגיע
+        .col-xs-6
             timepicker(ng-model='appointment.when', hour-step='1', minute-step='15', show-meridian='false')
 
-        
 .modal-footer
-
     button.btn.btn-sm.btn-primary.pull-left(ng-click='createOrUpdate()', ng-show='appointment.payment === null', ng-disabled='!patient') {{mode == 'create' ? 'צור פגישה' : 'עדכן פגישה'}}
-    
     button.btn.btn-sm.btn-default.pull-left(ng-click='cancel()') סגור
-    
     button.btn.btn-sm.btn-danger(ng-click='delete()', ng-show='mode == "update" && appointment.payment === null') מחק

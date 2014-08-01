@@ -65,6 +65,12 @@ select
     direction: rtl;
 }
 
+.select2-container
+{
+    width: 100%;
+    margin-bottom: 10px;
+}
+
 small
 {
     margin-right: 6px;
@@ -100,7 +106,8 @@ label
  * Input group
  *********************************************************************************************************************/
 
-.input-group
+.input-group,
+.input-group-container
 {
     direction: ltr;
     margin-bottom: 12px;
@@ -335,4 +342,70 @@ label
 .patient-contents tr.future-appointment
 {
     background-color: rgba(223, 233, 225, 0.42);
+}
+
+
+/*********************************************************************************************************************
+ * Appointment modal
+ *********************************************************************************************************************/
+
+.modal.appointment .select2-container
+{
+    padding-left: 5px;
+}
+
+.modal.appointment .inline-datepicker
+{
+    margin-bottom: 15px;
+}
+
+
+/*********************************************************************************************************************
+ * Appointment modal
+ *********************************************************************************************************************/
+
+ .modal.payment #noEmailWarning
+{
+    color: red;
+}
+
+
+/*********************************************************************************************************************
+ * Media tweaks
+ *********************************************************************************************************************/
+
+@media(max-width: 767px)
+{
+    .input-group-addon
+    {
+        padding: 6px 6px;
+    }
+
+    .form-control
+    {
+        padding: 6px 6px;
+    }
+
+    ul.nav.nav-tabs
+    {
+        margin-bottom: 12px;
+        margin-top: 0px;
+    }
+
+    .table > thead > tr > th
+    {
+        padding: 0px 8px 4px 8px;
+    }
+
+    .modal.appointment .inline-datepicker
+    {
+        padding-right: 25px;
+    }
+
+    .loading
+    {
+        font-size: 7em;
+        left: 38%;
+        top: 38%;
+    }
 }

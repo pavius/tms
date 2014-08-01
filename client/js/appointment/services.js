@@ -17,6 +17,7 @@ angular.module('tms.appointment.services', ['ngResource'])
         return $modal.open({templateUrl: './partials/appointment-modal',
             controller: 'AppointmentModalController',
             size: 'sm',
+            windowClass: 'appointment',
             resolve:
             {
                 patient: function() {return patient},

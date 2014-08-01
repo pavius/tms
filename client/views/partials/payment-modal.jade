@@ -23,7 +23,7 @@
                         span.input-group-addon סוג
 
             row
-                .col-xs-12(ng-show='patient.email')
+                .col-xs-12
                     input(type='checkbox', ng-model='payment.transaction.issueInvoice')
                     label(for='emailInvoice') הוצא חשבונית
 
@@ -33,7 +33,7 @@
                     label(for='emailInvoice') שלח חשבונית ל: {{patient.email}}
 
             row
-                .col-xs-12(ng-show='!patient.email')#noEmailWarning
+                .col-xs-12(ng-show='!patient.email && payment.transaction.issueInvoice')#noEmailWarning
                     i.fa.fa-warning
                     span למטופל לא מוגדרת כתובת מייל. החשבונית לא תישלח אוטומטית.
 
