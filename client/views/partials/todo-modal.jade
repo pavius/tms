@@ -1,25 +1,19 @@
 .modal-body.clearfix
 
     row
-    
-        textarea.form-control(type='text', ng-model='todo.text')
+        .col-xs-12
+            textarea.form-control(type='text', ng-model='todo.text')
 
     row
-
         .col-xs-6.col-md-8.col-left
-
             .input-group
                 input.form-control.datepicker(ui-date='', ng-model='todo.due', readonly='readonly')
                 span.input-group-addon דדליין
-
         .col-xs-6.col-md-4
-
             .btn-group
                 label.btn.btn-primary(ng-model='todo.type', btn-radio='"later"') אחר כך
                 label.btn.btn-primary(ng-model='todo.type', btn-radio='"urgent"') חשוב
 
 .modal-footer.clearfix
-
     button.btn.btn-sm.btn-primary.pull-left(ng-click='createOrUpdate()') צור משימה
-
     button.btn.btn-sm.btn-default.pull-left(ng-click='cancel()') סגור
