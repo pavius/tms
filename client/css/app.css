@@ -1,6 +1,5 @@
 body 
 {
-    padding-top: 10px;
     background: url('../images/ricepaper2.png');
 }
 
@@ -10,8 +9,8 @@ body
 
 .navbar
 {
-    background: url(../images/vertical_lines.png);
-    background-color: #FFF;
+    background-color: rgba(216, 216, 216, 0.39);
+    min-height: 40px;
 }
 
 .navbar-nav 
@@ -29,8 +28,8 @@ body
 
 .navbar-nav > li > a
 {
-    padding-top: 15px;
-    padding-bottom: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     width: 60px;
     text-align: center;
 }
@@ -38,14 +37,24 @@ body
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover
 {
-    background-color: rgba(148, 191, 216, 0.65)
+    background-color: rgba(206, 206, 206, 0.82);
+    padding-bottom: 7px;
+    border-bottom-color: red;
+    border-bottom-style: solid;
+    border-bottom-width: 3px;
 }
-
-
 
 /*
  * Other tweaks
  */
+
+#logo
+{
+    margin-bottom: 0px;
+    padding-top: 10px;
+    font-weight: bold;
+    color: #999;
+}
 
 .table.table
 {

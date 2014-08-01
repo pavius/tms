@@ -2,23 +2,25 @@ extends layout
 
 block body
 
-    .container
-
+    div
         nav.navbar.navbar-default(role='navigation', ng-controller="NavController")
 
-            .navbar-header
+            .container
 
-            ul.nav.navbar-nav
+                .navbar-header.pull-right
+                    ul.nav.navbar-nav
+                        li(ng-class="{ active: isActive('/') }")
+                            a(href='/')
+                                i.glyphicon.glyphicon-home
+                        li(ng-class="{ active: isActive('/patient') }")
+                            a(href='/patients')
+                                i.glyphicon.glyphicon-user
 
-                li(ng-class="{ active: isActive('/') }")
-                    a(href='/')
-                        i.glyphicon.glyphicon-home
+                .pull-left
+                    p#logo טל קפלינסקי
 
-                li(ng-class="{ active: isActive('/patient') }")
-                    a(href='/patients')
-                        i.glyphicon.glyphicon-user
-
-        div()
+    .container
+        div
             div(ng-view)
 
     link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
