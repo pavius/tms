@@ -1,35 +1,26 @@
 .modal-body
 
-    .clearfix
-    
-
+    row.clearfix
         .col-md-6.pull-right
-
             .input-group
                 input.form-control(type='text', id='name', placeholder='שם', ng-model='patient.name')
                 span.input-group-addon
                     i.glyphicon.glyphicon-user
-
             .input-group
                 input.form-control(type='email', id='email', placeholder='מייל', ng-model='patient.email')
                 span.input-group-addon
                     i.glyphicon.glyphicon-envelope
-
         .col-md-6.pull-left
-
             .input-group
                 input.form-control(type='text', id='primaryPhone', placeholder='טלפון', ng-model='patient.primaryPhone')
                 span.input-group-addon
                     i.glyphicon.glyphicon-phone
-
             .input-group
                 span.input-group-addon ש"ח
                 input.form-control(type='text', id='price', placeholder='מחיר פגישה', ng-model='patient.appointmentPrice')
                 span.input-group-addon תמחור
 
 .modal-footer
-
     button.btn.btn-sm.btn-primary.pull-left(ng-click='create()') צור מטופל
-
     button.btn.btn-sm.btn-default.pull-left(ng-click='cancel()') סגור
     
