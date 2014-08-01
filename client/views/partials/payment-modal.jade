@@ -1,98 +1,102 @@
-.modal-body
+.modal-body.clearfix
 
-    div#common(ng-disabled='inProgress')
+    row(ng-disabled='inProgress')
+        .col-xs-12
 
-        .input-group
-            input.form-control(type='text', ng-model='payment.transaction.invoiceRecipient', ng-disabled='inProgress')
-            span.input-group-addon ע"ש
+            row
+                .col-xs-12
+                    .input-group
+                        input.form-control(type='text', ng-model='payment.transaction.invoiceRecipient', ng-disabled='inProgress')
+                        span.input-group-addon ע"ש
 
-        .clearfix
+            row
+                .col-xs-5.col-left
+                    .input-group
+                        input.form-control(type='text', placeholder='{{payment.sum}}', ng-model='payment.sum', ng-disabled='inProgress')
+                        span.input-group-addon ע"ס
+                .col-xs-7
+                    .input-group
+                        select(ng-model='payment.transaction.type', ng-disabled='inProgress')
+                            option(value='cash') מזומן
+                            option(value='cheque') צ'ק
+                            option(value='transfer') העברה בנקאית
+                        span.input-group-addon סוג
 
-            .col-xs-5.col-left
+            row
+                .col-xs-12(ng-show='patient.email')
+                    input(type='checkbox', ng-model='payment.transaction.issueInvoice')
+                    label(for='emailInvoice') הוצא חשבונית
 
-                .input-group
-                    input.form-control(type='text', placeholder='{{payment.sum}}', ng-model='payment.sum', ng-disabled='inProgress')
-                    span.input-group-addon ע"ס
+            row
+                .col-xs-12(ng-show='patient.email', ng-enabled='payment.transaction.issueInvoice')
+                    input(type='checkbox', ng-model='payment.emailInvoice')
+                    label(for='emailInvoice') שלח חשבונית ל: {{patient.email}}
 
-            .col-xs-7
+            row
+                .col-xs-12(ng-show='!patient.email')#noEmailWarning
+                    i.fa.fa-warning
+                    span למטופל לא מוגדרת כתובת מייל. החשבונית לא תישלח אוטומטית.
 
-                .input-group
-                    select.patient-dropdown(ng-model='payment.transaction.type', ng-disabled='inProgress')
-                        option(value='cash') מזומן
-                        option(value='cheque') צ'ק
-                        option(value='transfer') העברה בנקאית
-                    span.input-group-addon סוג
+    row.spacer
+        .col-xs-12
 
-            .clearfix(ng-show='patient.email')
-                input(type='checkbox', ng-model='payment.transaction.issueInvoice')
-                label(for='emailInvoice') הוצא חשבונית
+    row(ng-show='payment.transaction.type=="cheque"')
+        .col-xs-12
 
-            .clearfix(ng-show='patient.email', ng-enabled='payment.transaction.issueInvoice')
-                input(type='checkbox', ng-model='payment.emailInvoice')
-                label(for='emailInvoice') שלח חשבונית ל: {{patient.email}}
+            row
+                .col-xs-12
+                    .input-group
+                        select(ng-model='payment.transaction.cheque.bank.name', ng-options='getBankId(bank) as getBankId(bank) for bank in banks', ng-disabled='inProgress')
+                        span.input-group-addon בנק
 
-            .clearfix(ng-show='!patient.email')#noEmailWarning
-                i.fa.fa-warning
-                span למטופל לא מוגדרת כתובת מייל. החשבונית לא תישלח אוטומטית.
+            row
+                .col-xs-7.col-left
+                    .input-group
+                        input.form-control(type='text', ng-model='payment.transaction.cheque.bank.account', ng-disabled='inProgress')
+                        span.input-group-addon חשבון
+                .col-xs-5
+                    .input-group
+                        input.form-control(type='text', ng-model='payment.transaction.cheque.bank.branch', ng-disabled='inProgress')
+                        span.input-group-addon סניף
 
+            row
+                .col-xs-12
+                    .input-group
+                        input.form-control(type='text', ng-model='payment.transaction.cheque.number', ng-disabled='inProgress')
+                        span.input-group-addon מספר צ'ק
 
-    div#checkPayment(ng-show='payment.transaction.type=="cheque"').clearfix
+                    .input-group
+                        input.form-control.datepicker(ui-date='', ng-model='payment.transaction.cheque.date', readonly='readonly')
+                        span.input-group-addon תאריך
 
-        .input-group
-            select.patient-dropdown(ng-model='payment.transaction.cheque.bank.name', ng-options='getBankId(bank) as getBankId(bank) for bank in banks', ng-disabled='inProgress')
-            span.input-group-addon בנק
+    row(ng-show='payment.transaction.type=="transfer"')
+        .col-xs-12
 
-        .clearfix
+            row
+                .col-xs-12
+                    .input-group
+                        select(ng-model='payment.transaction.transfer.bank.name', ng-options='getBankId(bank) as getBankId(bank) for bank in banks', ng-disabled='inProgress')
+                        span.input-group-addon בנק
 
-            .col-xs-7.col-left
+            row
+                .col-xs-7.col-left
+                    .input-group
+                        input.form-control(type='text', ng-model='payment.transaction.transfer.bank.account', ng-disabled='inProgress')
+                        span.input-group-addon חשבון
+                .col-xs-5
+                    .input-group
+                        input.form-control(type='text', ng-model='payment.transaction.transfer.bank.branch', ng-disabled='inProgress')
+                        span.input-group-addon סניף
 
-                .input-group
-                    input.form-control(type='text', ng-model='payment.transaction.cheque.bank.account', ng-disabled='inProgress')
-                    span.input-group-addon חשבון
-
-            .col-xs-5
-
-                .input-group
-                    input.form-control(type='text', ng-model='payment.transaction.cheque.bank.branch', ng-disabled='inProgress')
-                    span.input-group-addon סניף
-
-        .input-group.clearfix
-            input.form-control(type='text', ng-model='payment.transaction.cheque.number', ng-disabled='inProgress')
-            span.input-group-addon מספר צ'ק
-
-        .input-group
-            input.form-control.datepicker(ui-date='', ng-model='payment.transaction.cheque.date', readonly='readonly')
-            span.input-group-addon תאריך
-
-    div#transferPayment(ng-show='payment.transaction.type=="transfer"').clearfix
-
-        .input-group
-            select.patient-dropdown(ng-model='payment.transaction.transfer.bank.name', ng-options='getBankId(bank) as getBankId(bank) for bank in banks', ng-disabled='inProgress')
-            span.input-group-addon בנק
-
-        .clearfix
-
-            .col-xs-7.col-left
-
-                .input-group
-                    input.form-control(type='text', ng-model='payment.transaction.transfer.bank.account', ng-disabled='inProgress')
-                    span.input-group-addon חשבון
-
-            .col-xs-5
-
-                .input-group
-                    input.form-control(type='text', ng-model='payment.transaction.transfer.bank.branch', ng-disabled='inProgress')
-                    span.input-group-addon סניף
-
-        .input-group
-            input.form-control.datepicker(ui-date='', ng-model='payment.transaction.transfer.date', readonly='readonly')
-            span.input-group-addon תאריך
+            row
+                .col-xs-12
+                    .input-group
+                        input.form-control.datepicker(ui-date='', ng-model='payment.transaction.transfer.date', readonly='readonly')
+                        span.input-group-addon תאריך
 
 .modal-footer
-
     button.btn.btn-sm.btn-primary.pull-left(ng-click='createOrUpdate()', ng-disabled='inProgress')
         i.fa.fa-cog.fa-spin(ng-show='inProgress')
         | צור תשלום
-
     button.btn.btn-sm.btn-default.pull-left(ng-click='cancel()', ng-disabled='inProgress') סגור
     

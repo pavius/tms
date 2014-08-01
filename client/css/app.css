@@ -85,6 +85,17 @@ small
     z-index: 1100 !important;
 }
 
+button .fa
+{
+    margin-left: 5px;
+}
+
+label
+{
+    font-weight: normal;
+    margin-right: 6px;
+}
+
 /*********************************************************************************************************************
  * Input group
  *********************************************************************************************************************/
@@ -129,14 +140,17 @@ small
     padding-right: 0px !important;
 }
 
+.col-xs-5,
+.col-xs-6,
+.col-xs-7,
 .col-xs-12
 {
     padding: 0px 0px 0px 0px;
 }
 
-.col-xs-6
+.spacer .col-xs-12
 {
-    padding: 0px 0px 0px 0px;
+    margin-bottom: 10px;
 }
 
 
@@ -282,6 +296,7 @@ small
     margin-bottom: 15px;
 }
 
+
 /*********************************************************************************************************************
  * Patients
  *********************************************************************************************************************/
@@ -315,4 +330,9 @@ small
 .patient-contents td#appointment-type
 {
     width: 30px;
+}
+
+.patient-contents tr.future-appointment
+{
+    background-color: rgba(223, 233, 225, 0.42);
 }
