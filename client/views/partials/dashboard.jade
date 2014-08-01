@@ -1,122 +1,92 @@
 row
-    alert(ng-repeat='alert in errorHandler.alerts', type='{{alert.type}}', close='errorHandler.closeAlert($index)') {{alert.message}}
+    .col-xs-12
+        alert(ng-repeat='alert in errorHandler.alerts', type='{{alert.type}}', close='errorHandler.closeAlert($index)') {{alert.message}}
 
 row.dashboard-contents(ng-show='!loading')
+    .col-xs-12
 
-    row.quick-access
+        row
+            .col-xs-12.button-toolbar
+                button.btn.btn-sm.btn-primary(ng-click='createAppointment()') צור פגישה
+                button.btn.btn-sm.btn-primary(ng-click='createTodo()') צור משימה
+                .btn-group(dropdown='', is-open='dropdownStatus.fastPayment', ng-show='patientsWithRecentAppointments.length')
+                    button.btn.btn-sm.btn-primary.dropdown-toggle(type='button', ng-disabled='disabled')
+                        | תשלום מהיר
+                        span.caret
+                    ul.dropdown-menu(role='menu')
+                        li(ng-repeat="patient in patientsWithRecentAppointments")
+                            a(href='#', ng-click="fastPaymentClick(patient)") {{patient.name}}
 
-        button#dashboard.btn.btn-sm.btn-primary(ng-click='createAppointment()') צור פגישה
-        button#dashboard.btn.btn-sm.btn-primary(ng-click='createTodo()') צור משימה
+        row
+            .col-xs-12
 
-        .btn-group(dropdown='', is-open='dropdownStatus.fastPayment', ng-show='patientsWithRecentAppointments.length')
-            button.btn.btn-sm.btn-primary.dropdown-toggle(type='button', ng-disabled='disabled')
-                | תשלום מהיר
-                span.caret
-            ul.dropdown-menu(role='menu')
-                li(ng-repeat="patient in patientsWithRecentAppointments")
-                    a(href='#', ng-click="fastPaymentClick(patient)") {{patient.name}}
+                row
+                    .col-xs-12
+                        h3.pull-right משימות
 
-    row.clearfix
+                row
+                    .col-xs-12
+                        tabset.bullet-tabset
+                            tab(ng-attr-heading='חשוב ({{todos.length}})')
+                                p(ng-show='todos.length == 0') אין משימות לביצוע
+                                table.table
+                                    tbody
+                                        tr(ng-repeat="todo in todos | orderBy: 'importance()'")
+                                            td#done
+                                                form
+                                                    input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)', ng-show='todo.complete')
+                                            td
+                                                {{todo.toString()}}
+                                            td.zoom-in
+                                                a.location-selector(ng-click='todo.view()', ng-show='todo.view')
+                                                    i.glyphicon.glyphicon-zoom-in
+                            tab(ng-attr-heading='אחר כך ({{lowPriorityTodos.length}})')
+                                p(ng-show='lowPriorityTodos.length == 0') אין משימות לביצוע
+                                table.table
+                                    tbody
+                                        tr(ng-repeat="todo in lowPriorityTodos | orderBy: 'importance()'")
+                                            td#done
+                                                form
+                                                    input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)', ng-show='todo.complete')
+                                            td
+                                                {{todo.toString()}}
+                                            td.zoom-in
+                                                a.location-selector(ng-click='todo.view()', ng-show='todo.view')
+                                                    i.glyphicon.glyphicon-zoom-in
 
-        row.clearfix
+        row
+            .col-xs-12
 
-            h3.pull-right משימות
+                row
+                    .col-xs-12
+                        h3.pull-right פגישות
 
-        row.clearfix
-
-            tabset
-
-                tab#todos(ng-attr-heading='חשוב ({{todos.length}})')
-
-                    row
-                        p(ng-show='todos.length == 0') אין משימות לביצוע
-
-                        table.table.dashboard-table
-                            tbody
-
-                                tr(ng-repeat="todo in todos | orderBy: 'importance()'")
-
-                                    td#dashboard-checkbox-column
-
-                                        form
-                                            input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)', ng-show='todo.complete')
-
-                                    td
-                                        {{todo.toString()}}
-
-                                    td.zoom-in
-
-                                        a.location-selector(ng-click='todo.view()', ng-show='todo.view')
-                                            i.glyphicon.glyphicon-zoom-in
-
-                tab#todos(ng-attr-heading='אחר כך ({{lowPriorityTodos.length}})')
-
-                    row
-                        p(ng-show='lowPriorityTodos.length == 0') אין משימות לביצוע
-
-                        table.table.dashboard-table
-                            tbody
-
-                                tr(ng-repeat="todo in lowPriorityTodos | orderBy: 'importance()'")
-
-                                    td#dashboard-checkbox-column
-
-                                        form
-                                            input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)', ng-show='todo.complete')
-
-                                        td
-                                            {{todo.toString()}}
-
-                                        td.zoom-in
-                                            a.location-selector(ng-click='todo.view()', ng-show='todo.view')
-                                                i.glyphicon.glyphicon-zoom-in
-
-
-    row.clearfix
-
-        row.clearfix
-
-            h3.pull-right פגישות
-
-        row.clearfix
-
-            tabset
-
-                tab#todos(ng-attr-heading='השבוע ({{totalNumberOfAppointmentsThisWeek}})')
-
-                    p(ng-show='appointmentsThisWeek.length == 0') אין עוד פגישות השבוע
-
-                    table.table.dashboard-table
-
-                        tbody
-
-                            tr(ng-repeat="appointment in appointmentsThisWeek | orderBy:'when'")
-
-                                td
-                                    span.fa.fa-skype(ng-show='appointment.type == "skype"')
-                                    {{appointment.when | date:"EEEE, dd MMMM 'ב-' HH:mm"}} עם {{appointment.patient.name}}
-
-                                td.zoom-in
-                                    a.location-selector(href='patients/{{appointment.patient._id}}')
-                                        i.glyphicon.glyphicon-zoom-in
-
-                tab#todos(ng-attr-heading='שבוע הבא ({{appointmentsNextWeek.length}})')
-
-                    p(ng-show='appointmentsNextWeek.length == 0') אין פגישות בשבוע הבא
-
-                    table.table.dashboard-table
-
-                        tbody
-
-                            tr(ng-repeat="appointment in appointmentsNextWeek | orderBy:'when'")
-
-                                td
-                                    span.fa.fa-skype(ng-show='appointment.type == "skype"')
-                                    {{appointment.when | date:"EEEE, dd MMMM 'ב-' HH:mm"}} עם {{appointment.patient.name}}
-
-                                td.zoom-in
-                                    a.location-selector(href='patients/{{appointment.patient._id}}')
-                                        i.glyphicon.glyphicon-zoom-in
+                row
+                    .col-xs-12.bullet-tabset
+                        tabset
+                            tab#todos(ng-attr-heading='השבוע ({{totalNumberOfAppointmentsThisWeek}})')
+                                p(ng-show='appointmentsThisWeek.length == 0') אין עוד פגישות השבוע
+                                table.table.dashboard-table
+                                    tbody
+                                        tr(ng-repeat="appointment in appointmentsThisWeek | orderBy:'when'")
+                                            td
+                                                span.fa.fa-skype(ng-show='appointment.type == "skype"')
+                                                {{appointment.when | date:"EEEE, dd MMMM 'ב-' HH:mm"}} עם {{appointment.patient.name}}
+                                            td.zoom-in
+                                                a.location-selector(href='patients/{{appointment.patient._id}}')
+                                                    i.glyphicon.glyphicon-zoom-in
+                            tab#todos(ng-attr-heading='שבוע הבא ({{appointmentsNextWeek.length}})')
+                                p(ng-show='appointmentsNextWeek.length == 0') אין פגישות בשבוע הבא
+                                table.table.dashboard-table
+                                    tbody
+                                        tr(ng-repeat="appointment in appointmentsNextWeek | orderBy:'when'")
+                                            td
+                                                span.fa.fa-skype(ng-show='appointment.type == "skype"')
+                                                {{appointment.when | date:"EEEE, dd MMMM 'ב-' HH:mm"}} עם {{appointment.patient.name}}
+                                            td.zoom-in
+                                                a.location-selector(href='patients/{{appointment.patient._id}}')
+                                                    i.glyphicon.glyphicon-zoom-in
 
 row.loading(ng-show='loading')
-    i.fa.fa-circle-o-notch.fa-spin
+    .col-xs-12
+        i.fa.fa-circle-o-notch.fa-spin

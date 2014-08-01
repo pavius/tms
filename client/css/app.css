@@ -1,16 +1,116 @@
-body 
+/*********************************************************************************************************************
+ * Common elements
+ *********************************************************************************************************************/
+
+body
 {
     background: url('../images/ricepaper2.png');
 }
 
-/* 
- * Non-responsive navbar
+h3
+{
+    margin-top: 0px;
+    margin-bottom: 15px;
+    color: rgba(57, 97, 50, 0.65);
+}
+
+.col-left
+{
+    padding-left: 0px !important;
+    padding-right: 6px  !important;
+}
+
+.col-right
+{
+    padding-left: 6px !important;
+    padding-right: 0px !important;
+}
+
+.col-xs-12
+{
+    padding: 0px 0px 0px 0px;
+}
+
+.col-xs-6
+{
+    padding: 0px 0px 0px 0px;
+}
+
+td.zoom-in
+{
+    text-align: left;
+}
+
+.nav-tabs > li
+{
+    float: right;
+}
+
+a.location-selector
+{
+    color: black;
+}
+
+a.contact-glyph
+{
+    color: black;
+    padding-left: 20px;
+}
+
+/*
+ * Button toolbar
  */
+
+.button-toolbar
+{
+    margin-bottom: 18px;
+}
+
+.button-toolbar button
+{
+    margin-left: 6px;
+}
+
+/*
+ * bullet tabset
+ */
+
+.bullet-tabset ul.nav.nav-tabs
+{
+    padding-right: 0px;
+    border-bottom: none;
+    margin-bottom: 18px;
+}
+
+.bullet-tabset .nav-tabs>li>a
+{
+    padding: 5px 10px;
+    background-color: rgba(148, 191, 216, 0.2);
+    border-bottom-color: #ddd;
+    border-radius: 15px;
+    color: #555;
+    border-color: #ddd;
+    margin-left: 8px;
+}
+
+.bullet-tabset .nav-tabs>li.active>a,
+.bullet-tabset .nav-tabs>li.active>a:hover,
+.bullet-tabset .nav-tabs>li.active>a:focus
+{
+    background-color: rgba(148, 191, 216, 0.5);
+    font-weight: bold;
+}
+
+
+/*********************************************************************************************************************
+ * Navbar
+ *********************************************************************************************************************/
 
 .navbar
 {
     background-color: rgba(216, 216, 216, 0.39);
     min-height: 40px;
+    margin-bottom: 20px;
 }
 
 .navbar-nav 
@@ -39,16 +139,12 @@ body
 {
     background-color: rgba(206, 206, 206, 0.82);
     padding-bottom: 7px;
-    border-bottom-color: red;
+    border-bottom-color: rgb(187, 150, 56);
     border-bottom-style: solid;
     border-bottom-width: 3px;
 }
 
-/*
- * Other tweaks
- */
-
-#logo
+.navbar #logo
 {
     margin-bottom: 0px;
     padding-top: 10px;
@@ -56,400 +152,16 @@ body
     color: #999;
 }
 
-.table.table
-{
-    text-align: center;
-}
+/*********************************************************************************************************************
+ * Dashboard
+ *********************************************************************************************************************/
 
-th
-{
-    text-align: center;
-}
-
-.navbar
-{
-    margin-bottom: 12px;
-}
-
-.future-appointment
-{
-    background-color: rgba(223, 233, 225, 0.42);
-}
-
-.input-group
-{
-    margin-bottom: 12px;
-}
-
-.col-left
-{
-    padding-left: 0px !important;
-    padding-right: 6px  !important;
-}
-
-.col-right
-{
-    padding-left: 6px !important;
-    padding-right: 0px !important;
-}
-
-.col-xs-12
-{
-    padding: 0px 0px 12px 0px;
-}
-
-.col-xs-6
-{
-    padding: 0px 0px 12px 0px;
-}
-
-.row
-{
-    margin-bottom: 12px;
-}
-
-ul.nav.nav-tabs
-{
-    margin-bottom: 12px;
-    margin-top: 0px;
-}
-
-h3.view-header
-{
-    margin-bottom: 12px;
-    margin-top: 0px;
-}
-
-small
-{
-    margin-right: 6px;
-}
-
-#appointment-settings
-{
-    margin-top: 10px;
-}
-
-#s2id_appointment-modal-patient-dropdown
-{
-    width: 100%;
-    padding-left: 5px;
-    margin-bottom: 10px;
-}
-
-.modal-footer
-{
-    margin-top: 0px;
-}
-
-.table.table.dashboard-table
+.dashboard-contents .table.table
 {
     text-align: right;
 }
 
-a.location-selector
-{
-    color: black;
-}
-
-a.contact-glyph
-{
-    color: black;
-    padding-left: 20px;
-}
-
-.nav-tabs > li
-{
-    float: right;
-}
-
-#patient-list-status-indicator
+.dashboard-contents td#done
 {
     width: 30px;
-    font-size: 10px;
-    vertical-align: middle;
-}
-
-#patient-list-name
-{
-    text-align: right;
-}
-
-.toolbar-dropdown
-{
-    margin-left: 6px;
-    height: 30px;
-    padding: 6px 12px;
-    border-color: #CCCCCC;
-    background-color: #FFFFFF;
-    direction: rtl
-}
-
-.patient-dropdown
-{
-    width: 100%;
-    height: 34px;
-    padding: 6px 12px;
-    border-color: #CCCCCC;
-    background-color: #FFFFFF;
-    direction: rtl
-}
-
-.appointment-dropdown
-{
-    margin-bottom: 10px;
-    width: 100%;
-    height: 34px;
-    border-color: #CCCCCC;
-    background-color: #FFFFFF;
-    direction: rtl
-}
-
-#patient-status-separator
-{
-    margin-top: 0px;
-}
-
-#dashboard-checkbox-column
-{
-    width: 30px;
-}
-
-#patient-appointment-type-column
-{
-    width: 30px;
-}
-
-.input-group input[readonly="readonly"]
-{
-    background-color: #F5F5F5;
-    text-align: center;
-    color: #777;
-}
-
-#patients-patient-row.new-patient
-{
-    background-color: rgba(223, 233, 225, 0.8);
-}
-
-#patients-patient-row.inactive-patient
-{
-    background-color: rgba(255, 221, 221, 0.8);
-}
-
-.dashboard h3
-{
-    margin-top: 10px;
-    font-weight: bold;
-    color: rgba(57, 97, 50, 0.65);
-}
-
-#appointment-datepicker .btn-sm
-{
-    padding: 2px 10px;
-}
-
-#appointment-modal
-{
-    padding-bottom: 0px;
-}
-
-.fa-skype
-{
-    color: #3276b1;
-    padding-left: 7px;
-}
-
-td.zoom-in
-{
-    text-align: left;
-}
-
-.modal.payment #checkPayment,
-.modal.payment #transferPayment
-{
-    margin-top: 15px;
-}
-
-.modal.payment span.input-group-addon
-{
-    width: 50px;
-}
-
-.modal.payment .input-group
-{
-    width: 100%;
-}
-
-.modal.payment .col-xs-5,
-.modal.payment .col-xs-6,
-.modal.payment .col-xs-7
-{
-    padding-left: 0px;
-    padding-right: 0px;
-}
-
-button .fa
-{
-    margin-left: 5px;
-}
-
-.ui-datepicker
-{
-    z-index: 1100 !important;
-}
-
-.input-group input[readonly="readonly"].datepicker
-{
-    background-color: #ffffff;
-}
-
-.modal label
-{
-    font-weight: normal;
-    margin-right: 6px;
-}
-
-#noEmailWarning
-{
-    color: red;
-}
-
-.modal.todo textarea
-{
-    margin-bottom: 15px;
-}
-
-.loading
-{
-    position: absolute;
-    font-size: 10em;
-    left: 50%;
-    top: 40%;
-    color: #888;
-    opacity: 0.5;
-}
-
-/*
- * Dashboard nav
- */
-
-.dashboard-contents ul.nav.nav-tabs
-{
-    padding-right: 0px;
-    border-bottom: none;
-}
-
-.dashboard-contents .nav-tabs>li>a
-{
-    padding: 5px 10px;
-    background-color: rgba(148, 191, 216, 0.2);
-    border-bottom-color: #ddd;
-    border-radius: 15px;
-    color: #555;
-    border-color: #ddd;
-    margin-left: 8px;
-}
-
-.dashboard-contents .nav-tabs>li.active>a,
-.dashboard-contents .nav-tabs>li.active>a:hover,
-.dashboard-contents .nav-tabs>li.active>a:focus
-{
-    background-color: rgba(148, 191, 216, 0.5);
-    font-weight: bold;
-}
-
-.dashboard-contents .quick-access button
-{
-    margin-left: 6px;
-}
-
-/*
- * RTL checkbox
- */
-
-#patientsToolbar .cbx-container
-{
-    padding-top: 5px
-}
-
-#patientsToolbar input.cbx
-{
-    float: right;
-}
-
-#patientsToolbar label.cbx
-{
-    float: left;
-    padding: 0px 4px 0px 8px;
-    font-weight: normal;
-}
-
-/*
- * Input group LTR hack
- */
-
-.input-group
-{
-    direction: ltr;
-}
-
-.input-group input
-{
-    text-align: right;
-}
-
-/*
- * Selectors
- */
-@media(max-width: 767px)
-{
-
-    .input-group-addon
-    {
-        padding: 6px 6px;
-    }
-
-    .form-control
-    {
-        padding: 6px 6px;
-    }
-
-    ul.nav.nav-tabs
-    {
-        margin-bottom: 12px;
-        margin-top: 0px;
-    }
-
-    .table>thead>tr>th
-    {
-        padding: 0px 8px 4px 8px;
-    }
-
-    #appointment-datepicker
-    {
-        padding-right: 25px;
-    }
-
-    .loading
-    {
-        font-size: 7em;
-        left: 38%;
-        top: 38%;
-    }
-}
-
-@media(min-width: 768px)
-{
-
-}
-
-@media(min-width: 992px)
-{
-
-}
-
-@media(min-width: 1200px)
-{
-
 }
