@@ -14,6 +14,35 @@ h3
     color: rgba(57, 97, 50, 0.65);
 }
 
+td.zoom-in
+{
+    text-align: left;
+}
+
+.nav-tabs > li
+{
+    float: right;
+}
+
+a.location-selector
+{
+    color: black;
+}
+
+.table.table
+{
+    text-align: center;
+}
+
+th
+{
+    text-align: center;
+}
+
+/*********************************************************************************************************************
+ * Columns
+ *********************************************************************************************************************/
+
 .col-left
 {
     padding-left: 0px !important;
@@ -36,44 +65,35 @@ h3
     padding: 0px 0px 0px 0px;
 }
 
-td.zoom-in
-{
-    text-align: left;
-}
 
-.nav-tabs > li
-{
-    float: right;
-}
+/*********************************************************************************************************************
+ * Input toolbar
+ *********************************************************************************************************************/
 
-a.location-selector
-{
-    color: black;
-}
-
-a.contact-glyph
-{
-    color: black;
-    padding-left: 20px;
-}
-
-/*
- * Button toolbar
- */
-
-.button-toolbar
+.input-toolbar
 {
     margin-bottom: 18px;
 }
 
-.button-toolbar button
+.input-toolbar button
 {
     margin-left: 6px;
 }
 
-/*
- * bullet tabset
- */
+.input-toolbar-dropdown
+{
+    margin-left: 6px;
+    height: 30px;
+    padding: 6px 12px;
+    border-color: #CCCCCC;
+    background-color: #FFFFFF;
+    direction: rtl
+}
+
+
+/*********************************************************************************************************************
+ * Bullet tabset
+ *********************************************************************************************************************/
 
 .bullet-tabset ul.nav.nav-tabs
 {
@@ -152,6 +172,7 @@ a.contact-glyph
     color: #999;
 }
 
+
 /*********************************************************************************************************************
  * Dashboard
  *********************************************************************************************************************/
@@ -164,4 +185,30 @@ a.contact-glyph
 .dashboard-contents td#done
 {
     width: 30px;
+}
+
+
+/*********************************************************************************************************************
+ * Patients
+ *********************************************************************************************************************/
+
+.patients-contents tr.new-patient
+{
+    background-color: rgba(223, 233, 225, 0.8);
+}
+
+.patients-contents tr.inactive-patient
+{
+    background-color: rgba(255, 221, 221, 0.8);
+}
+
+.patients-contents td#name
+{
+    text-align: right;
+}
+
+.patients-contents a.contact-glyph
+{
+    color: black;
+    padding-left: 20px;
 }

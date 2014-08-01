@@ -2,11 +2,11 @@ row
     .col-xs-12
         alert(ng-repeat='alert in errorHandler.alerts', type='{{alert.type}}', close='errorHandler.closeAlert($index)') {{alert.message}}
 
-row.dashboard-contents(ng-show='!loading')
-    .col-xs-12
+row
+    .col-xs-12.dashboard-contents(ng-show='!loading')
 
         row
-            .col-xs-12.button-toolbar
+            .col-xs-12.input-toolbar
                 button.btn.btn-sm.btn-primary(ng-click='createAppointment()') צור פגישה
                 button.btn.btn-sm.btn-primary(ng-click='createTodo()') צור משימה
                 .btn-group(dropdown='', is-open='dropdownStatus.fastPayment', ng-show='patientsWithRecentAppointments.length')
@@ -62,8 +62,8 @@ row.dashboard-contents(ng-show='!loading')
                         h3.pull-right פגישות
 
                 row
-                    .col-xs-12.bullet-tabset
-                        tabset
+                    .col-xs-12
+                        tabset.bullet-tabset
                             tab#todos(ng-attr-heading='השבוע ({{totalNumberOfAppointmentsThisWeek}})')
                                 p(ng-show='appointmentsThisWeek.length == 0') אין עוד פגישות השבוע
                                 table.table.dashboard-table
@@ -87,6 +87,6 @@ row.dashboard-contents(ng-show='!loading')
                                                 a.location-selector(href='patients/{{appointment.patient._id}}')
                                                     i.glyphicon.glyphicon-zoom-in
 
-row.loading(ng-show='loading')
-    .col-xs-12
+row
+    .col-xs-12.loading(ng-show='loading')
         i.fa.fa-circle-o-notch.fa-spin

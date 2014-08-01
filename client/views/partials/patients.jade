@@ -1,49 +1,44 @@
 row
-    alert(ng-repeat='alert in errorHandler.alerts', type='{{alert.type}}', close='errorHandler.closeAlert($index)') {{alert.message}}
+    .col-xs-12
+        alert(ng-repeat='alert in errorHandler.alerts', type='{{alert.type}}', close='errorHandler.closeAlert($index)') {{alert.message}}
 
-.patients-contents(ng-show='!loading')
+row
+    .col-xs-12.patients-contents(ng-show='!loading')
 
-    row#patientsToolbar
+        row
+            .col-xs-12.input-toolbar
+                button.btn.btn-sm.btn-primary(ng-click='create()') צור מטופל
+                .input-group.pull-left(style='width: 100px')
+                    input.input-sm.form-control(type='text', id='search', placeholder='חפש', ng-model='searchTerm')
+                .input-group.pull-left
+                    select.input-toolbar-dropdown(ng-model='filterType', ng-change='reloadPatients()')
+                        option(value='active') פעילים
+                        option(value='all') כולם
+                        option(value='withDebt') בעלי חוב
 
-        button.btn.btn-sm.btn-primary.pull-right(ng-click='create()') צור מטופל
+        row
+            .col-xs-12.input-toolbar
+                table.table
+                    thead
+                        tr
+                            th שם
+                            th קשר
+                            th(ng-show='filterType=="withDebt"') חוב
+                            th
+                    tbody
+                        tr(ng-repeat="patient in patients | orderBy: ['getFreshness()', 'name'] | filter: searchFilter", ng-class='patient.getStatus() + "-patient"')
+                            td#name {{patient.name}}
+                            td
+                                a(href='mailto:{{patient.email}}', ng-show='patient.email.length').contact-glyph
+                                    i.glyphicon.glyphicon-envelope
+                                a(href='tel:{{patient.primaryPhone}}', ng-show='patient.primaryPhone.length').contact-glyph
+                                    i.glyphicon.glyphicon-phone-alt
+                            td(ng-show='filterType=="withDebt"')
+                                {{patient.debt.total}}
+                            td.zoom-in
+                                a.location-selector(href='patients/{{patient._id}}')
+                                    i.glyphicon.glyphicon-zoom-in
 
-        .input-group.pull-left(style='width: 100px')
-            input.input-sm.form-control(type='text', id='search', placeholder='חפש', ng-model='searchTerm')
-
-        .input-group.pull-left
-            select.toolbar-dropdown(ng-model='filterType', ng-change='reloadPatients()')
-                option(value='active') פעילים
-                option(value='all') כולם
-                option(value='withDebt') בעלי חוב
-
-    table.table
-
-        thead
-
-            tr
-                th שם
-                th קשר
-                th(ng-show='filterType=="withDebt"') חוב
-                th
-
-        tbody
-
-            tr#patients-patient-row(ng-repeat="patient in patients | orderBy: ['getFreshness()', 'name'] | filter: searchFilter", ng-class='patient.getStatus() + "-patient"')
-
-                td#patient-list-name {{patient.name}}
-
-                td
-                    a(href='mailto:{{patient.email}}', ng-show='patient.email.length').contact-glyph
-                        i.glyphicon.glyphicon-envelope
-
-                    a(href='tel:{{patient.primaryPhone}}', ng-show='patient.primaryPhone.length').contact-glyph
-                        i.glyphicon.glyphicon-phone-alt
-
-                td(ng-show='filterType=="withDebt"')
-                    {{patient.debt.total}}
-                td
-                    a.location-selector(href='patients/{{patient._id}}')
-                        i.glyphicon.glyphicon-zoom-in
-
-row.loading(ng-show='loading')
-    i.fa.fa-circle-o-notch.fa-spin
+row
+    .col-xs-12.loading(ng-show='loading')
+        i.fa.fa-circle-o-notch.fa-spin
