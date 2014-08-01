@@ -36,6 +36,7 @@ angular.module('tms.patient.controllers',
     $scope.filterType = 'active';
     $scope.patients = [];
     $scope.errorHandler = errorHandler;
+    $scope.totalDebt = 0;
 
     // create a new patient
     $scope.create = function()
@@ -64,10 +65,16 @@ angular.module('tms.patient.controllers',
 
         function addPatientsIfUnique(patients)
         {
+            $scope.totalDebt = 0;
+
             patients.forEach(function(patient)
             {
                 if (!_.findWhere($scope.patients, {_id: patient._id}))
                 {
+                    // sum debt, if needed
+                    if (patient.debt.total)
+                        $scope.totalDebt += patient.debt.total;
+
                     $scope.patients.push(patient);
                 }
             });

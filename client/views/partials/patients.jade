@@ -23,7 +23,7 @@ row
                         tr
                             th שם
                             th קשר
-                            th(ng-show='filterType=="withDebt"') חוב
+                            th(ng-show='filterType=="withDebt"') חוב ({{totalDebt}})
                             th
                     tbody
                         tr(ng-repeat="patient in patients | orderBy: ['getFreshness()', 'name'] | filter: searchFilter", ng-class='patient.getStatus() + "-patient"')
