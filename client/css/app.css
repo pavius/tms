@@ -295,7 +295,7 @@ button .fa
     background-color: #ffffff;
 }
 
-label#emailInvoice
+.modal label
 {
     font-weight: normal;
     margin-right: 6px;

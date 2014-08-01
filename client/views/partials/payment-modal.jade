@@ -24,8 +24,12 @@
                     span.input-group-addon סוג
 
             .clearfix(ng-show='patient.email')
-                input#emailInvoice(type='checkbox', ng-model='payment.emailInvoice')
-                label#emailInvoice(for='emailInvoice') שלח חשבונית במייל ל: {{patient.email}}
+                input(type='checkbox', ng-model='payment.transaction.issueInvoice')
+                label(for='emailInvoice') הוצא חשבונית
+
+            .clearfix(ng-show='patient.email', ng-enabled='payment.transaction.issueInvoice')
+                input(type='checkbox', ng-model='payment.emailInvoice')
+                label(for='emailInvoice') שלח חשבונית ל: {{patient.email}}
 
             .clearfix(ng-show='!patient.email')#noEmailWarning
                 i.fa.fa-warning

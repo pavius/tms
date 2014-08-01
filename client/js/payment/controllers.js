@@ -51,11 +51,14 @@ angular.module('tms.payment.controllers', [])
             // update in server
             Payment.save({patientId: $scope.patient._id}, $scope.payment, function(updatedPatient)
                 {
-                    var attempt = 0;
+                    // do we need to wait for the invoice to be issued?
+                    if ($scope.payment.transaction.issueInvoice)
+                    {
+                        var attempt = 0;
 
-                    // start polling for the payment's invoice. once the invoice is there (or a certain time passes
-                    // we can close the modal)
-                    invoicePoller = $interval(function()
+                        // start polling for the payment's invoice. once the invoice is there (or a certain time passes
+                        // we can close the modal)
+                        invoicePoller = $interval(function()
                         {
                             // get payment
                             Payment.get({patientId: $scope.patient._id, id: updatedPatient.payments[0]._id}, function(updatedPayment)
@@ -76,6 +79,11 @@ angular.module('tms.payment.controllers', [])
                                 }
                             })
                         }, 500);
+                    }
+                    else
+                    {
+                        $modalInstance.close({updatedPatient: updatedPatient, status: 'create'});
+                    }
                 },
                 function(error)
                 {

@@ -36,6 +36,7 @@ angular.module('tms.payment.services', ['ngResource'])
             {
                 type: 'cash',
                 invoiceRecipient: patient.invoiceRecipient || patient.name,
+                issueInvoice: true,
                 cheque:
                 {
                     number: '',

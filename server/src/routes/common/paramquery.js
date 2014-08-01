@@ -2,8 +2,6 @@ exports.query = function (model, rawParams, cb)
 {
     var params = buildQueryParams(model, rawParams);
 
-    console.log(params);
-
     // Create the Mongoose Query object.
     query = model.find(params.searchParams);
 

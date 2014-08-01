@@ -127,6 +127,10 @@ module.exports.addRoutes = function(app, security)
             var publicKey = process.env.GREENINVOICE_PUBLIC_KEY || '';
             var signer = crypto.createHmac('sha256', new Buffer(privateKey, 'utf8'));
 
+            // check if we even need to issue the invoice
+            if (payment.transaction.hasOwnProperty('issueInvoice') && !payment.transaction.issueInvoice)
+                return callback();
+
             var params =
             {
                 timestamp: new Date().getTime(),
@@ -259,9 +263,10 @@ module.exports.addRoutes = function(app, security)
                         }
                         else
                         {
-                            // save ticket id so that when the callback is handled, we'll know to which payment
-                            // it's for
-                            payment.invoice.ticket = invoice.ticket;
+                            // if an invoice was issued, save ticket id so that when the callback is handled, we'll know
+                            // to which payment it's for
+                            if (invoice)
+                                payment.invoice.ticket = invoice.ticket;
 
                             // shove the new payment
                             patientFromDb.payments.push(payment);

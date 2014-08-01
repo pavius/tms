@@ -293,6 +293,39 @@ describe('Payments', function()
             });
         });
 
+        describe('when creating a payment with cash but without invoice', function()
+        {
+            it('should not call the GI API', function(done)
+            {
+                var newPayment =
+                {
+                    when: (new Date()).toISOString(),
+                    sum: 750,
+                    transaction: {type: 'cash', invoiceRecipient: 'Some guy', issueInvoice: false}
+                };
+
+                patient = patientFixtures[1];
+
+                // expect invoice and check all parameters, including cash
+                nock('https://api.greeninvoice.co.il')
+                    .post('/api/documents/add')
+                    .reply(200, function(uri, requestBody)
+                    {
+                        assert.fail('', '', 'Should not get here');
+                    });
+
+                request(app)
+                    .post('/api/patients/' + patient._id + '/payments')
+                    .send(newPayment)
+                    .expect('Content-Type', /json/)
+                    .expect(201)
+                    .end(function(err, response)
+                    {
+                        done();
+                    });
+            });
+        });
+
         describe('when creating a payment with cheque', function()
         {
             it('should call the GI API with correct settings and update patient bank info', function(done)
@@ -305,6 +338,7 @@ describe('Payments', function()
                     transaction:
                     {
                         type: 'cheque',
+                        issueInvoice: true,
                         cheque:
                         {
                             number: 123,
