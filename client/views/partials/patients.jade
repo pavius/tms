@@ -23,7 +23,7 @@ row
                         tr
                             th שם
                             th קשר
-                            th(ng-show='filterType=="withDebt"') חוב ({{totalDebt}})
+                            th(ng-show='service.configuration.filterType=="withDebt"') חוב ({{totalDebt}})
                             th
                     tbody
                         tr(ng-repeat="patient in patients | orderBy: ['getFreshness()', 'name'] | filter: searchFilter", ng-class='patient.getStatus() + "-patient"')
@@ -33,7 +33,7 @@ row
                                     i.glyphicon.glyphicon-envelope
                                 a(href='tel:{{patient.primaryPhone}}', ng-show='patient.primaryPhone.length').contact-glyph
                                     i.glyphicon.glyphicon-phone-alt
-                            td(ng-show='filterType=="withDebt"')
+                            td(ng-show='service.configuration.filterType=="withDebt"')
                                 {{patient.debt.total}}
                             td.zoom-in
                                 a.location-selector(href='patients/{{patient._id}}')
