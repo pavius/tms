@@ -28,12 +28,12 @@ angular.module('tms.patient.controllers',
 }])
 
 .controller('PatientListController', 
-            ['$scope', '$log', '$location', '$modal', 'ErrorHandler', 'Patient',
-            function($scope, $log, $location, $modal, errorHandler, Patient)
+            ['$scope', '$log', '$location', '$modal', 'ErrorHandler', 'Patient', 'PatientsService',
+            function($scope, $log, $location, $modal, errorHandler, Patient, PatientsService)
 {
     $scope.loading = true;
     $scope.searchTerm = '';
-    $scope.filterType = 'active';
+    $scope.service = PatientsService;
     $scope.patients = [];
     $scope.errorHandler = errorHandler;
     $scope.totalDebt = 0;
@@ -86,7 +86,7 @@ angular.module('tms.patient.controllers',
         }
 
         // do we need only to get active/new patients?
-        if ($scope.filterType == 'active')
+        if ($scope.service.configuration.filterType == 'active')
         {
             // requires two queries
             async.parallel(
@@ -126,7 +126,7 @@ angular.module('tms.patient.controllers',
                 done
             );
         }
-        else if ($scope.filterType == 'withDebt')
+        else if ($scope.service.configuration.filterType == 'withDebt')
         {
             // just get'em all
             Patient.query({'debt.total': '{gt}' + 0, select: '-appointments'},

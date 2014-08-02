@@ -11,7 +11,7 @@ row
                 .input-group.pull-left(style='width: 100px')
                     input.input-sm.form-control(type='text', id='search', placeholder='חפש', ng-model='searchTerm')
                 .input-group.pull-left
-                    select.input-toolbar-dropdown(ng-model='filterType', ng-change='reloadPatients()')
+                    select.input-toolbar-dropdown(ng-model='service.configuration.filterType', ng-change='reloadPatients()')
                         option(value='active') פעילים
                         option(value='all') כולם
                         option(value='withDebt') בעלי חוב

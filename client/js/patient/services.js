@@ -31,7 +31,19 @@ angular.module('tms.patient.services', ['ngResource'])
         return freshness[this.getStatus()];
     }
 
+    return Patient;
+}])
 
+.factory('PatientsService', function()
+{
+    var service =
+    {
+        configuration:
+        {
+            filterType: 'active'
+        }
+    };
 
-    return Patient; 
-}]);
+    return service;
+});
+
