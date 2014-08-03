@@ -1,6 +1,7 @@
 angular.module('tms', 
 [
     'ngRoute',
+    'ngAnimate',
     'ui.select2',
     'ui.date',
     'tms.common.filters',

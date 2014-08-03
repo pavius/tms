@@ -293,6 +293,14 @@ label
     width: 30px;
 }
 
+.dashboard-contents tr.todo.ng-leave
+{
+    -webkit-animation: bounceOutRight 0.75s;
+    -moz-animation: bounceOutRight 0.75s;
+    -ms-animation: bounceOutRight 0.75s;
+    animation: bounceOutRight 0.75s;
+}
+
 
 /*********************************************************************************************************************
  * Todo modal

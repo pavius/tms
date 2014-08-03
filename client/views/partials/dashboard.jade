@@ -31,7 +31,7 @@ row
                                 p(ng-show='todos.length == 0') אין משימות לביצוע
                                 table.table
                                     tbody
-                                        tr(ng-repeat="todo in todos | orderBy: 'importance()'")
+                                        tr.todo(ng-repeat="todo in todos | orderBy: 'importance()'")
                                             td#done
                                                 form
                                                     input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)', ng-show='todo.complete')
@@ -44,7 +44,7 @@ row
                                 p(ng-show='lowPriorityTodos.length == 0') אין משימות לביצוע
                                 table.table
                                     tbody
-                                        tr(ng-repeat="todo in lowPriorityTodos | orderBy: 'importance()'")
+                                        tr.todo(ng-repeat="todo in lowPriorityTodos | orderBy: 'importance()'")
                                             td#done
                                                 form
                                                     input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)', ng-show='todo.complete')
