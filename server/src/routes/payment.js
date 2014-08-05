@@ -127,8 +127,13 @@ module.exports.addRoutes = function(app, security)
             var publicKey = process.env.GREENINVOICE_PUBLIC_KEY || '';
             var signer = crypto.createHmac('sha256', new Buffer(privateKey, 'utf8'));
 
+            // shove invoice part, if doesn't exist (easier later on)
+            if (!payment.transaction.hasOwnProperty('invoice'))
+                payment.transaction.invoice = {};
+
             // check if we even need to issue the invoice
-            if (payment.transaction.hasOwnProperty('issueInvoice') && !payment.transaction.issueInvoice)
+            if (payment.transaction.invoice.hasOwnProperty('issue') &&
+                !payment.transaction.invoice.issue)
                 return callback();
 
             var params =
@@ -139,14 +144,14 @@ module.exports.addRoutes = function(app, security)
                 client:
                 {
                     send_email: payment.emailInvoice,
-                    name: payment.transaction.invoiceRecipient || patient.name,
+                    name: payment.transaction.invoice.recipient || patient.name,
                     email: patient.email
                 },
                 income:
                 [
                     {
                         price: payment.sum,
-                        description: 'אימון'
+                        description: payment.transaction.invoice.item || 'אימון'
                     }
                 ],
                 payment: []
@@ -277,7 +282,8 @@ module.exports.addRoutes = function(app, security)
                             else if (request.body.transaction.type == 'transfer') patientFromDb.bank = request.body.transaction.transfer.bank;
 
                             // save the invoice recipient for this patient
-                            patientFromDb.invoiceRecipient = request.body.transaction.invoiceRecipient;
+                            patientFromDb.invoice.recipient = request.body.transaction.invoice.recipient;
+                            patientFromDb.invoice.item = request.body.transaction.invoice.item;
 
                             // attach to appointments
                             attachPaymentToAppointments(payment, patientFromDb, appointmentsToAttachTo, function(error)

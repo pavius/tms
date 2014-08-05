@@ -248,7 +248,15 @@ describe('Payments', function()
                 {
                     when: (new Date()).toISOString(),
                     sum: 750,
-                    transaction: {type: 'cash', invoiceRecipient: 'Some guy'}
+                    transaction:
+                    {
+                        type: 'cash',
+                        invoice:
+                        {
+                            recipient: 'Some guy',
+                            item: 'Panuccis pizza'
+                        }
+                    }
                 };
 
                 patient = patientFixtures[1];
@@ -260,9 +268,9 @@ describe('Payments', function()
                     {
                         invoice = getGreenInvoiceDataFromRequest(requestBody);
                         expect(invoice.params.doc_type).to.equal(320);
-                        expect(invoice.params.client.name).to.equal(newPayment.transaction.invoiceRecipient);
+                        expect(invoice.params.client.name).to.equal(newPayment.transaction.invoice.recipient);
                         expect(invoice.params.income[0].price).to.equal(newPayment.sum);
-                        expect(invoice.params.income[0].description).to.equal('אימון');
+                        expect(invoice.params.income[0].description).to.equal(newPayment.transaction.invoice.item);
                         expect(invoice.params.payment[0].type).to.equal(1);
                         expect(invoice.params.payment[0].amount).to.equal(newPayment.sum);
 
@@ -285,7 +293,8 @@ describe('Payments', function()
                                 .expect(200)
                                 .end(function(err, response)
                                 {
-                                    expect(response.body.invoiceRecipient).to.equal(newPayment.transaction.invoiceRecipient);
+                                    expect(response.body.invoice.recipient).to.equal(newPayment.transaction.invoice.recipient);
+                                    expect(response.body.invoice.item).to.equal(newPayment.transaction.invoice.item);
                                     done(err);
                                 });
                         });
@@ -301,7 +310,7 @@ describe('Payments', function()
                 {
                     when: (new Date()).toISOString(),
                     sum: 750,
-                    transaction: {type: 'cash', invoiceRecipient: 'Some guy', issueInvoice: false}
+                    transaction: {type: 'cash', invoice: {issue: false}}
                 };
 
                 patient = patientFixtures[1];
@@ -338,7 +347,7 @@ describe('Payments', function()
                     transaction:
                     {
                         type: 'cheque',
-                        issueInvoice: true,
+                        invoice: {issue: true},
                         cheque:
                         {
                             number: 123,

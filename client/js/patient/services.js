@@ -31,6 +31,12 @@ angular.module('tms.patient.services', ['ngResource'])
         return freshness[this.getStatus()];
     }
 
+    Patient.prototype.getInvoiceSettings = function()
+    {
+        if (this.invoice) return this.invoice;
+        else return {};
+    }
+
     return Patient;
 }])
 

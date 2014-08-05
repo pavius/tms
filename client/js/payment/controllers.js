@@ -52,7 +52,7 @@ angular.module('tms.payment.controllers', [])
             Payment.save({patientId: $scope.patient._id}, $scope.payment, function(updatedPatient)
                 {
                     // do we need to wait for the invoice to be issued?
-                    if ($scope.payment.transaction.issueInvoice)
+                    if ($scope.payment.transaction.invoice.issue)
                     {
                         var attempt = 0;
 
