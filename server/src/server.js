@@ -38,6 +38,16 @@ _.each(['auth', 'patient', 'appointment', 'payment', 'todo', 'client'], function
     require('./routes/' + route).addRoutes(app, passport);
 });
 
+// init controller map
+app.controllers = {};
+
+// load controllers from all modules
+_.each(['patient'], function(controller)
+{
+    app.controllers[controller] = require('./controllers/' + controller);
+    app.controllers[controller].init(app);
+});
+
 //
 // Start the server
 //
