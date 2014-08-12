@@ -189,8 +189,7 @@ module.exports.addRoutes = function(app, security)
                                     });
             }
 
-            console.log("Issuing invoice: ");
-            console.log(params);
+            console.log("Issuing invoice:\n" + JSON.stringify(params, null, '\t'));
 
             // generate a signature for the 'data' object - the unescape(encodeURIComponent())
             // is needed to support non-Latin characters properly
@@ -218,15 +217,13 @@ module.exports.addRoutes = function(app, security)
 
                     if (error || body.error_code !== 0)
                     {
-                        console.log("Got GreenInvoice webhook with error:");
-                        console.log(body);
+                        console.log("Got issue invoice response with error:\n" + JSON.stringify(body, null, '\t'));
                         error = error || body.error_description;
                         callback(new Error('Failed to issue invoice: ' + error));
                     }
                     else
                     {
-                        console.log("Got GreenInvoice webhook:");
-                        console.log(body);
+                        console.log("Got issue invoice response:\n" + JSON.stringify(body, null, '\t'));
                         callback(body.data);
                     }
                 }
@@ -302,6 +299,8 @@ module.exports.addRoutes = function(app, security)
     // payment invoice webhook from greeninvoice
     app.post('/api/patients/:patientId/payments/:id/invoices', function(request, response)
     {
+        console.log("Got issue invoice webhook:\n" + JSON.stringify(request.body, null, '\t'));
+
         Patient.findOne({_id: request.params.patientId}, function(dbError, patientFromDb)
         {
             if (dbError)                   response.json(403, dbError);
