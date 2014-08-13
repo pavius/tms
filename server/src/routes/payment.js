@@ -50,10 +50,10 @@ module.exports.addRoutes = function(app, security)
             // get all unpaid appointments
             unpaidAppointments = patient.getUnpaidAppointments();
 
-            appointmentsToAttachTo = [];
+            var appointmentsToAttachTo = [];
 
             // sum up the appointments until we deplete the payment. it must fit
-            for (idx = 0, sumLeft = request.body.sum;
+            for (var idx = 0, sumLeft = request.body.sum;
                  (sumLeft > 0) && (idx < unpaidAppointments.length);
                  ++idx)
             {
@@ -238,7 +238,7 @@ module.exports.addRoutes = function(app, security)
             {
                 // check if this payment is valid for the patient, by getting which appointments this payment
                 // will attach to
-                appointmentsToAttachTo = getPaymentAppointments(patientFromDb);
+                var appointmentsToAttachTo = getPaymentAppointments(patientFromDb);
 
                 if (appointmentsToAttachTo instanceof Error)
                 {
@@ -268,7 +268,7 @@ module.exports.addRoutes = function(app, security)
                             // if an invoice was issued, save ticket id so that when the callback is handled, we'll know
                             // to which payment it's for
                             if (invoice)
-                                payment.invoice.ticket = invoice.ticket;
+                                payment.invoice.ticket = invoice.ticket_id;
 
                             // shove the new payment
                             patientFromDb.payments.push(payment);
@@ -310,21 +310,29 @@ module.exports.addRoutes = function(app, security)
                 var payment = patientFromDb.payments.id(request.params.id);
 
                 // does such an payment exist and does the ticket id match?
-                if (payment !== null && payment.invoice.ticket == request.body.ticket_id)
+                if (payment !== null)
                 {
-                    // from a security POV, it would have been best to query GI here using this ticket ID but meh
-                    payment.invoice.id = request.body.id;
-                    payment.invoice.url = request.body.url;
-
-                    // save self
-                    patientFromDb.save(function(dbError, patientFromDb)
+                    if (payment.invoice.ticket == request.body.ticket_id)
                     {
+                        // from a security POV, it would have been best to query GI here using this ticket ID but meh
+                        payment.invoice.id = request.body.id;
+                        payment.invoice.url = request.body.url;
+
+                        // save self
+                        patientFromDb.save(function(dbError, patientFromDb)
+                        {
+                            response.send(200);
+                        });
+                    }
+                    else
+                    {
+                        console.warn("Unexpected ticket ID. Expected " + payment.invoice.ticket + " got " + request.body.ticket_id);
                         response.send(200);
-                    });
+                    }
                 }
                 else
                 {
-                    // OK (don't tell whoever it is something went wrong)
+                    console.warn("Couldn't find payment with ID " + request.params.id);
                     response.send(200);
                 }
             }

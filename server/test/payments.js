@@ -165,7 +165,7 @@ describe('Payments', function()
                     .post('/api/documents/add')
                     .reply(200, function(uri, requestBody)
                     {
-                        return {'error_code': 0, data: {ticket: '8cdd2b30-417d-d994-a924-7ea690d0b9a3'}};
+                        return {'error_code': 0, data: {ticket_id: '8cdd2b30-417d-d994-a924-7ea690d0b9a3'}};
                     });
 
                 request(app)
@@ -274,7 +274,7 @@ describe('Payments', function()
                         expect(invoice.params.payment[0].type).to.equal(1);
                         expect(invoice.params.payment[0].amount).to.equal(newPayment.sum);
 
-                        return {'error_code': 0, data: {ticket: '8cdd2b30-417d-d994-a924-7ea690d0b9a3'}};
+                        return {'error_code': 0, data: {ticket_id: '8cdd2b30-417d-d994-a924-7ea690d0b9a3'}};
                     });
 
                 request(app)
@@ -383,7 +383,7 @@ describe('Payments', function()
                         assert.equal(invoice.params.payment[0].number, newPayment.transaction.cheque.number);
                         expect(invoice.params.payment[0].date).to.equal(formatDateForGreenInvoice(newPayment.transaction.cheque.date));
 
-                        return {'error_code': 0, data: {ticket: '8cdd2b30-417d-d994-a924-7ea690d0b9a3'}};
+                        return {'error_code': 0, data: {ticket_id: '8cdd2b30-417d-d994-a924-7ea690d0b9a3'}};
                     });
 
                 request(app)
@@ -458,7 +458,7 @@ describe('Payments', function()
                         expect(invoice.params.payment[0].account).to.equal(newPayment.transaction.transfer.bank.account);
                         expect(invoice.params.payment[0].date).to.equal(formatDateForGreenInvoice(newPayment.transaction.transfer.date));
 
-                        return {'error_code': 0, data: {ticket: '8cdd2b30-417d-d994-a924-7ea690d0b9a3'}};
+                        return {'error_code': 0, data: {ticket_id: '8cdd2b30-417d-d994-a924-7ea690d0b9a3'}};
                     });
 
                 request(app)

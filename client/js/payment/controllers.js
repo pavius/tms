@@ -67,7 +67,7 @@ angular.module('tms.payment.controllers', [])
                                 updatedPatient.payments[0] = updatedPayment;
 
                                 // if there's an invoice url, close
-                                if (updatedPayment.invoice.url)
+                                if (updatedPayment.invoice && updatedPayment.invoice.url)
                                 {
                                     $modalInstance.close({updatedPatient: updatedPatient, status: 'create'});
                                     $interval.cancel(invoicePoller);
