@@ -110,7 +110,7 @@ angular.module('tms.patient.controllers',
                     // get all patients who are manually defined as active/new
                     function(callback)
                     {
-                        Patient.query({manualStatus: '^active|new', select: '-appointments'},
+                        Patient.query({manualStatus: '^active|new|starting', select: '-appointments'},
                             function(patients)
                             {
                                 addPatientsIfUnique(patients);

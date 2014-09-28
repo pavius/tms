@@ -125,7 +125,7 @@ angular.module('tms.dashboard.controllers',
     function loadActivePatients(callback)
     {
         // get all active patients along with relevant appointment info
-        Patient.query({status: '^active|new',
+        Patient.query({status: '^active|new|starting',
                 select: 'name email bank status manualStatus debt lastContact appointments._id appointments.when appointments.summarySent appointments.type'},
             function(patients)
             {
