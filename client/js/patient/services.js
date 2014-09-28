@@ -23,9 +23,10 @@ angular.module('tms.patient.services', ['ngResource'])
     Patient.prototype.getFreshness = function()
     {
         var freshness = {
-            'new': 1,
-            'active': 2,
-            'inactive': 3
+            'starting': 1,
+            'new': 2,
+            'active': 3,
+            'inactive': 4
         };
 
         return freshness[this.getStatus()];

@@ -11,8 +11,8 @@ var patientSchema = mongoose.Schema
     appointmentPrice: {type: Number, min: 0, default: 350},
     appointments: [Appointment.schema],
     payments: [Payment.schema],
-    status: {type: String, enum: ['new', 'active', 'inactive', 'unknown'], default: 'new'},
-    manualStatus: {type: String, enum: ['undefined', 'new', 'active', 'inactive', 'recalculate'], default: 'undefined'},
+    status: {type: String, enum: ['starting', 'new', 'active', 'inactive', 'unknown'], default: 'starting'},
+    manualStatus: {type: String, enum: ['undefined', 'starting', 'new', 'active', 'inactive', 'recalculate'], default: 'undefined'},
     inactivityReason: {type: String, enum: ['undefined', 'completed', 'terminated'], default: 'undefined'},
     debt:
     {
@@ -67,9 +67,9 @@ patientSchema.methods.calculateStatus = function()
             // patient you need to have less than 7 appointments and the last appointment must be 2 weeks ago
             if (appointments.length <= 7 &&
                 lastAppointmentMsAgo <= (2 * weekInMs) &&
-                this.status == 'new')
+                (this.status == 'new' || this.status == 'starting'))
             {
-                status = 'new';
+                status = (appointments.length <= 2 ? 'starting' : 'new');
             }
             else
             {

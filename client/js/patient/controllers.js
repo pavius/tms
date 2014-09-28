@@ -94,7 +94,7 @@ angular.module('tms.patient.controllers',
                     // get all patients who do not have manual status and are active/new
                     function(callback)
                     {
-                        Patient.query({manualStatus: 'undefined', status: '^active|new', select: '-appointments'},
+                        Patient.query({manualStatus: 'undefined', status: '^active|new|starting', select: '-appointments'},
                             function(patients)
                             {
                                 addPatientsIfUnique(patients);
@@ -255,6 +255,7 @@ angular.module('tms.patient.controllers',
     {
         switch(status)
         {
+            case 'starting': return 'מתחיל';
             case 'new': return 'חדש';
             case 'active': return 'בתהליך';
             case 'inactive': return 'לא פעיל';

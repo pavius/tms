@@ -273,7 +273,7 @@ describe('Patient status', function()
             {
                 if (err) return done(err);
 
-                expect(response.body.status).to.equal('new');
+                expect(response.body.status).to.equal('starting');
                 patientId = response.body._id;
                 done();
             });
@@ -281,37 +281,45 @@ describe('Patient status', function()
 
     describe('when a patient has more than N appointments', function()
     {
-        it('should transition from new to active', function(done)
+        it('should transition from new to new/active', function(done)
         {
-            var appointmentIndex = 0;
+            var appointmentCount = 0;
+
+            function getExpectedStatusByAppointmentCount(appointmentCount)
+            {
+                if (appointmentCount <= 2) return 'starting';
+                else if (appointmentCount <= 7) return 'new';
+                else return 'active';
+            }
 
             // create 7 appointments - must be new
             async.whilst(
-                function() { return appointmentIndex < 7 },
+                function() { return appointmentCount < 7 },
 
                 // 7 appointments - must be new
                 function(callback)
                 {
-                    createAppointment(patientId, (new Date()).toISOString(), 'new', callback);
-                    appointmentIndex++;
+                    appointmentCount++;
+                    createAppointment(patientId, (new Date()).toISOString(), getExpectedStatusByAppointmentCount(appointmentCount), callback);
                 },
 
                 // 8th appointment - become active
                 function()
                 {
-                    createAppointment(patientId, (new Date()).toISOString(), 'active', done);
+                    appointmentCount++;
+                    createAppointment(patientId, (new Date()).toISOString(), getExpectedStatusByAppointmentCount(appointmentCount), done);
                 });
         });
     });
 
     describe('when a patient has only 2 appointments but was previously active', function()
     {
-        it('should remain active, and not become new again', function(done)
+        it('should remain active, and not become starting again', function(done)
         {
             // do appointment stuff one at a time
             async.series(
                 [
-                    // create an appointment 3 weeks from now, should lose "new" status
+                    // create an appointment 3 weeks from now, should lose "starting" status
                     function(callback)
                     {
                         createAppointment(patientId, generateTimeFromNow(-21, 0, 0).toISOString(), 'active', callback);
@@ -378,7 +386,7 @@ describe('Patient status', function()
                             .end(function(err, response)
                             {
                                 if (err) return done(err);
-                                expect(response.body.status).to.equal('new');
+                                expect(response.body.status).to.equal('starting');
                                 done();
                             });
                     }
