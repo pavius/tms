@@ -21,7 +21,6 @@ angular.module('tms.dashboard.controllers',
             function($scope, $location, errorHandler, Patient, Todo, TodoModal, AppointmentModal, PaymentModal)
 {
     $scope.loading = true;
-    $scope.todos = [];
     $scope.lowPriorityTodos = [];
     $scope.appointmentsThisWeek = [];
     $scope.appointmentsNextWeek = [];
@@ -29,6 +28,27 @@ angular.module('tms.dashboard.controllers',
     $scope.totalNumberOfAppointmentsThisWeek = 0;
     $scope.patientsWithRecentAppointments = [];
     $scope.dropdownStatus = {fastPayment: false};
+    $scope.todos = {
+        urgent: {
+            label: "חשוב",
+            items: []
+        },
+
+        later: {
+            label: "אחר כך",
+            items: []
+        },
+
+        billing: {
+            label: "גבייה",
+            items: []
+        },
+
+        setup: {
+            label: "תיאום",
+            items: []
+        }
+    };
 
     function checkPatientDebtAndCreateTodo(patient)
     {
@@ -36,7 +56,7 @@ angular.module('tms.dashboard.controllers',
         if (patient.debt.total &&
             (Date.now() - Date.parse(patient.debt.oldestNonPaidAppointment)) > (2 * 31 * 24 * 60 * 60 * 1000))
         {
-            addTodoToArray(Todo.createCollectDebtTodo(patient, patient.debt), $scope.lowPriorityTodos);
+            addTodoToArray(Todo.createCollectDebtTodo(patient, patient.debt), $scope.todos.billing.items);
         }
     }
 
@@ -51,9 +71,9 @@ angular.module('tms.dashboard.controllers',
         dashboardTodo = Todo.createCustomTodo(todo);
 
         if (todo.type == 'urgent')
-            addTodoToArray(dashboardTodo, $scope.todos);
+            addTodoToArray(dashboardTodo, $scope.todos.urgent.items);
         else
-            addTodoToArray(dashboardTodo, $scope.lowPriorityTodos);
+            addTodoToArray(dashboardTodo, $scope.todos.later.items);
     }
 
     function getDayInMs()
@@ -152,7 +172,7 @@ angular.module('tms.dashboard.controllers',
                         {
                             // is it unsummarized?
                             if (!appointment.summarySent)
-                                addTodoToArray(Todo.createSummarizeAppointmentTodo(patient, appointment), $scope.todos);
+                                addTodoToArray(Todo.createSummarizeAppointmentTodo(patient, appointment), $scope.todos.urgent.items);
                         }
                         // future appointment
                         else
@@ -177,12 +197,12 @@ angular.module('tms.dashboard.controllers',
                     // check for outstanding debt
                     checkPatientDebtAndCreateTodo(patient);
 
-                    if (patient.getStatus() == 'new')
+                    if (patient.getStatus() == 'new' || patient.getStatus() == 'starting')
                     {
                         // check if this patient has an appointment
                         if (!patientHasFutureAppointment)
                         {
-                            addTodoToArray(Todo.createSetPatientAppointment(patient), $scope.lowPriorityTodos);
+                            addTodoToArray(Todo.createSetPatientAppointment(patient), $scope.todos.setup.items);
                         }
                     }
                 });
