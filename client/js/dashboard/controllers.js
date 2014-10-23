@@ -54,7 +54,7 @@ angular.module('tms.dashboard.controllers',
     {
         // if patients oldest unpaid appointment is 2 months old, we want to know about it
         if (patient.debt.total &&
-            (Date.now() - Date.parse(patient.debt.oldestNonPaidAppointment)) > (2 * 31 * 24 * 60 * 60 * 1000))
+            (((Date.now() - Date.parse(patient.debt.oldestNonPaidAppointment)) > (2 * 31 * 24 * 60 * 60 * 1000)) || patient.getStatus() == 'inactive'))
         {
             addTodoToArray(Todo.createCollectDebtTodo(patient, patient.debt), $scope.todos.billing.items);
         }
