@@ -32,6 +32,15 @@ angular.module('tms.patient.services', ['ngResource'])
         return freshness[this.getStatus()];
     }
 
+    Patient.prototype.futureAppointmentsCount = function()
+    {
+        return _.reduce(this.appointments, function(futureAppointments, appointment)
+            {
+                return (Date.parse(appointment.when) >= Date.now()) ? futureAppointments + 1 : futureAppointments;
+
+            }, 0);
+    }
+
     Patient.prototype.getInvoiceSettings = function()
     {
         if (this.invoice) return this.invoice;

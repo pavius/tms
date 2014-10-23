@@ -35,6 +35,7 @@ angular.module('tms.patient.controllers',
     $scope.searchTerm = '';
     $scope.service = PatientsService;
     $scope.patients = [];
+    $scope.patientsByStatus = {};
     $scope.errorHandler = errorHandler;
     $scope.totalDebt = 0;
 
@@ -62,6 +63,12 @@ angular.module('tms.patient.controllers',
     $scope.reloadPatients = function(done)
     {
         $scope.patients = [];
+        $scope.patientsByStatus = {
+            starting: 0,
+            new: 0,
+            active: 0,
+            inactive: 0,
+        };
 
         function addPatientsIfUnique(patients)
         {
@@ -75,6 +82,10 @@ angular.module('tms.patient.controllers',
                     if (patient.debt.total)
                         $scope.totalDebt += patient.debt.total;
 
+                    // count patients by type
+                    $scope.patientsByStatus[patient.getStatus()]++;
+
+                    // add to patients
                     $scope.patients.push(patient);
                 }
             });
@@ -94,7 +105,7 @@ angular.module('tms.patient.controllers',
                     // get all patients who do not have manual status and are active/new
                     function(callback)
                     {
-                        Patient.query({manualStatus: 'undefined', status: '^active|new|starting', select: '-appointments'},
+                        Patient.query({manualStatus: 'undefined', status: '^active|new|starting' /* , select: '-appointments' */},
                             function(patients)
                             {
                                 addPatientsIfUnique(patients);
@@ -110,7 +121,7 @@ angular.module('tms.patient.controllers',
                     // get all patients who are manually defined as active/new
                     function(callback)
                     {
-                        Patient.query({manualStatus: '^active|new|starting', select: '-appointments'},
+                        Patient.query({manualStatus: '^active|new|starting' /* , select: '-appointments' */},
                             function(patients)
                             {
                                 addPatientsIfUnique(patients);
@@ -129,7 +140,7 @@ angular.module('tms.patient.controllers',
         else if ($scope.service.configuration.filterType == 'withDebt')
         {
             // just get'em all
-            Patient.query({'debt.total': '{gt}' + 0, select: '-appointments'},
+            Patient.query({'debt.total': '{gt}' + 0 /*, select: '-appointments' */},
                 function(patients)
                 {
                     addPatientsIfUnique(patients);
@@ -144,7 +155,7 @@ angular.module('tms.patient.controllers',
         else
         {
             // just get'em all
-            Patient.query({select: '-appointments'},
+            Patient.query({/* select: '-appointments' */},
                 function(patients)
                 {
                     addPatientsIfUnique(patients);

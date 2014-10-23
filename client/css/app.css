@@ -318,12 +318,12 @@ label
 
 .patients-contents tr.starting-patient
 {
-    background-color: rgba(226, 237, 255, 0.8);
+    background-color: rgba(224, 224, 224, 0.8);
 }
 
 .patients-contents tr.new-patient
 {
-    background-color: rgba(223, 233, 225, 0.8);
+    background-color: rgba(226, 237, 255, 0.8);
 }
 
 .patients-contents tr.inactive-patient
@@ -336,12 +336,31 @@ label
     text-align: right;
 }
 
+.patients-contents td#hasFutureAppointment
+{
+    width: 1px;
+    padding-left: 0px;
+}
+
 .patients-contents a.contact-glyph
 {
     color: black;
     padding-left: 20px;
 }
 
+.patients-contents .footer
+{
+    font-size: 0.95em;
+    text-align: left;
+    padding-left: 20px;
+}
+
+.patients-contents .footer span
+{
+    color: rgb(162, 162, 162);
+    padding-left: 5px;
+    padding-right: 5px;
+}
 
 /*********************************************************************************************************************
  * Patient

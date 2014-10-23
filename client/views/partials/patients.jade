@@ -17,27 +17,42 @@ row
                         option(value='withDebt') בעלי חוב
 
         row
-            .col-xs-12.input-toolbar
+            .col-xs-12.patients-table
                 table.table
                     thead
                         tr
+                            th
                             th שם
                             th קשר
                             th(ng-show='service.configuration.filterType=="withDebt"') חוב ({{totalDebt}})
                             th
                     tbody
                         tr(ng-repeat="patient in patients | orderBy: ['getFreshness()', 'name'] | filter: searchFilter", ng-class='patient.getStatus() + "-patient"')
+                            td#hasFutureAppointment
+                                span.fa.fa-calendar(ng-show='patient.futureAppointmentsCount()')
                             td#name {{patient.name}}
                             td
                                 a(href='mailto:{{patient.email}}', ng-show='patient.email.length').contact-glyph
                                     i.glyphicon.glyphicon-envelope
-                                a(href='tel:{{patient.primaryPhone}}', ng-show='patient.primaryPhone.length').contact-glyph
-                                    i.glyphicon.glyphicon-phone-alt
                             td(ng-show='service.configuration.filterType=="withDebt"')
                                 {{patient.debt.total}}
                             td.zoom-in
                                 a.location-selector(href='patients/{{patient._id}}')
                                     i.glyphicon.glyphicon-zoom-in
+
+        row
+            .col-xs-12.footer
+                p
+                    מתחילים: {{patientsByStatus.starting}}
+                    span#separator
+                        |
+                    חדשים: {{patientsByStatus.new}}
+                    span#separator
+                        |
+                    פעילים: {{patientsByStatus.active}}
+                    span#separator
+                        |
+                    לא פעילים: {{patientsByStatus.inactive}}
 
 row
     .loading(ng-show='loading')
