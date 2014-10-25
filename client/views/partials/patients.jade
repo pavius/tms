@@ -29,7 +29,7 @@ row
                     tbody
                         tr(ng-repeat="patient in patients | orderBy: ['getFreshness()', 'name'] | filter: searchFilter", ng-class='patient.getStatus() + "-patient"')
                             td#hasFutureAppointment
-                                span.fa.fa-calendar(ng-show='patient.futureAppointmentsCount()')
+                                span.fa.fa-caret-left(ng-show='patient.futureAppointmentsCount()')
                             td#name {{patient.name}}
                             td
                                 a(href='mailto:{{patient.email}}', ng-show='patient.email.length').contact-glyph
