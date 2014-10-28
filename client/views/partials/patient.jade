@@ -120,10 +120,18 @@ row
                                                     option(value='inactive') ידני: לא פעיל
                                                     option(value='recalculate') חשב מחדש
                                                 span.input-group-addon חישוב סטטוס
-                                            select.patient-dropdown(ng-model='patient.inactivityReason', ng-show='patient.getStatus() == "inactive"')
-                                                option(value='undefined') לא ידועה סיבת הפסקת הטיפול
-                                                option(value='completed') הטיפול הגיע לסיומו
-                                                option(value='terminated') המטופל סיים את הטיפול ביוזמתו
+                                            .input-group(ng-show='patient.getStatus() == "inactive"')
+                                                select.patient-dropdown(ng-model='patient.inactivityReason')
+                                                    option(value='undefined') לא ידועה
+                                                    option(value='completed') הטיפול הגיע לסיומו
+                                                    option(value='terminated') ביוזמת המטופל
+                                                span.input-group-addon סיבת הפסקת הטיפול
+                                            .input-group(ng-show='patient.getStatus() == "inactive"')
+                                                select.patient-dropdown(ng-model='patient.followup')
+                                                    option(value='none') ללא
+                                                    option(value='random') מדי פעם
+                                                span.input-group-addon מעקב
+
 
 row.loading(ng-show='loading')
     i.fa.fa-circle-o-notch.fa-spin
