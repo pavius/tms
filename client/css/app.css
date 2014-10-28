@@ -350,7 +350,6 @@ label
 
 .patients-contents .footer
 {
-    font-size: 0.9em;
     text-align: left;
     padding-left: 20px;
 }
@@ -358,8 +357,8 @@ label
 .patients-contents .footer span
 {
     color: rgb(162, 162, 162);
-    padding-left: 4px;
-    padding-right: 4px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 /*********************************************************************************************************************
@@ -439,5 +438,16 @@ label
         font-size: 7em;
         left: 38%;
         top: 38%;
+    }
+
+    .patients-contents .footer
+    {
+        font-size: 0.9em;
+    }
+
+    .patients-contents .footer span
+    {
+        padding-left: 4px;
+        padding-right: 4px;
     }
 }
