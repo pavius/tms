@@ -60,6 +60,19 @@ angular.module('tms.patient.controllers',
         });
     };
 
+    $scope.getPatientClass = function(patient)
+    {
+        status = patient.getStatus()
+
+        if (status == 'inactive')
+            if (patient.followup == 'none')
+                status = 'inactive-no-followup';
+            else
+                status = 'inactive-random-followup';
+
+        return status + '-patient';
+    }
+
     $scope.reloadPatients = function(done)
     {
         $scope.patients = [];

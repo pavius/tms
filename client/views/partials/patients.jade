@@ -27,7 +27,7 @@ row
                             th(ng-show='service.configuration.filterType=="withDebt"') חוב ({{totalDebt}})
                             th
                     tbody
-                        tr(ng-repeat="patient in patients | orderBy: ['getFreshness()', 'name'] | filter: searchFilter", ng-class='patient.getStatus() + "-patient"')
+                        tr(ng-repeat="patient in patients | orderBy: ['getFreshness()', 'name'] | filter: searchFilter", ng-class='getPatientClass(patient)')
                             td#hasFutureAppointment
                                 span.fa.fa-caret-left(ng-show='patient.futureAppointmentsCount()')
                             td#name {{patient.name}}

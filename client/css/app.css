@@ -318,7 +318,7 @@ label
 
 .patients-contents tr.starting-patient
 {
-    background-color: rgba(224, 224, 224, 0.8);
+    background-color: rgba(207, 247, 219, 0.36);
 }
 
 .patients-contents tr.new-patient
@@ -326,9 +326,14 @@ label
     background-color: rgba(226, 237, 255, 0.8);
 }
 
-.patients-contents tr.inactive-patient
+.patients-contents tr.inactive-random-followup-patient
 {
-    background-color: rgba(255, 221, 221, 0.8);
+    background-color: rgba(224, 224, 224, 0.4);
+}
+
+.patients-contents tr.inactive-no-followup-patient *
+{
+    color: #BBB;
 }
 
 .patients-contents td#name
