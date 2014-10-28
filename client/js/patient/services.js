@@ -20,16 +20,30 @@ angular.module('tms.patient.services', ['ngResource'])
             return this.manualStatus;
     }
 
+    Patient.prototype.getClass = function()
+    {
+        status = this.getStatus()
+
+        if (status == 'inactive')
+            if (this.followup == 'none')
+                status = 'inactive-no-followup';
+            else
+                status = 'inactive-random-followup';
+
+        return status + '-patient';
+    }
+
     Patient.prototype.getFreshness = function()
     {
         var freshness = {
-            'starting': 1,
-            'new': 2,
-            'active': 3,
-            'inactive': 4
+            'starting-patient': 1,
+            'new-patient': 2,
+            'active-patient': 3,
+            'inactive-random-followup-patient': 4,
+            'inactive-no-followup-patient': 5
         };
 
-        return freshness[this.getStatus()];
+        return freshness[this.getClass()];
     }
 
     Patient.prototype.futureAppointmentsCount = function()
