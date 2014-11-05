@@ -213,6 +213,7 @@ module.exports.addRoutes = function(app, security)
                 },
                 function (error, response, body)
                 {
+                    console.log("Raw response from GreenInvoice:\n" + body);
                     body = JSON.parse(body);
 
                     if (error || body.error_code !== 0)
