@@ -36,6 +36,11 @@ angular.module('tms.payment.controllers', [])
         return bank.name + ' (' + bank.number + ')';
     }
 
+    $scope.invoicesEnabled = function()
+    {
+        return true;
+    }
+
     $scope.createOrUpdate = function()
     {
         // indicate that we're in progress so that the user can't do stupid stuff while we're interacting

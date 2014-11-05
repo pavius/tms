@@ -97,6 +97,11 @@ angular.module('tms.appointment.controllers', [])
         $scope.opened = true;
     };
 
+    $scope.appointmentPassed = function(appointment)
+    {
+        return Date.parse(appointment.when) < Date.now();
+    }
+
     // configure patient dropdown
     $scope.patientDropdownConfig =
     {

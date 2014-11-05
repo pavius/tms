@@ -34,8 +34,8 @@
                     label(for='emailInvoice') הוצא חשבונית
 
             row
-                .col-xs-12(ng-show='patient.email', ng-enabled='payment.transaction.invoice.issue')
-                    input(type='checkbox', ng-model='payment.emailInvoice')
+                .col-xs-12(ng-show='patient.email')
+                    input(type='checkbox', ng-model='payment.emailInvoice', ng-disabled='!payment.transaction.invoice.issue')
                     label(for='emailInvoice') שלח חשבונית ל: {{patient.email}}
 
             row
