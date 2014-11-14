@@ -6,13 +6,8 @@
  */
 exports.config = {
   /**
-   * Array of application names.
-   */
-  app_name : ['Tali Management System'],
-  /**
    * Your New Relic license key.
    */
-  license_key : 'f11b5a1781025751fafdd5347f5aa489a16445ae',
   logging : {
     /**
      * Level at which to log. 'trace' is most useful to New Relic when diagnosing
