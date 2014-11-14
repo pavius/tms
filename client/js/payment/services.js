@@ -9,7 +9,7 @@ angular.module('tms.payment.services', ['ngResource'])
 
     return Payment; 
 }])
-.service('PaymentModal', ['$modal', function($modal)
+.service('PaymentModal', ['$modal', 'Configuration', function($modal, Configuration)
 {
     function openModal(mode, patient, payment)
     {
@@ -37,7 +37,7 @@ angular.module('tms.payment.services', ['ngResource'])
                 type: 'cash',
                 invoice:
                 {
-                    issue: true,
+                    issue: Configuration.featureEnabled("issueInvoices"),
                     item: patient.getInvoiceSettings().item || 'אימון',
                     recipient: patient.getInvoiceSettings().recipient || patient.name
                 },

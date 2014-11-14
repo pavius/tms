@@ -10,7 +10,8 @@ angular.module('tms',
     'tms.patient.controllers',
     'tms.appointment.controllers',
     'tms.todo.controllers',
-    'tms.todo.services'
+    'tms.todo.services',
+    'tms.config.services'
 ])
 
 .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider)
@@ -26,9 +27,11 @@ angular.module('tms',
 }])
 
 .controller('NavController', 
-            ['$scope', '$location', 
-            function($scope, $location) 
+            ['$scope', '$location', 'Configuration',
+            function($scope, $location, Configuration)
 {
+    $scope.config = Configuration;
+
     $scope.isActive = function (viewLocation) 
     {
         var path = $location.path();
@@ -44,5 +47,5 @@ angular.module('tms',
             return path.substring(0, viewLocation.length) === viewLocation;
         }
         else return false;
-    };    
+    };
 }]);

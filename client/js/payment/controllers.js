@@ -5,9 +5,10 @@ angular.module('tms.payment.controllers', [])
 }])
 
 .controller('PaymentModalController',
-            ['$scope', '$modalInstance', '$interval', 'Patient', 'Payment', 'mode', 'patient', 'payment',
-            function($scope, $modalInstance, $interval, Patient, Payment, mode, patient, payment)
+            ['$scope', '$modalInstance', '$interval', 'Patient', 'Payment', 'Configuration', 'mode', 'patient', 'payment',
+            function($scope, $modalInstance, $interval, Patient, Payment, Configuration, mode, patient, payment)
 {
+    $scope.config = Configuration;
     $scope.mode = mode;
     $scope.patient = patient;
     $scope.payment = payment;

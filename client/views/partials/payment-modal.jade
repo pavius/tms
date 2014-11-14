@@ -28,12 +28,12 @@
                             option(value='transfer') העברה בנקאית
                         span.input-group-addon סוג
 
-            row
+            row(ng-show='config.featureEnabled("issueInvoices")')
                 .col-xs-12
                     input(type='checkbox', ng-model='payment.transaction.invoice.issue')
                     label(for='emailInvoice') הוצא חשבונית
 
-            row
+            row(ng-show='config.featureEnabled("issueInvoices")')
                 .col-xs-12(ng-show='patient.email', ng-enabled='payment.transaction.invoice.issue')
                     input(type='checkbox', ng-model='payment.emailInvoice')
                     label(for='emailInvoice') שלח חשבונית ל: {{patient.email}}
