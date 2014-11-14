@@ -38,7 +38,7 @@
                     input(type='checkbox', ng-model='payment.emailInvoice', ng-disabled='!payment.transaction.invoice.issue')
                     label(for='emailInvoice') שלח חשבונית ל: {{patient.email}}
 
-            row
+            row(ng-show='config.featureEnabled("issueInvoices")')
                 .col-xs-12(ng-show='!patient.email && payment.transaction.invoice.issue')#noEmailWarning
                     i.fa.fa-warning
                     span למטופל לא מוגדרת כתובת מייל. החשבונית לא תישלח אוטומטית.
