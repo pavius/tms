@@ -102,6 +102,11 @@ label
     margin-right: 6px;
 }
 
+textarea
+{
+    margin-bottom: 12px;
+}
+
 /*********************************************************************************************************************
  * Input group
  *********************************************************************************************************************/
@@ -395,9 +400,19 @@ label
     margin-bottom: 15px;
 }
 
+.modal.appointment input[type=checkbox]
+{
+    float: right;
+    margin-left: 10px;
+}
+
+.modal.appointment textarea#summary
+{
+    height: 200px;
+}
 
 /*********************************************************************************************************************
- * Appointment modal
+ * Payment modal
  *********************************************************************************************************************/
 
  .modal.payment #noEmailWarning
@@ -426,6 +441,13 @@ label
     {
         margin-bottom: 12px;
         margin-top: 0px;
+    }
+
+    .bullet-tabset .nav-tabs>li>a
+    {
+        padding: 5px 7px;
+        margin-left: 3px;
+        font-size: 0.9em;
     }
 
     .table > thead > tr > th

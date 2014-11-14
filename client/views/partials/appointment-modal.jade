@@ -5,9 +5,13 @@
             select(ui-select2='patientDropdownConfig', ng-model='$parent.selectedPatientIdx', ng-show='patients')
                 option(ng-repeat='patient in patients', value='{{$index}}'){{patient.name}}
 
-    row
+    row(ng-show='!appointmentPassed(appointment)')
         .col-xs-12
             datepicker.inline-datepicker(type='text', show-weeks='false', ng-model='appointment.when')
+
+    row(ng-show='appointmentPassed(appointment)')
+        .col-xs-12
+            textarea.form-control#summary(placeholder='סיכום פגישה', ng-model='appointment.summary')
 
     row
         .col-xs-6
@@ -18,14 +22,14 @@
             .input-group
                 span.input-group-addon ש"ח
                 input.form-control(type='text', id='price', ng-model='appointment.price')
+        .col-xs-6
+            timepicker(ng-model='appointment.when', hour-step='1', minute-step='15', show-meridian='false', ng-show='!appointmentPassed(appointment)')
             label.checkbox(ng-show='mode == "update"')
                 input(type='checkbox', ng-model='appointment.summarySent')
                 | סוכמה
             label.checkbox(ng-show='mode == "update"')
                 input(type='checkbox', ng-model='appointment.missed')
                 | לא הגיע
-        .col-xs-6
-            timepicker(ng-model='appointment.when', hour-step='1', minute-step='15', show-meridian='false')
 
 .modal-footer
     button.btn.btn-sm.btn-primary.pull-left(ng-click='createOrUpdate()', ng-show='appointment.payment === null', ng-disabled='!patient') {{mode == 'create' ? 'צור פגישה' : 'עדכן פגישה'}}
