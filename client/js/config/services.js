@@ -15,7 +15,7 @@ angular.module('tms.config.services', [])
     Configuration.prototype.loadConfiguration = function()
     {
         // ugly hack for now
-        if ($location.absUrl().indexOf("localhost") > -1)
+        if ($location.absUrl().indexOf("y-ms") > -1)
         {
             return {
                 "system": {
