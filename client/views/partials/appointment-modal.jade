@@ -5,11 +5,11 @@
             select(ui-select2='patientDropdownConfig', ng-model='$parent.selectedPatientIdx', ng-show='patients')
                 option(ng-repeat='patient in patients', value='{{$index}}'){{patient.name}}
 
-    row(ng-show='!appointmentPassed(appointment)')
+    row(ng-show='!loadedPassedAppointment')
         .col-xs-12
             datepicker.inline-datepicker(type='text', show-weeks='false', ng-model='appointment.when')
 
-    row(ng-show='appointmentPassed(appointment)')
+    row(ng-show='loadedPassedAppointment')
         .col-xs-12
             textarea.form-control#summary(placeholder='סיכום פגישה', ng-model='appointment.summary')
 
@@ -23,7 +23,7 @@
                 span.input-group-addon ש"ח
                 input.form-control(type='text', id='price', ng-model='appointment.price')
         .col-xs-6
-            timepicker(ng-model='appointment.when', hour-step='1', minute-step='15', show-meridian='false', ng-show='!appointmentPassed(appointment)')
+            timepicker(ng-model='appointment.when', hour-step='1', minute-step='15', show-meridian='false', ng-show='!loadedPassedAppointment')
             label.checkbox(ng-show='mode == "update"')
                 input(type='checkbox', ng-model='appointment.summarySent')
                 | סוכמה

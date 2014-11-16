@@ -105,8 +105,11 @@ angular.module('tms.appointment.controllers', [])
     // configure patient dropdown
     $scope.patientDropdownConfig =
     {
-        placeholder: "בחר מטופל",
+        placeholder: "בחר מטופל"
     }
+
+    // get whether we loaded a passed appointment
+    $scope.loadedPassedAppointment = (mode == 'update' && $scope.appointmentPassed(appointment));
 
     // on open, if there is no patient defined, we need to load the dropdown
     if ($scope.patient === null)
