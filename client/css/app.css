@@ -19,15 +19,15 @@ td.zoom-in
     text-align: left;
 }
 
-.nav-tabs > li
-{
-    float: right;
-}
-
 ul.nav.nav-tabs
 {
     margin-bottom: 12px;
     margin-top: 0px;
+}
+
+.nav-tabs > li
+{
+    float: right;
 }
 
 a.location-selector
