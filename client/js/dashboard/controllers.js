@@ -146,7 +146,7 @@ angular.module('tms.dashboard.controllers',
     {
         // get all active patients along with relevant appointment info
         Patient.query({status: '^active|new|starting',
-                select: 'name email bank status manualStatus debt lastContact appointments._id appointments.when appointments.summarySent appointments.type'},
+                select: 'name email primaryPhone bank status manualStatus debt lastContact appointments._id appointments.when appointments.summarySent appointments.type'},
             function(patients)
             {
                 patients.forEach(function (patient)
@@ -221,7 +221,7 @@ angular.module('tms.dashboard.controllers',
     {
         // get all inactive patients and check for debt
         Patient.query({status: 'inactive',
-                select: 'name debt'},
+                select: 'name debt email primaryPhone'},
             function(patients)
             {
                 patients.forEach(function(patient)

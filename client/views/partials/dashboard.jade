@@ -37,6 +37,10 @@ row
                                                     input(type='checkbox', ng-model='todo.done', ng-change='completeTodoAndRemove(todo, $index)', ng-show='todo.complete')
                                             td
                                                 {{todo.toString()}}
+                                                a(href='mailto:{{todo.patient.email}}', ng-show='todo.patient.email.length && todo.showContact').contact-glyph
+                                                    i.glyphicon.glyphicon-envelope
+                                                a(href='tel:{{todo.patient.primaryPhone}}', ng-show='todo.patient.primaryPhone.length && todo.showContact').contact-glyph
+                                                    i.glyphicon.glyphicon-phone-alt
                                             td.zoom-in
                                                 a.location-selector(ng-click='todo.view()', ng-show='todo.view')
                                                     i.glyphicon.glyphicon-zoom-in

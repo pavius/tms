@@ -71,6 +71,7 @@ angular.module('tms.todo.services',
         this.patient = patient;
         this.debt = debt;
         this.done = false;
+        this.showContact = true;
     }
 
     CollectDebtTodo.prototype.importance = function() { return 100; }
@@ -97,6 +98,7 @@ angular.module('tms.todo.services',
     {
         this.patient = patient;
         this.done = false;
+        this.showContact = true;
     }
 
     ContactPatientTodo.prototype.importance = function() { return 20; }
@@ -155,6 +157,7 @@ angular.module('tms.todo.services',
     {
         this.patient = patient;
         this.done = false;
+        this.showContact = true;
     }
 
     SetPatientAppointment.prototype.importance = function() { return 5; }

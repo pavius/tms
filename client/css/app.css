@@ -306,6 +306,10 @@ textarea
     animation: bounceOutRight 0.75s;
 }
 
+.dashboard-contents .tab-pane .contact-glyph
+{
+    margin-right: 15px;
+}
 
 /*********************************************************************************************************************
  * Todo modal
