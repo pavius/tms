@@ -16,22 +16,22 @@
     row
         .col-xs-6
             .input-group-container
-                select(ng-model='appointment.type')
+                select(ng-model='appointment.type', ng-disabled='!allowAppointmentModification(appointment)')
                     option(value='face-to-face') קליניקה
                     option(value='skype') סקייפ
             .input-group
                 span.input-group-addon ש"ח
-                input.form-control(type='text', id='price', ng-model='appointment.price')
+                input.form-control(type='text', id='price', ng-model='appointment.price', ng-disabled='!allowAppointmentModification(appointment)')
         .col-xs-6
-            timepicker(ng-model='appointment.when', hour-step='1', minute-step='15', show-meridian='false', ng-show='!loadedPassedAppointment')
+            timepicker(ng-model='appointment.when', hour-step='1', minute-step='15', show-meridian='false', ng-show='!loadedPassedAppointment', ng-disabled='!allowAppointmentModification(appointment)')
             label.checkbox(ng-show='mode == "update"')
                 input(type='checkbox', ng-model='appointment.summarySent')
-                | סוכמה
+                | סיכום נשלח
             label.checkbox(ng-show='mode == "update"')
-                input(type='checkbox', ng-model='appointment.missed')
+                input(type='checkbox', ng-model='appointment.missed', ng-disabled='!allowAppointmentModification(appointment)')
                 | לא הגיע
 
 .modal-footer
-    button.btn.btn-sm.btn-primary.pull-left(ng-click='createOrUpdate()', ng-show='appointment.payment === null', ng-disabled='!patient') {{mode == 'create' ? 'צור פגישה' : 'עדכן פגישה'}}
+    button.btn.btn-sm.btn-primary.pull-left(ng-click='createOrUpdate()', ng-disabled='!patient') {{mode == 'create' ? 'צור פגישה' : 'עדכן פגישה'}}
     button.btn.btn-sm.btn-default.pull-left(ng-click='cancel()') סגור
     button.btn.btn-sm.btn-danger(ng-click='delete()', ng-show='mode == "update" && appointment.payment === null') מחק
