@@ -442,7 +442,7 @@ angular.module('tms.patient.controllers',
             if (lastPassedAppointment)
             {
                 d = new Date(lastPassedAppointment.when);
-                return d.getDate() + '/' + d.getMonth() + '/' + d.getYear();
+                return d.getDate() + '/' + d.getMonth() + '/' + d.getFullYear();
             }
             else return '';
         }
