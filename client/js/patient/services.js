@@ -61,6 +61,22 @@ angular.module('tms.patient.services', ['ngResource'])
         else return {};
     }
 
+    Patient.prototype.getLastPassedAppointment = function()
+    {
+        if (this.appointments)
+        {
+            sortedAppointments = _.sortBy(this.appointments, function(appointment) {return -Date.parse(appointment.when)});
+
+            for (var idx = 0; idx < sortedAppointments.length; ++idx)
+            {
+                if (Date.parse(sortedAppointments[idx].when) < Date.now())
+                    return sortedAppointments[idx];
+            };
+        }
+
+        return null;
+    }
+
     return Patient;
 }])
 

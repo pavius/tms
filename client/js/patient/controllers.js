@@ -421,6 +421,34 @@ angular.module('tms.patient.controllers',
         else                                           return 'glyphicon glyphicon-remove';     
     };
 
+    $scope.getPatientLastAppointmentSummary = function(patient)
+    {
+        if (patient.getLastPassedAppointment)
+        {
+            lastPassedAppointment = patient.getLastPassedAppointment();
+
+            if (lastPassedAppointment) return lastPassedAppointment.summary;
+            else return '';
+        }
+        else return '';
+    }
+
+    $scope.getPatientLastAppointmentDate = function(patient)
+    {
+        if (patient.getLastPassedAppointment)
+        {
+            lastPassedAppointment = patient.getLastPassedAppointment();
+
+            if (lastPassedAppointment)
+            {
+                d = new Date(lastPassedAppointment.when);
+                return d.getDate() + '/' + d.getMonth() + '/' + d.getYear();
+            }
+            else return '';
+        }
+        else return '';
+    }
+
     // requires two queries
     async.parallel(
         [

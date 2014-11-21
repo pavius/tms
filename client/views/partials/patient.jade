@@ -102,6 +102,15 @@ row
                                                 input.form-control(type='text', id='price', placeholder='מחיר פגישה', ng-model='patient.appointmentPrice')
                                                 span.input-group-addon תמחור
 
+                                    row(ng-show='getPatientLastAppointmentSummary(patient).length')
+                                        .col-xs-12
+                                            .input-group
+                                                textarea.form-control#summary(readonly='readonly') {{getPatientLastAppointmentSummary(patient)}}
+                                                span.input-group-addon
+                                                    | סיכום אחרון
+                                                    br
+                                                    | ({{getPatientLastAppointmentDate(patient)}})
+
                                     row
                                         .col-xs-12
                                             hr
