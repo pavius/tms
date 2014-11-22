@@ -120,14 +120,15 @@ var controller =
         {
             console.log(error);
             console.log(patients);
+            console.log(patients.length);
 
             if (!error && patients)
             {
-                _.forEach(patients, function(patient)
+                /* _.forEach(patients, function(patient)
                 {
                     console.log(patient.name)
 
-                    /* try
+                    try
                     {
                         var phoneNumber = libphonenumber.e164(patient.primaryPhone, 'IL');
 
@@ -180,8 +181,8 @@ var controller =
                     {
                         // skip patients with invalid phone number
                         console.error(patient.name + " has an invalid phone number: " + patient.primaryPhone);
-                    } */
-                });
+                    }
+                }); */
             }
             else
             {
