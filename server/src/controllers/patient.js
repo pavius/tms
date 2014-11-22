@@ -74,12 +74,12 @@ var controller =
         {
             try
             {
-                console.log(appointment.when);
+                var mtz = moment(appointment.when).tz('Asia/Jerusalem');
 
                 var when = 'ב-' +
-                    moment(appointment.when).tz('Asia/Jersualem').format('DD/MM') +
+                    mtz.format('DD/MM') +
                     ' בשעה ' +
-                    moment(appointment.when).tz('Asia/Jersualem').format('HH:mm');
+                    mtz.format('HH:mm');
             }
             catch(e)
             {
