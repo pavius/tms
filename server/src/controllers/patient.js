@@ -5,6 +5,7 @@ var querystring = require('querystring');
 var Patient = require('../models/patient');
 var Appointment = require('../models/appointment');
 var moment = require('moment');
+var momentTz = require('moment-timezone');
 
 var controller =
 {
@@ -74,10 +75,9 @@ var controller =
             try
             {
                 var when = 'ב-' +
-                    moment(appointment.when).format('DD/MM') +
+                    moment(appointment.when).tz('Asia/Jersualem').format('DD/MM') +
                     ' בשעה ' +
-                    moment(appointment.when).format('HH:mm');
-
+                    moment(appointment.when).tz('Asia/Jersualem').format('HH:mm');
             }
             catch(e)
             {
