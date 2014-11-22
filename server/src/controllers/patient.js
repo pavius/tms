@@ -184,7 +184,7 @@ var controller =
                         // skip patients with invalid phone number
                         console.error(patient.name + " has an invalid phone number: " + patient.primaryPhone);
                     }
-                });
+                }
             }
             else
             {
