@@ -74,6 +74,8 @@ var controller =
         {
             try
             {
+                console.log(appointment.when);
+
                 var when = 'ב-' +
                     moment(appointment.when).tz('Asia/Jersualem').format('DD/MM') +
                     ' בשעה ' +
