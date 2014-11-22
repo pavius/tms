@@ -109,7 +109,7 @@ var controller =
             {'$match': {'appointments.when': next24HoursFilter, 'appointments.reminderSent': {'$in': [null, false]}}}
         ], function(error, patients)
         {
-            if (!error)
+            if (!error && patients)
             {
                 _.forEach(patients, function(patient)
                 {
@@ -173,6 +173,7 @@ var controller =
             else
             {
                 console.log("Error aggregating: " + error);
+                console.log("Patients: " + patients);
             }
         });
     }
