@@ -1,5 +1,10 @@
 var async = require('async');
+var libphonenumber = require('libphonenumber');
+var httpRequest = require('request');
+var querystring = require('querystring');
 var Patient = require('../models/patient');
+var Appointment = require('../models/appointment');
+var moment = require('moment');
 
 var controller =
 {
@@ -9,9 +14,11 @@ var controller =
 
         // re-evaluate patients now
         this.reevaluatePatients();
+        this.sendAppointmentReminders();
 
         // periodically re-evaluate as well
         setInterval(this.reevaluatePatients, 60 * 1000);
+        setInterval(this.sendAppointmentReminders, 10 * 1000);
     },
 
     reevaluatePatients: function(done)
@@ -51,6 +58,113 @@ var controller =
             {
                 if (done) done();
             }
+        });
+    },
+
+    sendAppointmentReminders: function(done)
+    {
+        function generateReminderText(appointment)
+        {
+            try
+            {
+                var when = 'ב-' +
+                    moment(appointment.when).format('DD/MM') +
+                    ' בשעה ' +
+                    moment(appointment.when).format('HH:mm');
+
+            }
+            catch(e)
+            {
+                console.log(e);
+            }
+
+            if (appointment.type == 'skype')
+                return 'תזכורת: פגישת סקייפ עם טל קפלינסקי ' + when;
+            else
+                return 'תזכורת: פגישה עם טל קפלינסקי ' + when + '. תוספתא 13 דירה 3 ת"א';
+        }
+
+        var next24HoursFilter = {'$gte': new Date(), '$lte': new Date(Date.now() + 24 * 60 * 60 * 1000)};
+
+        Patient.aggregate(
+        [
+            // match only patients with an appointment in the next 24 hours
+            {'$match':
+                {
+                    'primaryPhone': {'$nin': [null, ""]},
+                    'appointments.when': next24HoursFilter,
+                    'appointmentReminders': {'$nin': [null, "none"]}
+                }
+            },
+
+            // remove all unnecessary fields from patient
+            {'$project': {'_id': 1, 'appointments': 1, 'name': 1, 'email': 1, 'primaryPhone': 1}},
+
+            // treat appointments subdoc as a document so that we can match on it
+            {'$unwind': '$appointments'},
+
+            // take only appointments within next 24 hours
+            {'$match': {'appointments.when': next24HoursFilter, 'appointments.reminderSent': {'$in': [null, false]}}}
+        ], function(error, patients)
+        {
+            _.forEach(patients, function(patient)
+            {
+                console.log(patient.name)
+                try
+                {
+                    var phoneNumber = libphonenumber.e164(patient.primaryPhone, 'IL');
+
+                    if (phoneNumber)
+                    {
+                        console.log('Sending reminder SMS to ' + patient.name + phoneNumber);
+
+                        var params = {
+                            'api_key': process.env.NEXMO_API_KEY,
+                            'api_secret': process.env.NEXMO_API_SECRET,
+                            'from': phoneNumber,
+                            'to': '972546653003',
+                            'text': generateReminderText(patient.appointments),
+                            'type': 'unicode'
+                        };
+
+                        httpRequest(
+                            {
+                                'method': 'POST',
+                                'url': 'https://rest.nexmo.com/sms/json?' + querystring.stringify(params),
+                                'headers': {'charset': 'utf-8'}
+                            },
+                            function (error, response, body)
+                            {
+                                console.log("Raw response from Nexmo:\n" + body);
+                                body = JSON.parse(body);
+
+                                if (!error && body.messages[0].status == 0)
+                                {
+                                    console.log("SMS sent successfully");
+
+                                    Patient.findById(patient._id, function(error, patientToUpdate)
+                                    {
+                                        if (error)
+                                            console.log("Error saving patient: " + error);
+
+                                        patientToUpdate.appointments.id(patient.appointments._id).reminderSent = true;
+                                        patientToUpdate.save();
+                                    });
+                                }
+                                else
+                                {
+                                    console.error("Failed to send SMS (error: " + error + ")");
+                                }
+                            }
+                        );
+                    }
+                }
+                catch(e)
+                {
+                    // skip patients with invalid phone number
+                    console.error(patient.name + " has an invalid phone number: " + patient.primaryPhone);
+                }
+            });
         });
     }
 };

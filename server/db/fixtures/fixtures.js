@@ -162,7 +162,7 @@ function autoGenerateFixtures()
         patient =
         {
             name: randomWords(2),
-            primaryPhone: "0541234567",
+            primaryPhone: "0546653003",
             email: randomWords(1) + '@' + randomWords(1) + '.com',
             appointments: []
         };

@@ -102,6 +102,15 @@ row
                                                 input.form-control(type='text', id='price', placeholder='מחיר פגישה', ng-model='patient.appointmentPrice')
                                                 span.input-group-addon תמחור
 
+                                     row
+                                        .input-group
+                                            select.patient-dropdown(ng-model='patient.appointmentReminders')
+                                                option(value='none') ללא
+                                                option(value='sms') סמס
+                                                option(value='email') אימייל
+                                                option(value='smsAndEmail') סמס ואימייל
+                                            span.input-group-addon תזכורות
+
                                     row(ng-show='getPatientLastAppointmentSummary(patient).length')
                                         .col-xs-12
                                             .input-group

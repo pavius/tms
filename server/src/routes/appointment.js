@@ -91,6 +91,9 @@ module.exports.addRoutes = function(app, security)
                 // does such an appointment exist?
                 if (appointment !== null)
                 {
+                    // ignore fields
+                    delete request.body.reminderSent;
+
                     // update the appointment
                     routeCommon.updateDocument(appointment, Appointment, request.body);
 
