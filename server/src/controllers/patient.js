@@ -109,67 +109,71 @@ var controller =
             {'$match': {'appointments.when': next24HoursFilter, 'appointments.reminderSent': {'$in': [null, false]}}}
         ], function(error, patients)
         {
-            console.log("AGGREGATE RESULTS:");
-            console.log(patients);
-
-            _.forEach(patients, function(patient)
+            if (!error)
             {
-                console.log(patient.name)
-                try
+                _.forEach(patients, function(patient)
                 {
-                    var phoneNumber = libphonenumber.e164(patient.primaryPhone, 'IL');
-
-                    if (phoneNumber)
+                    console.log(patient.name)
+                    try
                     {
-                        console.log('Sending reminder SMS to ' + patient.name + phoneNumber);
+                        var phoneNumber = libphonenumber.e164(patient.primaryPhone, 'IL');
 
-                        var params = {
-                            'api_key': process.env.NEXMO_API_KEY,
-                            'api_secret': process.env.NEXMO_API_SECRET,
-                            'from': phoneNumber,
-                            'to': '972546653003',
-                            'text': generateReminderText(patient.appointments),
-                            'type': 'unicode'
-                        };
+                        if (phoneNumber)
+                        {
+                            console.log('Sending reminder SMS to ' + patient.name + phoneNumber);
 
-                        httpRequest(
-                            {
-                                'method': 'POST',
-                                'url': 'https://rest.nexmo.com/sms/json?' + querystring.stringify(params),
-                                'headers': {'charset': 'utf-8'}
-                            },
-                            function (error, response, body)
-                            {
-                                console.log("Raw response from Nexmo:\n" + body);
-                                body = JSON.parse(body);
+                            var params = {
+                                'api_key': process.env.NEXMO_API_KEY,
+                                'api_secret': process.env.NEXMO_API_SECRET,
+                                'from': phoneNumber,
+                                'to': '972546653003',
+                                'text': generateReminderText(patient.appointments),
+                                'type': 'unicode'
+                            };
 
-                                if (!error && body.messages[0].status == 0)
+                            httpRequest(
                                 {
-                                    console.log("SMS sent successfully");
+                                    'method': 'POST',
+                                    'url': 'https://rest.nexmo.com/sms/json?' + querystring.stringify(params),
+                                    'headers': {'charset': 'utf-8'}
+                                },
+                                function (error, response, body)
+                                {
+                                    console.log("Raw response from Nexmo:\n" + body);
+                                    body = JSON.parse(body);
 
-                                    Patient.findById(patient._id, function(error, patientToUpdate)
+                                    if (!error && body.messages[0].status == 0)
                                     {
-                                        if (error)
-                                            console.log("Error saving patient: " + error);
+                                        console.log("SMS sent successfully");
 
-                                        patientToUpdate.appointments.id(patient.appointments._id).reminderSent = true;
-                                        patientToUpdate.save();
-                                    });
+                                        Patient.findById(patient._id, function(error, patientToUpdate)
+                                        {
+                                            if (error)
+                                                console.log("Error saving patient: " + error);
+
+                                            patientToUpdate.appointments.id(patient.appointments._id).reminderSent = true;
+                                            patientToUpdate.save();
+                                        });
+                                    }
+                                    else
+                                    {
+                                        console.error("Failed to send SMS (error: " + error + ")");
+                                    }
                                 }
-                                else
-                                {
-                                    console.error("Failed to send SMS (error: " + error + ")");
-                                }
-                            }
-                        );
+                            );
+                        }
                     }
-                }
-                catch(e)
-                {
-                    // skip patients with invalid phone number
-                    console.error(patient.name + " has an invalid phone number: " + patient.primaryPhone);
-                }
-            });
+                    catch(e)
+                    {
+                        // skip patients with invalid phone number
+                        console.error(patient.name + " has an invalid phone number: " + patient.primaryPhone);
+                    }
+                });
+            }
+            else
+            {
+                console.log("Error aggregating: " + error);
+            }
         });
     }
 };
