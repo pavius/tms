@@ -124,8 +124,10 @@ var controller =
 
             if (!error && patients)
             {
-                /* _.forEach(patients, function(patient)
+                /* _.forEach(patients, function(patient) */
+                for (var idx = 0; idx < patients.length; ++idx)
                 {
+                    var patient = patients[idx];
                     console.log(patient.name)
 
                     try
@@ -182,7 +184,7 @@ var controller =
                         // skip patients with invalid phone number
                         console.error(patient.name + " has an invalid phone number: " + patient.primaryPhone);
                     }
-                }); */
+                });
             }
             else
             {
