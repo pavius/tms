@@ -94,15 +94,14 @@ var controller =
 
         console.log("GOING TO AGGREGATE");
 
-        Patient.aggregate(
-        [
+        var aggregateQuery =  [
             // match only patients with an appointment in the next 24 hours
             {'$match':
-                {
-                    'primaryPhone': {'$nin': [null, ""]},
-                    'appointments.when': next24HoursFilter,
-                    'appointmentReminders': {'$nin': [null, "none"]}
-                }
+            {
+                'primaryPhone': {'$nin': [null, ""]},
+                'appointments.when': next24HoursFilter,
+                'appointmentReminders': {'$nin': [null, "none"]}
+            }
             },
 
             // remove all unnecessary fields from patient
@@ -113,9 +112,16 @@ var controller =
 
             // take only appointments within next 24 hours
             {'$match': {'appointments.when': next24HoursFilter, 'appointments.reminderSent': {'$in': [null, false]}}}
-        ], function(error, patients)
+        ];
+
+        console.log(aggregateQuery);
+
+        Patient.aggregate(aggregateQuery, function(error, patients)
         {
-            if (!error && patients)
+            console.log(error);
+            console.log(patients);
+
+            /* if (!error && patients)
             {
                 _.forEach(patients, function(patient)
                 {
@@ -180,7 +186,7 @@ var controller =
             {
                 console.log("Error aggregating: " + error);
                 console.log("Patients: " + patients);
-            }
+            } */
         });
     }
 };
