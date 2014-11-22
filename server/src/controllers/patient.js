@@ -109,7 +109,8 @@ var controller =
             {'$match': {'appointments.when': next24HoursFilter, 'appointments.reminderSent': {'$in': [null, false]}}}
         ], function(error, patients)
         {
-            console.log("AGGREGATE RESULTS");
+            console.log("AGGREGATE RESULTS:");
+            console.log(patients);
 
             _.forEach(patients, function(patient)
             {
