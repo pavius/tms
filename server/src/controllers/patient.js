@@ -19,7 +19,7 @@ var controller =
 
         // periodically re-evaluate as well
         setInterval(this.reevaluatePatients, 60 * 1000);
-        // setInterval(this.sendAppointmentReminders, 60 * 1000);
+        setInterval(this.sendAppointmentReminders, 60 * 1000);
     },
 
     reevaluatePatients: function(done)
@@ -92,8 +92,6 @@ var controller =
 
         var next24HoursFilter = {'$gte': new Date(), '$lte': new Date(Date.now() + 24 * 60 * 60 * 1000)};
 
-        console.log("GOING TO AGGREGATE");
-
         var aggregateQuery =  [
             // match only patients with an appointment in the next 24 hours
             {'$match':
@@ -114,14 +112,8 @@ var controller =
             {'$match': {'appointments.when': next24HoursFilter, 'appointments.reminderSent': {'$in': [null, false]}}}
         ];
 
-        console.log(aggregateQuery);
-
         Patient.aggregate(aggregateQuery, function(error, patients)
         {
-            console.log(error);
-            console.log(patients);
-            console.log(patients.length);
-
             if (!error && patients)
             {
                 /* _.forEach(patients, function(patient) */
