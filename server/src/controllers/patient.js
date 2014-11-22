@@ -18,7 +18,7 @@ var controller =
 
         // periodically re-evaluate as well
         setInterval(this.reevaluatePatients, 60 * 1000);
-        setInterval(this.sendAppointmentReminders, 10 * 1000);
+        setInterval(this.sendAppointmentReminders, 60 * 1000);
     },
 
     reevaluatePatients: function(done)
