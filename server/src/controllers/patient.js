@@ -25,6 +25,12 @@ var controller =
     {
         Patient.find({'appointments.payment': null}, function(error, patientsFromDb)
         {
+            if (error)
+            {
+                console.log("Error reevaluating patients: " + error);
+                return;
+            }
+
             var patientsNeedingUpdate = [];
 
             // iterate over patients, look for those whose debt is incorrect
