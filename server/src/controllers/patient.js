@@ -86,6 +86,8 @@ var controller =
 
         var next24HoursFilter = {'$gte': new Date(), '$lte': new Date(Date.now() + 24 * 60 * 60 * 1000)};
 
+        console.log("GOING TO AGGREGATE");
+
         Patient.aggregate(
         [
             // match only patients with an appointment in the next 24 hours
@@ -107,6 +109,8 @@ var controller =
             {'$match': {'appointments.when': next24HoursFilter, 'appointments.reminderSent': {'$in': [null, false]}}}
         ], function(error, patients)
         {
+            console.log("AGGREGATE RESULTS");
+
             _.forEach(patients, function(patient)
             {
                 console.log(patient.name)
