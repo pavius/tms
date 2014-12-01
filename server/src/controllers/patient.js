@@ -135,8 +135,8 @@ var controller =
                             var params = {
                                 'api_key': process.env.NEXMO_API_KEY,
                                 'api_secret': process.env.NEXMO_API_SECRET,
-                                'from': phoneNumber,
-                                'to': '972546653003',
+                                'from': '972543020641',
+                                'to': phoneNumber,
                                 'text': generateReminderText(patient.appointments),
                                 'type': 'unicode'
                             };
