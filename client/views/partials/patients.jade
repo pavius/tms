@@ -34,6 +34,8 @@ row
                             td
                                 a(href='mailto:{{patient.email}}', ng-show='patient.email.length').contact-glyph
                                     i.glyphicon.glyphicon-envelope
+                                a(href='tel:{{patient.primaryPhone}}', ng-show='patient.primaryPhone.length').contact-glyph
+                                    i.glyphicon.glyphicon-phone-alt
                             td(ng-show='service.configuration.filterType=="withDebt"')
                                 {{patient.debt.total}}
                             td.zoom-in
