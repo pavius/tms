@@ -350,6 +350,7 @@ textarea
 .patients-contents td#name
 {
     text-align: right;
+    width: 50%;
 }
 
 .patients-contents td#hasFutureAppointment
