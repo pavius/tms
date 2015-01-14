@@ -346,6 +346,7 @@ textarea
     color: #BBB;
 }
 
+.patients-contents th#name,
 .patients-contents td#name
 {
     text-align: right;
@@ -360,7 +361,6 @@ textarea
 .patients-contents a.contact-glyph
 {
     color: black;
-    padding-left: 20px;
 }
 
 .patients-contents .footer
@@ -376,13 +376,10 @@ textarea
     padding-right: 10px;
 }
 
-.patients-contents div#contact-icons
+.patients-contents td#mail,
+.patients-contents td#phone
 {
-    display: inline-block;
-    margin: auto;
-    text-align: right;
-    margin-left: -20px;
-    min-width: 68px;
+    width: 40px;
 }
 
 /*********************************************************************************************************************
@@ -391,7 +388,7 @@ textarea
 
 .patient-contents td#appointment-type
 {
-    width: 30px;
+    width: 40px;
 }
 
 .patient-contents tr.future-appointment
