@@ -38,7 +38,7 @@ angular.module('tms.payment.services', ['ngResource'])
                 invoice:
                 {
                     issue: Configuration.featureEnabled("issueInvoices"),
-                    item: patient.getInvoiceSettings().item || 'אימון',
+                    item: patient.getInvoiceSettings().item || 'אימון וטיפול התנהגותי-קוגניטיבי',
                     recipient: patient.getInvoiceSettings().recipient || patient.name
                 },
                 cheque:

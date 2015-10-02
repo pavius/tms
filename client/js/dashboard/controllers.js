@@ -197,7 +197,9 @@ angular.module('tms.dashboard.controllers',
                     // check for outstanding debt
                     checkPatientDebtAndCreateTodo(patient);
 
-                    if (patient.getStatus() == 'new' || patient.getStatus() == 'starting')
+                    if (patient.getStatus() == 'new' ||
+                        patient.getStatus() == 'starting' ||
+                        patient.getStatus() == 'active')
                     {
                         // check if this patient has an appointment
                         if (!patientHasFutureAppointment)
