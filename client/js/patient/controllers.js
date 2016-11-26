@@ -1,4 +1,4 @@
-angular.module('tms.patient.controllers', 
+angular.module('tms.patient.controllers',
 [
     'ui.bootstrap',
     'ui.bootstrap.tpls',
@@ -9,17 +9,17 @@ angular.module('tms.patient.controllers',
     'tms.payment.services'
 ])
 
-.config(['$routeProvider', function ($routeProvider) 
+.config(['$routeProvider', function ($routeProvider)
 {
     $routeProvider
 
-    .when('/patients', 
+    .when('/patients',
     {
         templateUrl:'partials/patients',
         controller:'PatientListController'
     })
 
-    .when('/patients/:id', 
+    .when('/patients/:id',
     {
         templateUrl:'partials/patient',
         controller:'PatientDetailController'
@@ -27,7 +27,7 @@ angular.module('tms.patient.controllers',
 
 }])
 
-.controller('PatientListController', 
+.controller('PatientListController',
             ['$scope', '$log', '$location', '$modal', 'ErrorHandler', 'Patient', 'PatientsService',
             function($scope, $log, $location, $modal, errorHandler, Patient, PatientsService)
 {
@@ -201,7 +201,7 @@ angular.module('tms.patient.controllers',
     );
 }])
 
-.controller('PatientDetailController', 
+.controller('PatientDetailController',
             ['$scope', '$log', '$routeParams', '$modal', '$location', 'ErrorHandler', 'Patient', 'Appointment', 'AppointmentModal', 'Payment', 'PaymentModal',
             function($scope, $log, $routeParams, $modal, $location, errorHandler, Patient, Appointment, AppointmentModal, Payment, PaymentModal)
 {
@@ -216,7 +216,7 @@ angular.module('tms.patient.controllers',
 
     function updateActiveTab(activeTab)
     {
-        $scope.activeTab = activeTab;        
+        $scope.activeTab = activeTab;
     }
 
     function getAppointmentPrice(patient, appointment)
@@ -394,7 +394,7 @@ angular.module('tms.patient.controllers',
         }
     };
 
-    $scope.closeAlert = function(index) 
+    $scope.closeAlert = function(index)
     {
         $scope.alerts.splice(index, 1);
     };
@@ -411,14 +411,14 @@ angular.module('tms.patient.controllers',
     {
         if (Date.parse(appointment.when) > Date.now())      return 'glyphicon glyphicon-minus';
         else if (appointment.payment !== null)              return 'glyphicon glyphicon-ok';
-        else                                                return 'glyphicon glyphicon-remove';     
+        else                                                return 'glyphicon glyphicon-remove';
     };
 
     $scope.getAppointmentSummaryIcon = function(appointment)
     {
         if (Date.parse(appointment.when) > Date.now()) return 'glyphicon glyphicon-minus';
         else if (appointment.summarySent)              return 'glyphicon glyphicon-ok';
-        else                                           return 'glyphicon glyphicon-remove';     
+        else                                           return 'glyphicon glyphicon-remove';
     };
 
     $scope.getPatientLastAppointmentSummary = function(patient)
@@ -475,11 +475,11 @@ angular.module('tms.patient.controllers',
     );
 }])
 
-.controller('PatientModalController', 
-            ['$scope', '$modalInstance', 
-            function($scope, $modalInstance) 
+.controller('PatientModalController',
+            ['$scope', '$modalInstance',
+            function($scope, $modalInstance)
 {
-    $scope.patient = {appointmentPrice: 350};
+    $scope.patient = {appointmentPrice: 400};
 
     $scope.create = function()
     {
