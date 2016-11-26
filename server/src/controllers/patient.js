@@ -89,7 +89,7 @@ var controller =
             if (appointment.type == 'skype')
                 return 'תזכורת: פגישת סקייפ עם טל קפלינסקי ' + when;
             else
-                return 'תזכורת: פגישה עם טל קפלינסקי ' + when + '. תוספתא 13 דירה 3 ת"א';
+                return 'תזכורת: פגישה עם טל קפלינסקי ' + when + '. בן סרוק 20 תל אביב - מרפאת רזולוציה';
         }
 
         var next24HoursFilter = {'$gte': new Date(), '$lte': new Date(Date.now() + 24 * 60 * 60 * 1000)};
