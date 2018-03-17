@@ -36,7 +36,7 @@ row
                                             td#appointment-type
                                                 span.fa.fa-skype(ng-show='appointment.type == "skype"')
                                             td
-                                                {{appointment.when | date:'dd MMMM yyyy HH:mm'}}
+                                                {{appointment.when | date:'dd MMMM yyyy - HH:mm'}}
                                             td
                                                 i(ng-class='getAppointmentSummaryIcon(appointment)', ng-click="toggleAppointmentSummarized(appointment)")
                                             td
@@ -59,7 +59,7 @@ row
                                             th חשבונית
                                     tbody
                                         tr(ng-repeat="payment in patient.payments | orderBy:'-when'")
-                                            td {{payment.when | date:'dd MMMM yyyy HH:mm'}}
+                                            td {{payment.when | date:'dd MMMM yyyy - HH:mm'}}
                                             td {{payment.sum}}
                                             td
                                                 i.glyphicon.glyphicon-remove(ng-show='!payment.invoice.url')
