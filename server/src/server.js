@@ -3,7 +3,9 @@ var _ = require('underscore');
 var express = require('express');
 var app = express();
 var mongoose = require('mongoose');
-mongoose.plugin(schema => { schema.options.usePushEach = true });
+mongoose.plugin(function(schema) {
+ schema.options.usePushEach = true;
+});
 
 var passport = require('passport');
 var flash = require('connect-flash');
